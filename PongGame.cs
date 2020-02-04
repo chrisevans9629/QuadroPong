@@ -5,63 +5,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MyGame
 {
-    public class Sprite
-    {
-        public Vector2 Position { get; set; }
-
-        public Vector2 Center => Position - new Vector2(0, Texture2D.Height / 2f);
-
-        public Texture2D Texture2D { get; set; }
-        public Vector2 Size { get; set; } = new Vector2(1);
-        public float Speed { get; set; } = 0;
-        public Vector2 Acceleration { get; set; } = Vector2.Zero;
-        public Color Color { get; set; } = Color.White;
-        public void Draw(SpriteBatch batch)
-        {
-            batch.Draw(Texture2D, Position, null, Color, 0, Vector2.Zero, Size, SpriteEffects.None, 0);
-        }
-
-        public void Update(GameTime time, Vector2 viewportSize)
-        {
-            var min = Vector2.Zero;
-
-            var max = viewportSize - new Vector2(Texture2D.Width, Texture2D.Height);
-
-            if (Math.Abs(Position.X - min.X) < 1)
-            {
-                Acceleration = Vector2.Reflect(Acceleration, new Vector2(1, 0));
-            }
-            else if (Math.Abs(Position.X - max.X) < 1)
-            {
-                Acceleration = Vector2.Reflect(Acceleration, new Vector2(1, 0));
-            }
-            else if (Math.Abs(Position.Y - min.Y) < 1)
-            {
-                Acceleration = Vector2.Reflect(Acceleration, new Vector2(0, 1));
-            }
-            else if (Math.Abs(Position.Y - max.Y) < 1)
-            {
-                Acceleration = Vector2.Reflect(Acceleration, new Vector2(0, 1));
-            }
-
-            // TODO: Add your update logic here
-            Acceleration.Normalize();
-
-            var newPos = Position +
-                         Acceleration * (float)(Speed * time.ElapsedGameTime.TotalSeconds);
-
-            Position = Vector2.Clamp(newPos, min, max);
-        }
-
-    }
-
-    public class Game1 : Game
+    public class PongGame : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Sprite Ball;
+        private Ball Ball;
         Random random;
-        public Game1()
+        public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -73,7 +23,7 @@ namespace MyGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            Ball = new Sprite();
+            Ball = new Ball();
             Ball.Speed = 300;
             Ball.Size = new Vector2(1);
             random = new Random();
