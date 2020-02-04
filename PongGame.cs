@@ -11,6 +11,7 @@ namespace MyGame
         private SpriteBatch _spriteBatch;
         private Ball Ball;
         private Paddle Paddle;
+        private Goal goal;
         Random random;
         public PongGame()
         {
@@ -20,18 +21,15 @@ namespace MyGame
 
         }
 
-        private float RandomFloat => (float)(random.NextDouble() * 2) - 1f;
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
             random = new Random();
-
             Ball = new Ball(random);
-            Ball.Speed = 300;
-            Ball.Acceleration = new Vector2(RandomFloat, RandomFloat);
             Paddle = new Paddle();
             Paddle.Speed = 300;
-
+            goal = new Goal();
+            
             base.Initialize();
         }
 
@@ -39,11 +37,12 @@ namespace MyGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             var texture = Content.Load<Texture2D>("ball2");
+            goal.Rectangle = new Rectangle(GraphicsDevice.Viewport.Width-5,0,1,GraphicsDevice.Viewport.Height);
             Ball.Texture2D = texture;
-            Ball.Position = new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height / 2f) - new Vector2(0, Ball.Texture2D.Height / 2f);
+            Ball.Reset(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             Paddle.Texture2D = Content.Load<Texture2D>("paddle");
-            Paddle.Position = new Vector2(GraphicsDevice.Viewport.Width - 10, GraphicsDevice.Viewport.Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
+            Paddle.Position = new Vector2(GraphicsDevice.Viewport.Width - 30, GraphicsDevice.Viewport.Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
 
             // TODO: use this.Content to load your game content here
         }
@@ -56,6 +55,7 @@ namespace MyGame
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
             Ball.Update(gameTime, viewPort);
             Paddle.Update(gameTime, viewPort, Ball);
+            goal.Update(Ball, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             base.Update(gameTime);
         }
 
@@ -71,4 +71,25 @@ namespace MyGame
             base.Draw(gameTime);
         }
     }
+
+    public class Goal : Collider
+    {
+        public Rectangle Rectangle { get; set; }
+        public override Rectangle Bounds()
+        {
+            return Rectangle;
+        }
+
+        public void Update(Ball ball, int width, int height)
+        {
+            if (Collision(ball))
+            {
+                Score++;
+                ball.Reset(width, height);
+            }
+        }
+
+        public int Score { get; set; }
+    }
+    
 }

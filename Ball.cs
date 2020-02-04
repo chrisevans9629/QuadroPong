@@ -11,6 +11,15 @@ namespace MyGame
         {
             _random = random;
         }
+        private float RandomFloat => (float)(_random.NextDouble() * 2) - 1f;
+
+        public void Reset(int width, int height)
+        {
+            Speed = 300;
+            Acceleration = new Vector2(RandomFloat, RandomFloat);
+            Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
+        }
+
         public void Update(GameTime time, Vector2 viewportSize)
         {
             var min = Vector2.Zero;
