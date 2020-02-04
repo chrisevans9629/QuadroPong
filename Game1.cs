@@ -65,7 +65,7 @@ namespace MyGame
 
             var min = Vector2.Zero;
 
-            var max = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
+            var max = GraphicsDevice.Viewport.Bounds.Size.ToVector2() - new Vector2(Ball.Texture2D.Width, Ball.Texture2D.Height);
 
             if (Math.Abs(Ball.Position.X - min.X) < 1)
             {
@@ -86,8 +86,11 @@ namespace MyGame
 
             // TODO: Add your update logic here
             Ball.Acceleration.Normalize();
-            
-            Ball.Position = Vector2.Clamp(Ball.Position + Ball.Acceleration * (float)(Ball.Speed * gameTime.ElapsedGameTime.TotalSeconds), min, max);
+
+            var newPos = Ball.Position +
+                         Ball.Acceleration * (float) (Ball.Speed * gameTime.ElapsedGameTime.TotalSeconds);
+
+            Ball.Position = Vector2.Clamp(newPos, min, max);
 
             base.Update(gameTime);
         }
