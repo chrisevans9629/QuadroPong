@@ -9,7 +9,7 @@ namespace MyGame
         {
             var min = Vector2.Zero;
 
-            var max = viewportSize - new Vector2(Texture2D.Width, Texture2D.Height);
+            var max = viewportSize - EndPoint;
 
             if (Math.Abs(Position.X - min.X) < 1)
             {
