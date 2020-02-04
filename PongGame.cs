@@ -12,6 +12,7 @@ namespace MyGame
         private Ball Ball;
         private Paddle Paddle;
         private Goal goal;
+        private SpriteFont font;
         Random random;
         public PongGame()
         {
@@ -37,6 +38,7 @@ namespace MyGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             var texture = Content.Load<Texture2D>("ball2");
+            font = Content.Load<SpriteFont>("arial");
             goal.Rectangle = new Rectangle(GraphicsDevice.Viewport.Width-5,0,1,GraphicsDevice.Viewport.Height);
             Ball.Texture2D = texture;
             Ball.Reset(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
@@ -67,6 +69,9 @@ namespace MyGame
             _spriteBatch.Begin();
             Ball.Draw(_spriteBatch);
             Paddle.Draw(_spriteBatch);
+
+            _spriteBatch.DrawString(font,goal.Score.ToString(), new Vector2(GraphicsDevice.Viewport.Width/2f, GraphicsDevice.Viewport.Y/2f), Color.White);
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
