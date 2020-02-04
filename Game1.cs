@@ -20,6 +20,39 @@ namespace MyGame
         {
             batch.Draw(Texture2D, Position, null, Color, 0, Vector2.Zero, Size, SpriteEffects.None, 0);
         }
+
+        public void Update(GameTime time, Vector2 viewportSize)
+        {
+            var min = Vector2.Zero;
+
+            var max = viewportSize - new Vector2(Texture2D.Width, Texture2D.Height);
+
+            if (Math.Abs(Position.X - min.X) < 1)
+            {
+                Acceleration = Vector2.Reflect(Acceleration, new Vector2(1, 0));
+            }
+            else if (Math.Abs(Position.X - max.X) < 1)
+            {
+                Acceleration = Vector2.Reflect(Acceleration, new Vector2(1, 0));
+            }
+            else if (Math.Abs(Position.Y - min.Y) < 1)
+            {
+                Acceleration = Vector2.Reflect(Acceleration, new Vector2(0, 1));
+            }
+            else if (Math.Abs(Position.Y - max.Y) < 1)
+            {
+                Acceleration = Vector2.Reflect(Acceleration, new Vector2(0, 1));
+            }
+
+            // TODO: Add your update logic here
+            Acceleration.Normalize();
+
+            var newPos = Position +
+                         Acceleration * (float)(Speed * time.ElapsedGameTime.TotalSeconds);
+
+            Position = Vector2.Clamp(newPos, min, max);
+        }
+
     }
 
     public class Game1 : Game
@@ -63,34 +96,7 @@ namespace MyGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            var min = Vector2.Zero;
-
-            var max = GraphicsDevice.Viewport.Bounds.Size.ToVector2() - new Vector2(Ball.Texture2D.Width, Ball.Texture2D.Height);
-
-            if (Math.Abs(Ball.Position.X - min.X) < 1)
-            {
-                Ball.Acceleration = Vector2.Reflect(Ball.Acceleration, new Vector2(1, 0));
-            }
-            else if (Math.Abs(Ball.Position.X - max.X) < 1)
-            {
-                Ball.Acceleration = Vector2.Reflect(Ball.Acceleration, new Vector2(1,0));
-            }
-            else if (Math.Abs(Ball.Position.Y - min.Y) < 1)
-            {
-                Ball.Acceleration = Vector2.Reflect(Ball.Acceleration, new Vector2(0, 1));
-            }
-            else if (Math.Abs(Ball.Position.Y - max.Y) < 1)
-            {
-                Ball.Acceleration = Vector2.Reflect(Ball.Acceleration, new Vector2(0,1));
-            }
-
-            // TODO: Add your update logic here
-            Ball.Acceleration.Normalize();
-
-            var newPos = Ball.Position +
-                         Ball.Acceleration * (float) (Ball.Speed * gameTime.ElapsedGameTime.TotalSeconds);
-
-            Ball.Position = Vector2.Clamp(newPos, min, max);
+            Ball.Update(gameTime, GraphicsDevice.Viewport.Bounds.Size.ToVector2());
 
             base.Update(gameTime);
         }
