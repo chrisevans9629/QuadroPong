@@ -24,9 +24,10 @@ namespace MyGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            Ball = new Ball();
-            Ball.Speed = 300;
             random = new Random();
+
+            Ball = new Ball(random);
+            Ball.Speed = 300;
             Ball.Acceleration = new Vector2(RandomFloat, RandomFloat);
             Paddle = new Paddle();
             Paddle.Speed = 300;
@@ -42,7 +43,7 @@ namespace MyGame
             Ball.Position = new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height / 2f) - new Vector2(0, Ball.Texture2D.Height / 2f);
 
             Paddle.Texture2D = Content.Load<Texture2D>("paddle");
-            Paddle.Position = new Vector2(GraphicsDevice.Viewport.Width-10, GraphicsDevice.Viewport.Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
+            Paddle.Position = new Vector2(GraphicsDevice.Viewport.Width - 10, GraphicsDevice.Viewport.Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
 
             // TODO: use this.Content to load your game content here
         }
@@ -52,8 +53,9 @@ namespace MyGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            Ball.Update(gameTime, GraphicsDevice.Viewport.Bounds.Size.ToVector2());
-
+            var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
+            Ball.Update(gameTime, viewPort);
+            Paddle.Update(gameTime, viewPort, Ball);
             base.Update(gameTime);
         }
 
@@ -67,19 +69,6 @@ namespace MyGame
             Paddle.Draw(_spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
-        }
-    }
-
-    public class Paddle : Sprite
-    {
-        public void Update(GameTime time, Vector2 viewPortSize)
-        {
-            var min = Vector2.Zero;
-            var max = viewPortSize - EndPoint;
-
-            var newPos = new Vector2(2);
-
-            Position = Vector2.Clamp(newPos, min, max);
         }
     }
 }

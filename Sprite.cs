@@ -15,9 +15,18 @@ namespace MyGame
         public float Speed { get; set; } = 0;
         public Vector2 Acceleration { get; set; } = Vector2.Zero;
         public Color Color { get; set; } = Color.White;
+
+        public Rectangle Bounds => new Rectangle(Position.ToPoint(), new Point(Texture2D.Width, Texture2D.Height));
         public void Draw(SpriteBatch batch)
         {
             batch.Draw(Texture2D, Position, null, Color, 0, Vector2.Zero, Size, SpriteEffects.None, 0);
         }
+
+        public bool Collision(Sprite sprite)
+        {
+            // Texture2D.Bounds.Intersects(sprite.Texture2D.Bounds);
+            return Bounds.Intersects(sprite.Bounds);
+        }
+
     }
 }
