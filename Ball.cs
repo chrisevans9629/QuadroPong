@@ -31,6 +31,8 @@ namespace MyGame
                 y = -y;
             }
 
+            x = -0.25f;
+            y = -1;
             Acceleration = new Vector2(x, y);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
         }
@@ -70,13 +72,13 @@ namespace MyGame
             Position = Vector2.Clamp(newPos, min, max);
         }
 
-        public void Reflect()
+        public void Reflect(Vector2 normal)
         {
             var randomVariation = new Vector2(0, (float)_random.NextDouble() - 0.5f);
 
             var accel = Vector2.Clamp(Acceleration + randomVariation, -Vector2.One, Vector2.One);
             //var accel = Acceleration;
-            Acceleration = Vector2.Reflect(accel, new Vector2(1, 0));
+            Acceleration = Vector2.Reflect(accel, normal);
             Acceleration.Normalize();
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MyGame
@@ -6,10 +7,42 @@ namespace MyGame
     public abstract class Collider
     {
         public abstract Rectangle Bounds();
+
+        private  List<Sprite> lastCollisions = new List<Sprite>();
+
+
+        public bool BetweenX(Sprite sprite)
+        {
+            var bounds = Bounds();
+           return sprite.Position.X >= bounds.X && sprite.Position.X + sprite.EndPoint.X <= bounds.X + bounds.Width;
+        }
+
+        public bool BetweenY(Sprite sprite)
+        {
+            var bounds = Bounds();
+            return sprite.Position.Y >= bounds.Y && sprite.Position.Y + sprite.EndPoint.Y <= bounds.Y + bounds.Height;
+        }
+
+
         public bool Collision(Sprite sprite)
         {
             // Texture2D.Bounds.Intersects(sprite.Texture2D.Bounds);
-            return Bounds().Intersects(sprite.Bounds());
+            var isColliding = Bounds().Intersects(sprite.Bounds());
+            if (isColliding)
+            {
+                if (lastCollisions.Contains(sprite))
+                {
+                    return false;
+                }
+
+                lastCollisions.Add(sprite);
+            }
+            else
+            {
+                lastCollisions.Remove(sprite);
+            }
+
+            return isColliding;
         }
     }
     public class Sprite : Collider
@@ -18,7 +51,7 @@ namespace MyGame
 
         public Vector2 Center => Position - new Vector2(0, Texture2D.Height / 2f);
 
-        public Vector2 EndPoint => new Vector2(Texture2D.Width, Texture2D.Height);
+        public Vector2 EndPoint => new Vector2( Texture2D.Width, Texture2D.Height);
         public Texture2D Texture2D { get; set; }
         public Vector2 Size { get; set; } = new Vector2(1);
         public float Speed { get; set; } = 0;

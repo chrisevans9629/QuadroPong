@@ -15,7 +15,7 @@ namespace MyGame
         {
             if (Collision(ball))
             {
-                ball.Reflect();
+                ball.Reflect(new Vector2(1,0));
             }
 
             var min = Vector2.Zero;

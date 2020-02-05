@@ -10,7 +10,22 @@ namespace MyGame
 {
     public class Boundary : Sprite
     {
-        
+        public void Update(Ball ball)
+        {
+            if (Collision(ball))
+            {
+                if (BetweenY(ball))
+                {
+                    ball.Reflect(new Vector2(1, 0));
+                }
+                else if (BetweenX(ball))
+                {
+                    ball.Reflect(new Vector2(0, 1));
+                }
+                
+
+            }
+        }
     }
 
     public class PongGame : Game
@@ -108,7 +123,10 @@ namespace MyGame
             goalAi.Update(Ball, Width, Height);
             Ball.Update(gameTime, viewPort);
             gameTimer.Update(gameTime);
-            
+            foreach (var boundary in boundaries)
+            {
+                boundary.Update(Ball);
+            }
             base.Update(gameTime);
         }
 
