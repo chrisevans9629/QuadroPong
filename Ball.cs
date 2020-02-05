@@ -6,21 +6,40 @@ namespace MyGame
     public class Ball : Sprite
     {
         private readonly Random _random;
+        private readonly GameTimer _gameTimer;
 
-        public Ball(Random random)
+        public Ball(Random random, GameTimer gameTimer)
         {
             _random = random;
+            _gameTimer = gameTimer;
         }
-        private float RandomFloat => (float)(_random.NextDouble());
-
+        private float RandomFloat() => (float)(_random.NextDouble() + 0.5f);
+        private bool RandomBool() => _random.NextDouble() > 0.5f;
         public void Reset(int width, int height)
         {
-            Acceleration = new Vector2( RandomFloat , RandomFloat);
+            _gameTimer.Restart();
+            var x = RandomFloat();
+            var y = RandomFloat();
+
+            if (RandomBool())
+            {
+                x = -x;
+            }
+
+            if (RandomBool())
+            {
+                y = -y;
+            }
+
+            Acceleration = new Vector2(x, y);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
         }
 
         public void Update(GameTime time, Vector2 viewportSize)
         {
+            if (_gameTimer.IsRunning)
+                return;
+
             var min = Vector2.Zero;
 
             var max = viewportSize - EndPoint;
@@ -53,7 +72,7 @@ namespace MyGame
 
         public void Reflect()
         {
-            var randomVariation = new Vector2(0, (float) _random.NextDouble() - 0.5f);
+            var randomVariation = new Vector2(0, (float)_random.NextDouble() - 0.5f);
 
             var accel = Vector2.Clamp(Acceleration + randomVariation, -Vector2.One, Vector2.One);
             //var accel = Acceleration;

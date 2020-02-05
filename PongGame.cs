@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,23 +16,25 @@ namespace MyGame
         private Goal goal;
         private Goal goalAi;
         private SpriteFont font;
+        private GameTimer gameTimer;
         Random random;
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-
         }
 
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
             random = new Random();
-            Ball = new Ball(random);
+            gameTimer = new GameTimer();
+            gameTimer.CountDuration = 3f;
+            Ball = new Ball(random, gameTimer);
             Ball.Speed = 300;
             AiPaddle = new Paddle(new AiPlayer());
-            AiPaddle.Speed = 300;
+            AiPaddle.Speed = 150;
             Paddle = new Paddle(new Player());
             Paddle.Speed = 300;
             goal = new Goal();
@@ -48,11 +51,11 @@ namespace MyGame
             font = Content.Load<SpriteFont>("arial");
             goalAi.SpriteFont = font;
             goalAi.Rectangle = new Rectangle(5,0,1, Height);
-            goalAi.Offset = -30;
+            goalAi.Offset = 30;
 
             goal.Rectangle = new Rectangle(Width-5,0,1,Height);
             goal.SpriteFont = font;
-            goal.Offset = 30;
+            goal.Offset = -30;
             Ball.Texture2D = texture;
             Ball.Reset(Width, Height);
             var paddle = Content.Load<Texture2D>("paddle");
@@ -62,7 +65,7 @@ namespace MyGame
 
             Paddle.Texture2D = paddle;
             Paddle.Position = new Vector2(Width - 30, Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
-
+            gameTimer.Font = font;
             // TODO: use this.Content to load your game content here
         }
 
@@ -77,7 +80,7 @@ namespace MyGame
             goal.Update(Ball, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             goalAi.Update(Ball, Width, Height);
             Ball.Update(gameTime, viewPort);
-
+            gameTimer.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -93,6 +96,7 @@ namespace MyGame
             AiPaddle.Draw(_spriteBatch);
             goal.Draw(_spriteBatch, Width);
             goalAi.Draw(_spriteBatch, Width);
+            gameTimer.Draw(_spriteBatch, Width, Height);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

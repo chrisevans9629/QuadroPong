@@ -18,7 +18,7 @@ namespace MyGame
             {
                 Score++;
                 ball.Reset(width, height);
-                ball.Speed += 100;
+                ball.Speed += 5;
             }
         }
 
