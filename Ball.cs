@@ -54,10 +54,10 @@ namespace MyGame
 
         public void Reflect()
         {
-            var randomVariation = new Vector2((float) _random.NextDouble(), (float) _random.NextDouble());
+            var randomVariation = new Vector2(0, (float) _random.NextDouble());
 
             var accel = Vector2.Clamp(Acceleration + randomVariation, -Vector2.One, Vector2.One);
-
+            //var accel = Acceleration;
             Acceleration = Vector2.Reflect(accel, new Vector2(1, 0));
             Acceleration.Normalize();
         }

@@ -71,11 +71,12 @@ namespace MyGame
                 Exit();
 
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
-            Ball.Update(gameTime, viewPort);
             Paddle.Update(gameTime, viewPort, Ball);
             AiPaddle.Update(gameTime, viewPort, Ball);
             goal.Update(Ball, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             goalAi.Update(Ball, Width, Height);
+            Ball.Update(gameTime, viewPort);
+
             base.Update(gameTime);
         }
 
