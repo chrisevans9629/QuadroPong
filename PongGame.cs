@@ -29,6 +29,7 @@ namespace MyGame
             // TODO: Add your initialization logic here
             random = new Random();
             Ball = new Ball(random);
+            Ball.Speed = 300;
             AiPaddle = new Paddle(new AiPlayer());
             AiPaddle.Speed = 300;
             Paddle = new Paddle(new Player());
@@ -76,6 +77,7 @@ namespace MyGame
             goal.Update(Ball, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             goalAi.Update(Ball, Width, Height);
             Ball.Update(gameTime, viewPort);
+
 
             base.Update(gameTime);
         }

@@ -11,12 +11,11 @@ namespace MyGame
         {
             _random = random;
         }
-        private float RandomFloat => (float)(_random.NextDouble() * 2) - 1f;
+        private float RandomFloat => (float)(_random.NextDouble());
 
         public void Reset(int width, int height)
         {
-            Speed = 300;
-            Acceleration = new Vector2(RandomFloat, RandomFloat);
+            Acceleration = new Vector2( RandomFloat , RandomFloat);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
         }
 
@@ -54,7 +53,7 @@ namespace MyGame
 
         public void Reflect()
         {
-            var randomVariation = new Vector2(0, (float) _random.NextDouble());
+            var randomVariation = new Vector2(0, (float) _random.NextDouble() - 0.5f);
 
             var accel = Vector2.Clamp(Acceleration + randomVariation, -Vector2.One, Vector2.One);
             //var accel = Acceleration;
