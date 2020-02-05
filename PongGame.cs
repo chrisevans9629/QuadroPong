@@ -11,7 +11,9 @@ namespace MyGame
         private SpriteBatch _spriteBatch;
         private Ball Ball;
         private Paddle Paddle;
+        private Paddle AiPaddle;
         private Goal goal;
+        private Goal goalAi;
         private SpriteFont font;
         Random random;
         public PongGame()
@@ -27,24 +29,38 @@ namespace MyGame
             // TODO: Add your initialization logic here
             random = new Random();
             Ball = new Ball(random);
-            Paddle = new Paddle();
+            AiPaddle = new Paddle(new AiPlayer());
+            AiPaddle.Speed = 300;
+            Paddle = new Paddle(new Player());
             Paddle.Speed = 300;
             goal = new Goal();
-            
+            goalAi = new Goal();
             base.Initialize();
         }
 
+        public int Width => GraphicsDevice.Viewport.Width;
+        public int Height => GraphicsDevice.Viewport.Height;
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             var texture = Content.Load<Texture2D>("ball2");
             font = Content.Load<SpriteFont>("arial");
-            goal.Rectangle = new Rectangle(GraphicsDevice.Viewport.Width-5,0,1,GraphicsDevice.Viewport.Height);
-            Ball.Texture2D = texture;
-            Ball.Reset(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            goalAi.SpriteFont = font;
+            goalAi.Rectangle = new Rectangle(5,0,1, Height);
+            goalAi.Offset = -30;
 
-            Paddle.Texture2D = Content.Load<Texture2D>("paddle");
-            Paddle.Position = new Vector2(GraphicsDevice.Viewport.Width - 30, GraphicsDevice.Viewport.Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
+            goal.Rectangle = new Rectangle(Width-5,0,1,Height);
+            goal.SpriteFont = font;
+            goal.Offset = 30;
+            Ball.Texture2D = texture;
+            Ball.Reset(Width, Height);
+            var paddle = Content.Load<Texture2D>("paddle");
+
+            AiPaddle.Texture2D = paddle;
+            AiPaddle.Position = new Vector2(30, Height /2f) - new Vector2(0, AiPaddle.Texture2D.Height / 2f);
+
+            Paddle.Texture2D = paddle;
+            Paddle.Position = new Vector2(Width - 30, Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
 
             // TODO: use this.Content to load your game content here
         }
@@ -57,7 +73,9 @@ namespace MyGame
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
             Ball.Update(gameTime, viewPort);
             Paddle.Update(gameTime, viewPort, Ball);
+            AiPaddle.Update(gameTime, viewPort, Ball);
             goal.Update(Ball, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            goalAi.Update(Ball, Width, Height);
             base.Update(gameTime);
         }
 
@@ -69,32 +87,11 @@ namespace MyGame
             _spriteBatch.Begin();
             Ball.Draw(_spriteBatch);
             Paddle.Draw(_spriteBatch);
-
-            _spriteBatch.DrawString(font,goal.Score.ToString(), new Vector2(GraphicsDevice.Viewport.Width/2f, GraphicsDevice.Viewport.Y/2f), Color.White);
-
+            AiPaddle.Draw(_spriteBatch);
+            goal.Draw(_spriteBatch, Width);
+            goalAi.Draw(_spriteBatch, Width);
             _spriteBatch.End();
             base.Draw(gameTime);
         }
     }
-
-    public class Goal : Collider
-    {
-        public Rectangle Rectangle { get; set; }
-        public override Rectangle Bounds()
-        {
-            return Rectangle;
-        }
-
-        public void Update(Ball ball, int width, int height)
-        {
-            if (Collision(ball))
-            {
-                Score++;
-                ball.Reset(width, height);
-            }
-        }
-
-        public int Score { get; set; }
-    }
-    
 }

@@ -59,6 +59,7 @@ namespace MyGame
             var accel = Vector2.Clamp(Acceleration + randomVariation, -Vector2.One, Vector2.One);
 
             Acceleration = Vector2.Reflect(accel, new Vector2(1, 0));
+            Acceleration.Normalize();
         }
     }
 }
