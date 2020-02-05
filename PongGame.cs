@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net.Mime;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,6 +8,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MyGame
 {
+    public class Boundary : Sprite
+    {
+        
+    }
+
     public class PongGame : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -17,12 +24,21 @@ namespace MyGame
         private Goal goalAi;
         private SpriteFont font;
         private GameTimer gameTimer;
+        private List<Boundary> boundaries;
+
         Random random;
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.PreferredBackBufferHeight = 1000;
+            _graphics.PreferredBackBufferWidth = 1000;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            boundaries = new List<Boundary>();
+            for (int i = 0; i < 4; i++)
+            {
+                boundaries.Add(new Boundary());
+            }
         }
 
         protected override void Initialize()
@@ -59,13 +75,24 @@ namespace MyGame
             Ball.Texture2D = texture;
             Ball.Reset(Width, Height);
             var paddle = Content.Load<Texture2D>("paddle");
-
+            var boundary = Content.Load<Texture2D>("Boundary");
             AiPaddle.Texture2D = paddle;
             AiPaddle.Position = new Vector2(30, Height /2f) - new Vector2(0, AiPaddle.Texture2D.Height / 2f);
 
             Paddle.Texture2D = paddle;
             Paddle.Position = new Vector2(Width - 30, Height / 2f) - new Vector2(0, Paddle.Texture2D.Height / 2f);
             gameTimer.Font = font;
+
+            foreach (var boundary1 in boundaries)
+            {
+                boundary1.Texture2D = boundary;
+            }
+
+            boundaries[0].Position = new Vector2(0);
+            boundaries[1].Position = new Vector2(Width-boundaries[1].Texture2D.Width,Height-boundaries[1].Texture2D.Height);
+            boundaries[2].Position = new Vector2(0, Height-boundaries[2].Texture2D.Height);
+            boundaries[3].Position = new Vector2(Width-boundaries[3].Texture2D.Width,0);
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -81,7 +108,7 @@ namespace MyGame
             goalAi.Update(Ball, Width, Height);
             Ball.Update(gameTime, viewPort);
             gameTimer.Update(gameTime);
-
+            
             base.Update(gameTime);
         }
 
@@ -97,6 +124,12 @@ namespace MyGame
             goal.Draw(_spriteBatch, Width);
             goalAi.Draw(_spriteBatch, Width);
             gameTimer.Draw(_spriteBatch, Width, Height);
+
+            foreach (var boundary in boundaries)
+            {
+                boundary.Draw(_spriteBatch);
+            }
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }
