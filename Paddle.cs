@@ -11,15 +11,14 @@ namespace MyGame
             _player = player;
         }
 
-        public void Update(GameTime time, Vector2 viewPortSize, Ball ball)
+        public void Update(GameTime time, Vector2 min, Vector2 maxPort, Ball ball)
         {
             if (Collision(ball))
             {
                 ball.Reflect(new Vector2(1,0));
             }
 
-            var min = Vector2.Zero;
-            var max = viewPortSize - EndPoint;
+            var max = maxPort - EndPoint;
 
             if (!_player.UpdateAcceleration(this, ball))
             {

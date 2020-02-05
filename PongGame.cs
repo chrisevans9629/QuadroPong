@@ -8,26 +8,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MyGame
 {
-    public class Boundary : Sprite
-    {
-        public void Update(Ball ball)
-        {
-            if (Collision(ball))
-            {
-                if (BetweenY(ball))
-                {
-                    ball.Reflect(new Vector2(1, 0));
-                }
-                else if (BetweenX(ball))
-                {
-                    ball.Reflect(new Vector2(0, 1));
-                }
-                
-
-            }
-        }
-    }
-
     public class PongGame : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -116,9 +96,11 @@ namespace MyGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            var b = boundaries[0];
+
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
-            Paddle.Update(gameTime, viewPort, Ball);
-            AiPaddle.Update(gameTime, viewPort, Ball);
+            Paddle.Update(gameTime, new Vector2(0, b.Texture2D.Height), viewPort - new Vector2(0,b.Texture2D.Height), Ball);
+            AiPaddle.Update(gameTime, new Vector2(0, b.Texture2D.Height), viewPort - new Vector2(0,b.Texture2D.Height), Ball);
             goal.Update(Ball, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             goalAi.Update(Ball, Width, Height);
             Ball.Update(gameTime, viewPort);
