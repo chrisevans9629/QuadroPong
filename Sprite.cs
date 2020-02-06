@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -57,7 +58,6 @@ namespace MyGame
         public float Speed { get; set; } = 0;
         public Vector2 Acceleration { get; set; } = Vector2.Zero;
         public Color Color { get; set; } = Color.White;
-
         public override Rectangle Bounds() => new Rectangle(Position.ToPoint(), new Point(Texture2D.Width, Texture2D.Height));
         public void Draw(SpriteBatch batch)
         {

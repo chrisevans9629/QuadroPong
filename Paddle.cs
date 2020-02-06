@@ -15,7 +15,14 @@ namespace MyGame
         {
             if (Collision(ball))
             {
-                ball.Reflect(new Vector2(1,0));
+                if (BetweenY(ball))
+                {
+                    ball.Reflect(new Vector2(1, 0));
+                }
+                else if (BetweenX(ball))
+                {
+                    ball.Reflect(new Vector2(0, 1));
+                }
             }
 
             var max = maxPort - EndPoint;
