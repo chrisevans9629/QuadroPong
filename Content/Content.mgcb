@@ -25,6 +25,18 @@
 /processorParam:TextureFormat=Color
 /build:../../../../Desktop/Boundary.png;Boundary.png
 
+#begin 150222__pumodi__menu-select.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:150222__pumodi__menu-select.mp3;goal.mp3
+
+#begin 4359__noisecollector__pongblipf4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:4359__noisecollector__pongblipf4.wav;blip.wav
+
 #begin arial.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

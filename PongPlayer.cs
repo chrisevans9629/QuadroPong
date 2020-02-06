@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 
 namespace MyGame
 {
@@ -15,11 +16,12 @@ namespace MyGame
             Goal = new Goal();
         }
 
-        public void Load(SpriteFont font, Texture2D paddle, int goalOffset)
+        public void Load(SpriteFont font, Texture2D paddle, int goalOffset, Song goalSong)
         {
             Paddle.Texture2D = paddle;
             Goal.SpriteFont = font;
             Goal.Offset = goalOffset;
+            Goal.Song = goalSong;
         }
 
         public void SetPosition(int Width, int Height)

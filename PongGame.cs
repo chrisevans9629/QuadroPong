@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace MyGame
 {
@@ -78,16 +80,18 @@ namespace MyGame
             var paddleRot = Content.Load<Texture2D>("paddleRot");
 
             var offset = -60;
-
+            var goal = Content.Load<Song>("goal");
+            var blip = Content.Load<SoundEffect>("blip");
             foreach (var pongPlayer in players)
             {
                 if (pongPlayer.Side)
-                    pongPlayer.Load(font, paddle, offset);
+                    pongPlayer.Load(font, paddle, offset,goal);
                 else
-                    pongPlayer.Load(font, paddleRot, offset);
+                    pongPlayer.Load(font, paddleRot, offset,goal);
                 offset += 30;
             }
 
+            Ball.BounceSong = blip;
             Ball.Texture2D = texture;
             Ball.Reset(Width, Height);
             var boundary = Content.Load<Texture2D>("Boundary");

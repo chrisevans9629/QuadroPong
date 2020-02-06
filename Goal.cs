@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 
 namespace MyGame
 {
@@ -7,6 +8,9 @@ namespace MyGame
     {
         public SpriteFont SpriteFont { get; set; }
         public Rectangle Rectangle { get; set; }
+
+        public Song Song { get; set; }
+
         public override Rectangle Bounds()
         {
             return Rectangle;
@@ -17,6 +21,7 @@ namespace MyGame
             if (Collision(ball))
             {
                 Score++;
+                MediaPlayer.Play(Song);
                 ball.Reset(width, height);
                 ball.Speed += 5;
             }

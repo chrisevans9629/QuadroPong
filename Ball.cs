@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace MyGame
 {
@@ -13,6 +15,8 @@ namespace MyGame
             _random = random;
             _gameTimer = gameTimer;
         }
+
+        public SoundEffect BounceSong { get; set; }
         private float RandomFloat() => (float)(_random.NextDouble() + 0.5f);
         private bool RandomBool() => _random.NextDouble() > 0.5f;
         public void Reset(int width, int height)
@@ -74,6 +78,8 @@ namespace MyGame
 
         public void Reflect(Vector2 normal)
         {
+            BounceSong.Play();
+
             var randomVariation = new Vector2(0, (float)_random.NextDouble() - 0.5f);
 
             var accel = Vector2.Clamp(Acceleration + randomVariation, -Vector2.One, Vector2.One);
