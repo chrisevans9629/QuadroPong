@@ -8,12 +8,13 @@ namespace MyGame
     public class Ball : Sprite
     {
         private readonly Random _random;
-        private readonly GameTimer _gameTimer;
+        public GameTimer Timer { get; }
 
         public Ball(Random random, GameTimer gameTimer)
         {
             _random = random;
-            _gameTimer = gameTimer;
+            Timer = gameTimer;
+            Speed = 300;
         }
 
         public SoundEffect BounceSong { get; set; }
@@ -21,7 +22,7 @@ namespace MyGame
         private bool RandomBool() => _random.NextDouble() > 0.5f;
         public void Reset(int width, int height)
         {
-            _gameTimer.Restart();
+            Timer.Restart();
             var x = RandomFloat();
             var y = RandomFloat();
 
@@ -43,7 +44,7 @@ namespace MyGame
 
         public void Update(GameTime time, Vector2 viewportSize)
         {
-            if (_gameTimer.IsRunning)
+            if (Timer.IsRunning)
                 return;
 
             var min = Vector2.Zero;

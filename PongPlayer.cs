@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 
@@ -12,7 +14,7 @@ namespace MyGame
         {
             Position = position;
             Paddle = new Paddle(player);
-            Paddle.Speed = 300;
+            Paddle.Speed = 1000;
             Goal = new Goal();
         }
 
@@ -63,9 +65,18 @@ namespace MyGame
         public Paddle Paddle { get; set; }
         public Goal Goal { get; set; }
 
-        public void Update(GameTime gameTime, Vector2 viewPort, Ball ball, int width, int height, int boundarySize)
+        public void Update(GameTime gameTime, Vector2 viewPort, List<Ball> balls, int width, int height, int boundarySize)
         {
-            Goal.Update(ball, width, height);
+
+            foreach (var ball1 in balls)
+            {
+                Goal.Update(ball1, width, height);
+            }
+
+
+            var ball = balls.OrderBy(p => Vector2.Distance(p.Position, Goal.Rectangle.Center.ToVector2())).First();
+
+
             if (Side)
             {
                 Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(0, boundarySize), ball);
