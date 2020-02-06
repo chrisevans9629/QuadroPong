@@ -8,16 +8,7 @@ namespace MyGame
         {
             if (Collision(ball))
             {
-                if (BetweenY(ball))
-                {
-                    ball.Reflect(new Vector2(1, 0));
-                }
-                else if (BetweenX(ball))
-                {
-                    ball.Reflect(new Vector2(0, 1));
-                }
-                
-
+                ReflectHelper.ReflectBall(this, ball);
             }
         }
     }
