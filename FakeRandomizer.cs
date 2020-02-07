@@ -14,5 +14,10 @@
             _result += 0.1f;
             return t;
         }
+
+        public int Next(int count)
+        {
+            return count;
+        }
     }
 }

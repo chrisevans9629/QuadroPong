@@ -22,7 +22,7 @@ namespace MyGame
         private SpriteBatch _spriteBatch;
         //private Ball Ball;
         // private GameTimer gameTimer;
-
+        private ParticleEngine engine;
         private List<Ball> balls = new List<Ball>();
         private List<PongPlayer> players = new List<PongPlayer>();
         private List<Boundary> boundaries = new List<Boundary>();
@@ -30,7 +30,6 @@ namespace MyGame
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
-
 
 
 
@@ -69,16 +68,17 @@ namespace MyGame
             SetPositions();
         }
 
+        private IRandomizer randomizer;
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            var random = new Randomizer();
+            randomizer = new Randomizer();
 
             for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer();
                 gameTimer.CountDuration = 3f;
-                balls.Add(new Ball(random, gameTimer));
+                balls.Add(new Ball(randomizer, gameTimer));
             }
 
             base.Initialize();
@@ -100,6 +100,10 @@ namespace MyGame
             var offset = -60;
             var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
+
+            engine = new ParticleEngine(new List<Texture2D>(){texture }, new Vector2(Width/2f,Height/2f),  randomizer);
+
+
             foreach (var pongPlayer in players)
             {
                 if (pongPlayer.Side)
@@ -194,7 +198,6 @@ namespace MyGame
                 Exit();
 
             var b = boundaries[0];
-
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
 
             foreach (var pongPlayer in players)
@@ -205,11 +208,13 @@ namespace MyGame
 
             foreach (var ball in balls)
             {
+                engine.EmitterLocation = ball.Position;
                 ball.HasSound = SoundOn;
                 ball.Update(gameTime, viewPort);
                 ball.Timer.Update(gameTime);
-
             }
+            engine.Update();
+
             foreach (var boundary in boundaries)
             {
                 foreach (var ball in balls)
@@ -245,7 +250,7 @@ namespace MyGame
             {
                 boundary.Draw(_spriteBatch);
             }
-
+            engine.Draw(_spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

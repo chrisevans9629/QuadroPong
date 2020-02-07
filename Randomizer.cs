@@ -14,5 +14,10 @@ namespace MyGame
         {
             return (float)random.NextDouble();
         }
+
+        public int Next(int count)
+        {
+            return random.Next(count);
+        }
     }
 }
