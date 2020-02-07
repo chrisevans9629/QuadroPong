@@ -14,7 +14,7 @@ namespace MyGame
         {
             Position = position;
             Paddle = new Paddle(player);
-            Paddle.Speed = 300;
+            Paddle.Speed = 500;
             Goal = new Goal();
         }
 

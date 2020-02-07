@@ -16,11 +16,6 @@ using MonoGame.Extended.ViewportAdapters;
 
 namespace MyGame
 {
-    public interface IRandomizer
-    {
-        float NextFloat();
-    }
-
     public class PongGame : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -79,7 +74,7 @@ namespace MyGame
             // TODO: Add your initialization logic here
             var random = new Randomizer();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer();
                 gameTimer.CountDuration = 3f;
@@ -117,6 +112,7 @@ namespace MyGame
 
             foreach (var ball in balls)
             {
+                ball.Debug = true;
                 ball.BounceSong = blip;
                 ball.Texture2D = texture;
                 ball.Reset(Width, Height);
@@ -209,7 +205,7 @@ namespace MyGame
 
             foreach (var ball in balls)
             {
-                ball.HasSound = true;
+                ball.HasSound = SoundOn;
                 ball.Update(gameTime, viewPort);
                 ball.Timer.Update(gameTime);
 
