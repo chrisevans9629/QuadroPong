@@ -24,6 +24,34 @@ namespace MyGame
             return sprite.Position.Y >= bounds.Y && sprite.Position.Y + sprite.EndPoint.Y <= bounds.Y + bounds.Height;
         }
 
+        public Direction OnRelativeSide(Sprite sprite)
+        {
+            var bounds = Bounds();
+            if (BetweenX(sprite))
+            {
+                if (sprite.Position.Y >= bounds.Y + bounds.Height)
+                {
+                    return Direction.Bottom;
+                }
+                else
+                {
+                    return Direction.Top;
+                }
+            }
+            else if (BetweenY(sprite))
+            {
+                if (sprite.Position.X + sprite.Texture2D.Width >= bounds.X + bounds.Width)
+                {
+                    return Direction.Right;
+                }
+                else
+                {
+                    return Direction.Left;
+                }
+            }
+
+            return Direction.Bottom;
+        }
 
         public bool Collision(Sprite sprite)
         {

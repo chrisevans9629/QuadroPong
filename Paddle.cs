@@ -1,27 +1,7 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace MyGame
 {
-    public class ReflectHelper
-    {
-        public static void ReflectBall(Collider collider, Ball ball)
-        {
-            if (collider.BetweenY(ball))
-            {
-                ball.Reflect(new Vector2(1, 0), 0, (float)Math.PI);
-            }
-            else if (collider.BetweenX(ball))
-            {
-                ball.Reflect(new Vector2(0, 1), 0, (float)Math.PI);
-            }
-            else
-            {
-                ball.Reflect(new Vector2(1,1),0, (float)Math.PI );
-            }
-        }
-    }
-
     public class Paddle : Sprite
     {
         private readonly IPlayer _player;

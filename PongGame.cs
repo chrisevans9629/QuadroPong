@@ -16,36 +16,6 @@ using MonoGame.Extended.ViewportAdapters;
 
 namespace MyGame
 {
-    public class Randomizer : IRandomizer
-    {
-        private Random random;
-        public Randomizer()
-        {
-            random = new Random();
-        }
-
-        public float NextFloat()
-        {
-            return (float)random.NextDouble();
-        }
-    }
-
-    public class FakeRandomizer : IRandomizer
-    {
-        private float _result;
-
-        public FakeRandomizer(float result)
-        {
-            _result = result;
-        }
-        public float NextFloat()
-        {
-            var t = _result;
-            _result += 0.1f;
-            return t;
-        }
-    }
-
     public interface IRandomizer
     {
         float NextFloat();
@@ -88,10 +58,10 @@ namespace MyGame
                 boundaries.Add(new Boundary());
             }
 
-            foreach (var name in Enum.GetNames(typeof(Position)))
+            foreach (var name in Enum.GetNames(typeof(Direction)))
             {
-                var pos = (Position)Enum.Parse(typeof(Position), name);
-                players.Add(new PongPlayer(new AiPlayer(pos == Position.Left || pos == Position.Right), pos));
+                var pos = (Direction)Enum.Parse(typeof(Direction), name);
+                players.Add(new PongPlayer(new AiPlayer(pos == Direction.Left || pos == Direction.Right), pos));
             }
         }
 
@@ -109,7 +79,7 @@ namespace MyGame
             // TODO: Add your initialization logic here
             var random = new Randomizer();
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var gameTimer = new GameTimer();
                 gameTimer.CountDuration = 3f;
@@ -181,39 +151,30 @@ namespace MyGame
                             new CheckBox()
                             {
                                 Name = "Running",
-                                 Content = "Running",
-                                 
+                                Content = "Start",
                             },
-                            new StackPanel()
+                            new CheckBox()
                             {
-                                Orientation = Orientation.Horizontal,
-                                Items =
-                                {
-                                    new Label("Balls"),
-                                    new TextBox()
-                                    {
-                                        Width = 100
-                                    },
-                                    new Button()
-                                    {
-                                        Content = "test",
-
-                                    }
-                                }
-                            }
+                                Name = "Sound",
+                                Content = "Sound",
+                            },
                         }
                     }
                 }
             };
 
-            checkBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Running");
-            checkBox.IsChecked = true;
-            
+            runningCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Running");
+            soundCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Sound");
+            soundCheckBox.IsChecked = true;
+            runningCheckBox.IsChecked = true;
+
             // TODO: use this.Content to load your game content here
         }
 
-        private CheckBox checkBox;
-        public bool IsRunning => checkBox.IsChecked;
+        private CheckBox runningCheckBox;
+        private CheckBox soundCheckBox;
+        public bool SoundOn => soundCheckBox.IsChecked;
+        public bool IsRunning => runningCheckBox.IsChecked;
         public void SetPositions()
         {
             boundaries[0].Position = new Vector2(0);
@@ -242,11 +203,13 @@ namespace MyGame
 
             foreach (var pongPlayer in players)
             {
+                pongPlayer.Goal.SoundOn = SoundOn;
                 pongPlayer.Update(gameTime, viewPort, balls, Width, Height, b.Texture2D.Width);
             }
 
             foreach (var ball in balls)
             {
+                ball.HasSound = true;
                 ball.Update(gameTime, viewPort);
                 ball.Timer.Update(gameTime);
 

@@ -1,6 +1,6 @@
 ﻿namespace MyGame
 {
-    public enum Position
+    public enum Direction
     {
         Top,
         Bottom,

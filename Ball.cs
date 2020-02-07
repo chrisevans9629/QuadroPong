@@ -39,7 +39,7 @@ namespace MyGame
 
             //x = -0.25f;
             //y = -1;
-            Acceleration = new Vector2(-0.5f, -0.39999998f);
+            Acceleration = new Vector2(x, y);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
         }
 
@@ -77,59 +77,39 @@ namespace MyGame
 
             Position = Vector2.Clamp(newPos, min, max);
         }
-        
-        public void Reflect(Vector2 normal, float minAngle, float maxAngle)
+
+        public bool HasSound { get; set; } = true;
+        public bool Debug { get; set; }
+        public void Reflect(Direction position)
         {
-            BounceSong.Play();
+            if (HasSound)
+                BounceSong.Play();
 
-            var randomVariation = _random.NextFloat() - 0.5f;
+            var randomVariation = (_random.NextFloat() - 0.5f) / 2f;
 
-            var angle = Math.Min(Math.Min(VectorToAngle(Acceleration), minAngle), maxAngle);
 
-            var accel = AngleToVector(angle + randomVariation);// * randomVariation;
+            var (x, y, normal) = position switch
+            {
+                Direction.Bottom => (0f, randomVariation, new Vector2(0, 1)),
+                Direction.Top => (0f, -randomVariation, new Vector2(0, 1)),
+                Direction.Left => (-randomVariation, 0f, new Vector2(1, 0)),
+                Direction.Right => (randomVariation, 0f, new Vector2(1, 0)),
+            };
 
-            //if (RandomBool())
-            //{
-            //    accel.X = Math.Min(Acceleration.X * randomVariation.X,0.25f);
-            //    accel.Y = Math.Min(Acceleration.Y * randomVariation.Y, 0.25f);
-            //}
-            //else
-            //{
-            //    accel = Acceleration / randomVariation;
-            //}
-            
 
-            //if (Math.Abs(accel.X) > 1)
-            //{
-            //    accel.X /= randomVariation.X;
-            //}
-
-            //if (Math.Abs(accel.Y) > 1)
-            //{
-            //    accel.Y /= randomVariation.Y;
-            //}
-
-            //if (Math.Abs(accel.X - randomVariation.X) > 0)
-            //{
-            //    accel.X += randomVariation.X;
-            //}
-            //if (Math.Abs(accel.Y - randomVariation.Y) > 0)
-            //{
-            //    accel.Y += randomVariation.Y;
-            //}
-            //var accel = Acceleration;
-            Acceleration = Vector2.Reflect(accel, normal);
+            Acceleration = Vector2.Reflect(Acceleration + new Vector2(x, y), normal);
         }
 
         public float Normalize(float x, float min, float max, float from, float to)
         {
-            return from + ((x - min)*(to-from)) / (max - min);
+            return from + ((x - min) * (to - from)) / (max - min);
         }
 
         public override void Draw(SpriteBatch batch)
         {
             base.Draw(batch);
-            batch.DrawString(SpriteFont,Acceleration.ToString(), Position, Color.Red);
+            if (Debug)
+                batch.DrawString(SpriteFont, Acceleration.ToString(), Position, Color.Red);
         }
     }
 }

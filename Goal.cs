@@ -16,12 +16,14 @@ namespace MyGame
             return Rectangle;
         }
 
+        public bool SoundOn { get; set; } = true;
         public void Update(Ball ball, int width, int height)
         {
             if (Collision(ball))
             {
                 Score++;
-                MediaPlayer.Play(Song);
+                if (SoundOn)
+                    MediaPlayer.Play(Song);
                 ball.Reset(width, height);
                 ball.Speed += 5;
             }
