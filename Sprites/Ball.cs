@@ -18,9 +18,11 @@ namespace MyGame
             Speed = 300;
         }
 
+        public bool Collision { get; set; }
         public SoundEffect BounceSong { get; set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
         private bool RandomBool() => _random.NextFloat() > 0.5f;
+
         public void Reset(int width, int height)
         {
             Timer.Restart();
@@ -41,6 +43,7 @@ namespace MyGame
             //y = -1;
             Acceleration = new Vector2(1.0529189f, 1.0159452f);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
+            
         }
 
         public void Update(GameTime time, Vector2 viewportSize)
@@ -76,12 +79,14 @@ namespace MyGame
                          Acceleration * (float)(Speed * time.ElapsedGameTime.TotalSeconds);
 
             Position = Vector2.Clamp(newPos, min, max);
+            Collision = false;
         }
 
         public bool HasSound { get; set; } = true;
         public bool Debug { get; set; }
         public void Reflect(Direction position)
         {
+            Collision = true;
             if (HasSound)
                 BounceSong.Play();
 

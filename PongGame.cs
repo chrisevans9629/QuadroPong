@@ -209,11 +209,13 @@ namespace MyGame
             foreach (var ball in balls)
             {
                 engine.EmitterLocation = ball.Position;
+                
+                engine.Update(ball.Collision);
+
                 ball.HasSound = SoundOn;
                 ball.Update(gameTime, viewPort);
                 ball.Timer.Update(gameTime);
             }
-            engine.Update();
 
             foreach (var boundary in boundaries)
             {
