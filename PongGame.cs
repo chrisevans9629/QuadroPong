@@ -74,7 +74,7 @@ namespace MyGame
             // TODO: Add your initialization logic here
             randomizer = new Randomizer();
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var gameTimer = new GameTimer();
                 gameTimer.CountDuration = 3f;
@@ -101,7 +101,7 @@ namespace MyGame
             var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
 
-            engine = new ParticleEngine(new List<Texture2D>(){texture }, new Vector2(Width/2f,Height/2f),  randomizer);
+            engine = new ParticleEngine(new List<Texture2D>() { texture }, new Vector2(Width / 2f, Height / 2f), randomizer);
 
 
             foreach (var pongPlayer in players)
@@ -158,6 +158,11 @@ namespace MyGame
                                 Name = "Sound",
                                 Content = "Sound",
                             },
+                            new CheckBox()
+                            {
+                                Name = "Debug",
+                                Content = "Debug",
+                            },
                         }
                     }
                 }
@@ -165,14 +170,18 @@ namespace MyGame
 
             runningCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Running");
             soundCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Sound");
+            debugginCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Debug");
+
             soundCheckBox.IsChecked = true;
             runningCheckBox.IsChecked = true;
 
             // TODO: use this.Content to load your game content here
         }
 
+        private CheckBox debugginCheckBox;
         private CheckBox runningCheckBox;
         private CheckBox soundCheckBox;
+        public bool IsDebugging => debugginCheckBox.IsChecked;
         public bool SoundOn => soundCheckBox.IsChecked;
         public bool IsRunning => runningCheckBox.IsChecked;
         public void SetPositions()
@@ -209,13 +218,14 @@ namespace MyGame
             foreach (var ball in balls)
             {
                 engine.EmitterLocation = ball.Position;
-                
-                engine.Update(ball.Collision);
-
+                if (ball.Collision)
+                    engine.AddParticles();
+                ball.Debug = IsDebugging;
                 ball.HasSound = SoundOn;
                 ball.Update(gameTime, viewPort);
                 ball.Timer.Update(gameTime);
             }
+            engine.Update();
 
             foreach (var boundary in boundaries)
             {

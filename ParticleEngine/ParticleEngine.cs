@@ -21,15 +21,17 @@ namespace MyGame
             this.random = random;
         }
 
-        public void Update(bool generateMoreParticles)
+        public void AddParticles()
         {
-            int total = 10;
-            if (generateMoreParticles)
-                for (int i = 0; i < total; i++)
-                {
-                    particles.Add(GenerateNewParticle());
-                }
+            int total = 20;
+            for (int i = 0; i < total; i++)
+            {
+                particles.Add(GenerateNewParticle());
+            }
+        }
 
+        public void Update()
+        {
             for (int particle = 0; particle < particles.Count; particle++)
             {
                 particles[particle].Update();
