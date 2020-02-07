@@ -16,25 +16,59 @@ using MonoGame.Extended.ViewportAdapters;
 
 namespace MyGame
 {
+    public class Randomizer : IRandomizer
+    {
+        private Random random;
+        public Randomizer()
+        {
+            random = new Random();
+        }
+
+        public float NextFloat()
+        {
+            return (float)random.NextDouble();
+        }
+    }
+
+    public class FakeRandomizer : IRandomizer
+    {
+        private float _result;
+
+        public FakeRandomizer(float result)
+        {
+            _result = result;
+        }
+        public float NextFloat()
+        {
+            var t = _result;
+            _result += 0.1f;
+            return t;
+        }
+    }
+
+    public interface IRandomizer
+    {
+        float NextFloat();
+    }
+
     public class PongGame : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         //private Ball Ball;
-       // private GameTimer gameTimer;
+        // private GameTimer gameTimer;
 
         private List<Ball> balls = new List<Ball>();
         private List<PongPlayer> players = new List<PongPlayer>();
         private List<Boundary> boundaries = new List<Boundary>();
         private GuiSystem _guiSystem;
-        Random random;
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
 
 
 
-            
+
 
             //_graphics.IsFullScreen = true;
             _graphics.PreferMultiSampling = true;
@@ -73,13 +107,9 @@ namespace MyGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            random = new Random();
+            var random = new Randomizer();
 
-            
-
-            
-
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer();
                 gameTimer.CountDuration = 3f;
@@ -121,7 +151,7 @@ namespace MyGame
                 ball.Texture2D = texture;
                 ball.Reset(Width, Height);
                 ball.Timer.Font = font;
-
+                ball.SpriteFont = font;
             }
 
             var boundary = Content.Load<Texture2D>("Boundary");
@@ -150,7 +180,9 @@ namespace MyGame
                         {
                             new CheckBox()
                             {
-                                 Content = "Random"
+                                Name = "Running",
+                                 Content = "Running",
+                                 
                             },
                             new StackPanel()
                             {
@@ -164,7 +196,8 @@ namespace MyGame
                                     },
                                     new Button()
                                     {
-                                        Content = "test"
+                                        Content = "test",
+
                                     }
                                 }
                             }
@@ -173,9 +206,14 @@ namespace MyGame
                 }
             };
 
+            checkBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Running");
+            checkBox.IsChecked = true;
+            
             // TODO: use this.Content to load your game content here
         }
 
+        private CheckBox checkBox;
+        public bool IsRunning => checkBox.IsChecked;
         public void SetPositions()
         {
             boundaries[0].Position = new Vector2(0);
@@ -191,6 +229,10 @@ namespace MyGame
 
         protected override void Update(GameTime gameTime)
         {
+            _guiSystem.Update(gameTime);
+
+            if (!IsRunning)
+                return;
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -202,7 +244,6 @@ namespace MyGame
             {
                 pongPlayer.Update(gameTime, viewPort, balls, Width, Height, b.Texture2D.Width);
             }
-            _guiSystem.Update(gameTime);
 
             foreach (var ball in balls)
             {
@@ -223,8 +264,8 @@ namespace MyGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            
-            
+
+
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
             _guiSystem.Draw(gameTime);

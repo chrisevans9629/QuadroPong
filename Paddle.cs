@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace MyGame
 {
@@ -8,15 +9,15 @@ namespace MyGame
         {
             if (collider.BetweenY(ball))
             {
-                ball.Reflect(new Vector2(1, 0));
+                ball.Reflect(new Vector2(1, 0), 0, (float)Math.PI);
             }
             else if (collider.BetweenX(ball))
             {
-                ball.Reflect(new Vector2(0, 1));
+                ball.Reflect(new Vector2(0, 1), 0, (float)Math.PI);
             }
             else
             {
-                ball.Reflect(new Vector2(1,1));
+                ball.Reflect(new Vector2(1,1),0, (float)Math.PI );
             }
         }
     }
