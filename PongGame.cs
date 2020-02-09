@@ -265,6 +265,8 @@ namespace MyGame
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
+            ship.Draw(_spriteBatch);
+
             _guiSystem.Draw(gameTime);
 
             foreach (var ball in balls)
@@ -288,7 +290,6 @@ namespace MyGame
             {
                 powerUp.Draw(_spriteBatch);
             }
-            ship.Draw(_spriteBatch);
             engine.Draw(_spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);

@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Threading;
 using Microsoft.Xna.Framework;
+using MonoGame.Extended;
 
 namespace MyGame
 {
     public abstract class Collider
     {
-        public abstract Rectangle Bounds();
+        public abstract RectangleF Bounds();
 
         private  List<Sprite> lastCollisions = new List<Sprite>();
 
@@ -55,7 +57,10 @@ namespace MyGame
         public bool Collision(Sprite sprite)
         {
             // Texture2D.Bounds.Intersects(sprite.Texture2D.Bounds);
-            var isColliding = Bounds().Intersects(sprite.Bounds());
+            var myBounds = Bounds();
+            var spriteBounds = sprite.Bounds();
+
+            var isColliding = myBounds.Intersects(spriteBounds);
             if (isColliding)
             {
                 if (lastCollisions.Contains(sprite))

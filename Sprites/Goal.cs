@@ -1,17 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using MonoGame.Extended;
 
 namespace MyGame
 {
     public class Goal : Collider
     {
         public SpriteFont SpriteFont { get; set; }
-        public Rectangle Rectangle { get; set; }
+        public RectangleF Rectangle { get; set; }
 
         public Song Song { get; set; }
 
-        public override Rectangle Bounds()
+        public override RectangleF Bounds()
         {
             return Rectangle;
         }

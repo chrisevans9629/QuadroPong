@@ -74,7 +74,7 @@ namespace MyGame
             }
 
 
-            var ball = balls.OrderBy(p => Vector2.Distance(p.Position, Goal.Rectangle.Center.ToVector2())).First();
+            var ball = balls.OrderBy(p => Vector2.Distance(p.Position, Goal.Rectangle.Center)).First();
 
 
             if (Side)

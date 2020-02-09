@@ -28,7 +28,7 @@ namespace MyGame
         }
         public void Update(GameTime gameTime, List<Ball> balls)
         {
-            var def = new Vector2(1);
+            var def = new Vector2(0.25f);
 
             if (ShipState == ShipState.Coming)
             {
@@ -53,7 +53,7 @@ namespace MyGame
             {
                 if (Health <= 0)
                 {
-                    _particleEngine.AddParticles(Center);
+                    _particleEngine.AddParticles(Position - RelativeCenter);
                     ShipState = ShipState.Dead;
                 }
 
@@ -63,14 +63,16 @@ namespace MyGame
                     {
                         Health--;
                         _particleEngine.AddParticles(ball.Position);
+                        ball.Reflect(Center - ball.Center,0);
                     }
                 }
             }
         }
 
+        public Vector2 RelativeCenter => new Vector2(Texture2D.Width / 2f * Size.X, Texture2D.Height / 2f * Size.Y);
         public override void Draw(SpriteBatch batch)
         {
-            batch.Draw(Texture2D, Center, null,Color,0,Vector2.Zero, Size, SpriteEffects.None,0);
+            batch.Draw(Texture2D, Position - RelativeCenter, null,Color,0,Vector2.Zero, Size, SpriteEffects.None,0);
         }
     }
 }
