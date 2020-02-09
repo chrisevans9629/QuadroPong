@@ -18,7 +18,7 @@ namespace MyGame
             Speed = 300;
         }
 
-        public bool Collision { get; set; }
+        public bool IsColliding { get; set; }
         public SoundEffect BounceSong { get; set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
         private bool RandomBool() => _random.NextFloat() > 0.5f;
@@ -80,14 +80,14 @@ namespace MyGame
                          Acceleration * (float)(Speed * time.ElapsedGameTime.TotalSeconds);
 
             Position = Vector2.Clamp(newPos, min, max);
-            Collision = false;
+            IsColliding = false;
         }
 
         public bool HasSound { get; set; } = true;
         public bool Debug { get; set; }
         public void Reflect(Direction position)
         {
-            Collision = true;
+            IsColliding = true;
             if (HasSound)
                 BounceSong.Play();
 

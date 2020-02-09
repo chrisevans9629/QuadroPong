@@ -218,7 +218,7 @@ namespace MyGame
             foreach (var ball in balls)
             {
                 engine.EmitterLocation = ball.Position;
-                if (ball.Collision)
+                if (ball.IsColliding)
                     engine.AddParticles();
                 ball.Debug = IsDebugging;
                 ball.HasSound = SoundOn;
