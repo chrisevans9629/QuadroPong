@@ -54,10 +54,10 @@ namespace MyGame
                 boundaries.Add(new Boundary());
             }
 
-            foreach (var name in Enum.GetNames(typeof(Direction)))
+            foreach (var name in Enum.GetNames(typeof(Paddles)))
             {
-                var pos = (Direction)Enum.Parse(typeof(Direction), name);
-                players.Add(new PongPlayer(new AiPlayer(pos == Direction.Left || pos == Direction.Right), pos));
+                var pos = (Paddles)Enum.Parse(typeof(Paddles), name);
+                players.Add(new PongPlayer(new AiPlayer(pos == Paddles.Left || pos == Paddles.Right), pos));
             }
 
             
@@ -113,7 +113,6 @@ namespace MyGame
             ship = new Ship(engine);
             ship.Texture2D = Content.Load<Texture2D>("meatball");
             ship.Position = new Vector2(Width/2f, Height/2f);
-            ship.Start();
             foreach (var pongPlayer in players)
             {
                 if (pongPlayer.Side)
@@ -231,6 +230,10 @@ namespace MyGame
             {
                 pongPlayer.Goal.SoundOn = SoundOn;
                 pongPlayer.Update(gameTime, viewPort, balls, Width, Height, b.Texture2D.Width);
+                if (pongPlayer.Goal.Score > 0 && pongPlayer.Goal.Score % 5 == 0 && ship.ShipState == ShipState.Dead)
+                {
+                    this.ship.Start();
+                }
             }
 
             foreach (var ball in balls)

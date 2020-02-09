@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
-using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 
 namespace MyGame
@@ -51,16 +50,20 @@ namespace MyGame
                 }
             }
 
-            return Direction.Bottom;
+            return Direction.None;
         }
 
-        public bool Collision(Sprite sprite)
+        protected virtual bool IsColliding(Sprite sprite)
         {
-            // Texture2D.Bounds.Intersects(sprite.Texture2D.Bounds);
             var myBounds = Bounds();
             var spriteBounds = sprite.Bounds();
 
             var isColliding = myBounds.Intersects(spriteBounds);
+            return isColliding;
+        }
+        public virtual bool Collision(Sprite sprite)
+        {
+            var isColliding = IsColliding(sprite);
             if (isColliding)
             {
                 if (lastCollisions.Contains(sprite))

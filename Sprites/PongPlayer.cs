@@ -8,9 +8,9 @@ namespace MyGame
 {
     public class PongPlayer
     {
-        public Direction Position { get; }
-        public bool Side => Position == Direction.Left || Position == Direction.Right;
-        public PongPlayer(IPlayer player, Direction position)
+        public Paddles Position { get; }
+        public bool Side => Position == Paddles.Left || Position == Paddles.Right;
+        public PongPlayer(IPlayer player, Paddles position)
         {
             Position = position;
             Paddle = new Paddle(player);
@@ -36,12 +36,12 @@ namespace MyGame
             var goalOffset = 5;
             var goalWidth = 1;
 
-            if (Position == Direction.Bottom)
+            if (Position == Paddles.Bottom)
             {
                 Paddle.Position = new Vector2(halfWinWidth, Height - offset) - halfPaddleWidth;
                 Goal.Rectangle = new Rectangle(0, Height - goalOffset, Width, goalWidth);
             }
-            else if (Position == Direction.Top)
+            else if (Position == Paddles.Top)
             {
                 Paddle.Position = new Vector2(halfWinWidth, offset) - halfPaddleWidth;
                 Goal.Rectangle = new Rectangle(0, goalOffset, Width, goalWidth);
@@ -50,12 +50,12 @@ namespace MyGame
             var halfPaddleHeight = new Vector2(0, Paddle.Texture2D.Height / 2f);
             var halfWinHeight = Height / 2f;
 
-            if (Position == Direction.Left)
+            if (Position == Paddles.Left)
             {
                 Paddle.Position = new Vector2(offset, halfWinHeight) - halfPaddleHeight;
                 Goal.Rectangle = new Rectangle(goalOffset, 0, goalWidth, Height);
             }
-            else if (Position == Direction.Right)
+            else if (Position == Paddles.Right)
             {
                 Paddle.Position = new Vector2(Width - offset, halfWinHeight) - halfPaddleHeight;
                 Goal.Rectangle = new Rectangle(Width - goalOffset, 0, goalWidth, Height);

@@ -26,7 +26,7 @@ namespace MyGame
         public float Speed { get; set; } = 0;
         public Vector2 Acceleration { get; set; } = Vector2.Zero;
         public Color Color { get; set; } = Color.White; 
-        public override RectangleF Bounds() => new RectangleF(new Point2(Position.X,Position.Y), new Size2(Texture2D.Width * Size.X , Texture2D.Height * Size.Y));
+        public override RectangleF Bounds() => new RectangleF(Position, new Size2(Texture2D.Width, Texture2D.Height));
         public virtual void Draw(SpriteBatch batch)
         {
             batch.Draw(Texture2D, Position, null, Color, 0, Vector2.Zero, Size, SpriteEffects.None, 0);
