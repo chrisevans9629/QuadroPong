@@ -6,7 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MyGame
 {
-    public class ParticleEngine
+    public interface IParticleEngine
+    {
+        void AddParticles(Vector2 location);
+    }
+    public class ParticleEngine : IParticleEngine
     {
         private readonly IRandomizer random;
         public Vector2 EmitterLocation { get; set; }
@@ -21,8 +25,9 @@ namespace MyGame
             this.random = random;
         }
 
-        public void AddParticles()
+        public void AddParticles(Vector2 location)
         {
+            EmitterLocation = location;
             int total = 20;
             for (int i = 0; i < total; i++)
             {

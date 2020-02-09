@@ -10,8 +10,6 @@
 
 #-------------------------------- References --------------------------------#
 
-#/reference:..\bin\Debug\netcoreapp3.0\MonoGame.Extended.Content.Pipeline.dll
-#/reference:..\..\..\..\..\.nuget\packages\monogame.extended.content.pipeline\3.7.0\lib\netstandard2.0\MonoGame.Extended.Content.Pipeline.dll
 /reference:MonoGame.Extended.dll
 /reference:MonoGame.Extended.Content.Pipeline.dll
 /reference:MonoGame.Extended.Graphics.dll
@@ -74,7 +72,14 @@
 /processorParam:TextureFormat=Color
 /build:Boundary.png
 
-#begin Boundary.png
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont
+
+#begin meatball.PNG
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -84,14 +89,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Boundary.png
-
-#begin File.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:File.spritefont
+/build:meatball.PNG
 
 #begin paddle.png
 /importer:TextureImporter

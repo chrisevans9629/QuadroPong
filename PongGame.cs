@@ -27,6 +27,7 @@ namespace MyGame
         private List<PongPlayer> players = new List<PongPlayer>();
         private List<Boundary> boundaries = new List<Boundary>();
         private List<PowerUp> powerups = new List<PowerUp>();
+        private Ship ship;
         private GuiSystem _guiSystem;
         public PongGame()
         {
@@ -109,8 +110,10 @@ namespace MyGame
             var blip = Content.Load<SoundEffect>("blip");
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, new Vector2(Width / 2f, Height / 2f), randomizer);
-
-
+            ship = new Ship(engine);
+            ship.Texture2D = Content.Load<Texture2D>("meatball");
+            ship.Position = new Vector2(Width/2f, Height/2f);
+            ship.Start();
             foreach (var pongPlayer in players)
             {
                 if (pongPlayer.Side)
@@ -223,7 +226,7 @@ namespace MyGame
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
 
             
-
+            ship.Update(gameTime, balls);
             foreach (var pongPlayer in players)
             {
                 pongPlayer.Goal.SoundOn = SoundOn;
@@ -232,9 +235,8 @@ namespace MyGame
 
             foreach (var ball in balls)
             {
-                engine.EmitterLocation = ball.Position;
                 if (ball.IsColliding)
-                    engine.AddParticles();
+                    engine.AddParticles(ball.Position);
                 ball.Debug = IsDebugging;
                 ball.HasSound = SoundOn;
                 ball.Update(gameTime, viewPort);
@@ -286,6 +288,7 @@ namespace MyGame
             {
                 powerUp.Draw(_spriteBatch);
             }
+            ship.Draw(_spriteBatch);
             engine.Draw(_spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
