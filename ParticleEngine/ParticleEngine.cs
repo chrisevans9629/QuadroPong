@@ -17,9 +17,9 @@ namespace MyGame
         private readonly List<Particle> particles;
         private readonly List<Texture2D> textures;
 
-        public ParticleEngine(List<Texture2D> textures, Vector2 location, IRandomizer random)
+        public ParticleEngine(List<Texture2D> textures, IRandomizer random)
         {
-            EmitterLocation = location;
+            EmitterLocation = Vector2.One;
             this.textures = textures;
             this.particles = new List<Particle>();
             this.random = random;

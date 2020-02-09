@@ -41,10 +41,6 @@ namespace MyGame
             {
                 y = -y;
             }
-            //1.0529189  1.0159452
-            //x = -0.25f;
-            //y = -1;
-            //Acceleration = new Vector2(1.0529189f, 1.0159452f);
             Acceleration = new Vector2(x, y);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
 

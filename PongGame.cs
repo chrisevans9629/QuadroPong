@@ -109,10 +109,19 @@ namespace MyGame
             var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
 
-            engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, new Vector2(Width / 2f, Height / 2f), randomizer);
+            engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
             ship = new Ship(engine);
             ship.Texture2D = Content.Load<Texture2D>("meatball");
             ship.Position = new Vector2(Width/2f, Height/2f);
+
+
+            var bullets = new List<Ball>();
+            for (int i = 0; i < 4; i++)
+            {
+                bullets.Add(new Ball(randomizer, new GameTimer()));
+            }
+            ship.Bullets = bullets;
+            ship.Start();
             foreach (var pongPlayer in players)
             {
                 if (pongPlayer.Side)
@@ -129,6 +138,14 @@ namespace MyGame
                 powerUp.Reset(PowerUpArea);
             }
 
+            foreach (var ball in bullets)
+            {
+                ball.BounceSong = blip;
+                ball.Texture2D = ballTexture;
+                ball.Reset(Width, Height);
+                ball.Timer.Font = font;
+                ball.SpriteFont = font;
+            }
             foreach (var ball in balls)
             {
                 ball.Debug = true;
@@ -225,7 +242,7 @@ namespace MyGame
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
 
             
-            ship.Update(gameTime, balls);
+            ship.Update(gameTime, balls, viewPort, Width, Height);
             foreach (var pongPlayer in players)
             {
                 pongPlayer.Goal.SoundOn = SoundOn;

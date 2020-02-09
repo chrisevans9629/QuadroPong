@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -14,21 +15,39 @@ namespace MyGame
     public class Ship : Sprite
     {
         private readonly IParticleEngine _particleEngine;
-
+        private List<Ball> shipBullets = new List<Ball>();
         public Ship(IParticleEngine particleEngine)
         {
             _particleEngine = particleEngine;
             Size = Vector2.Zero;
         }
+
+        public List<Ball>? Bullets
+        {
+            get => ShipState == ShipState.Ready ? shipBullets : null;
+            set => shipBullets = value ?? new List<Ball>();
+        }
+
         public int Health { get; set; }
         public ShipState ShipState { get; set; } = ShipState.Dead;
+
         public void Start()
         {
             ShipState = ShipState.Coming;
             Health = 10;
         }
-        public void Update(GameTime gameTime, List<Ball> balls)
+        public void Update(
+            GameTime gameTime,
+            List<Ball> balls,
+            Vector2 viewport,
+            int width,
+            int height)
         {
+            foreach (var shipBullet in shipBullets)
+            {
+                shipBullet.Update(gameTime, viewport);
+                shipBullet.Timer.Update(gameTime);
+            }
             var def = new Vector2(0.25f);
 
             if (ShipState == ShipState.Coming)
@@ -40,6 +59,10 @@ namespace MyGame
                 else
                 {
                     ShipState = ShipState.Ready;
+                    foreach (var shipBullet in shipBullets)
+                    {
+                        shipBullet.Reset(width, height);
+                    }
                 }
             }
             else if (ShipState == ShipState.Dead)
@@ -60,7 +83,7 @@ namespace MyGame
                     ShipState = ShipState.Dead;
                 }
 
-                foreach (var ball in balls)
+                foreach (var ball in balls.Union(shipBullets))
                 {
                     if (Collision(ball))
                     {
@@ -91,6 +114,10 @@ namespace MyGame
         public override void Draw(SpriteBatch batch)
         {
             batch.Draw(Texture2D, Position - RelativeCenter, null, Color, 0, Vector2.Zero, Size, SpriteEffects.None, 0);
+            foreach (var shipBullet in shipBullets)
+            {
+                shipBullet.Draw(batch);
+            }
         }
     }
 }
