@@ -29,10 +29,10 @@ namespace MyGame
         private List<PowerUp> powerups = new List<PowerUp>();
         private Ship ship;
         private GuiSystem _guiSystem;
+        private PongGui gui;
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
-
 
 
 
@@ -170,52 +170,18 @@ namespace MyGame
             var font1 = Content.Load<BitmapFont>("Sensation");
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font1);
+            gui = new PongGui();
 
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
-                ActiveScreen = new Screen()
-                {
-                    Content = new StackPanel()
-                    {
-                        Margin = new Thickness(10),
-                        Items =
-                        {
-                            new CheckBox()
-                            {
-                                Name = "Running",
-                                Content = "Start",
-                            },
-                            new CheckBox()
-                            {
-                                Name = "Sound",
-                                Content = "Sound",
-                            },
-                            new CheckBox()
-                            {
-                                Name = "Debug",
-                                Content = "Debug",
-                            },
-                        }
-                    }
-                }
+                ActiveScreen = gui.Screen,
             };
-
-            runningCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Running");
-            soundCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Sound");
-            debugginCheckBox = _guiSystem.ActiveScreen.FindControl<CheckBox>("Debug");
-
-            soundCheckBox.IsChecked = true;
-            runningCheckBox.IsChecked = true;
+            
 
             // TODO: use this.Content to load your game content here
         }
 
-        private CheckBox debugginCheckBox;
-        private CheckBox runningCheckBox;
-        private CheckBox soundCheckBox;
-        public bool IsDebugging => debugginCheckBox.IsChecked;
-        public bool SoundOn => soundCheckBox.IsChecked;
-        public bool IsRunning => runningCheckBox.IsChecked;
+        
         public void SetPositions()
         {
             boundaries[0].Position = new Vector2(0);
@@ -233,7 +199,7 @@ namespace MyGame
         {
             _guiSystem.Update(gameTime);
 
-            if (!IsRunning)
+            if (!gui.IsRunning)
                 return;
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -245,7 +211,7 @@ namespace MyGame
             ship.Update(gameTime, balls, Width, Height);
             foreach (var pongPlayer in players)
             {
-                pongPlayer.Goal.SoundOn = SoundOn;
+                pongPlayer.Goal.SoundOn = gui.SoundOn;
                 pongPlayer.Update(gameTime, viewPort, balls.Union(ship.Bullets).ToList(), Width, Height, b.Texture2D.Width);
                 if (pongPlayer.Goal.Score > 0 && pongPlayer.Goal.Score % 5 == 0 && ship.ShipState == ShipState.Dead)
                 {
@@ -257,8 +223,8 @@ namespace MyGame
             {
                 if (ball.IsColliding)
                     engine.AddParticles(ball.Position);
-                ball.Debug = IsDebugging;
-                ball.HasSound = SoundOn;
+                ball.Debug = gui.IsDebugging;
+                ball.HasSound = gui.SoundOn;
                 ball.Update(gameTime, viewPort);
                 ball.Timer.Update(gameTime);
                 foreach (var powerUp in powerups)
