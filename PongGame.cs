@@ -26,6 +26,7 @@ namespace MyGame
         private List<Ball> balls = new List<Ball>();
         private List<PongPlayer> players = new List<PongPlayer>();
         private List<Boundary> boundaries = new List<Boundary>();
+        private List<PowerUp> powerups = new List<PowerUp>();
         private GuiSystem _guiSystem;
         public PongGame()
         {
@@ -57,6 +58,8 @@ namespace MyGame
                 var pos = (Direction)Enum.Parse(typeof(Direction), name);
                 players.Add(new PongPlayer(new AiPlayer(pos == Direction.Left || pos == Direction.Right), pos));
             }
+
+            
         }
 
         private void WindowOnClientSizeChanged(object sender, EventArgs e)
@@ -73,7 +76,10 @@ namespace MyGame
         {
             // TODO: Add your initialization logic here
             randomizer = new Randomizer();
-
+            for (int i = 0; i < 4; i++)
+            {
+                powerups.Add(new PowerUp(randomizer));
+            }
             for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer();
@@ -84,6 +90,7 @@ namespace MyGame
             base.Initialize();
         }
 
+        public Rectangle PowerUpArea => new Rectangle(250, 250, Width - 250, Height - 250);
         public int Width => GraphicsDevice.Viewport.Width;
         public int Height => GraphicsDevice.Viewport.Height;
         protected override void LoadContent()
@@ -92,7 +99,7 @@ namespace MyGame
 
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            var texture = Content.Load<Texture2D>("ball2");
+            var ballTexture = Content.Load<Texture2D>("ball2");
             var font = Content.Load<SpriteFont>("arial");
             var paddle = Content.Load<Texture2D>("paddle");
             var paddleRot = Content.Load<Texture2D>("paddleRot");
@@ -101,7 +108,7 @@ namespace MyGame
             var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
 
-            engine = new ParticleEngine(new List<Texture2D>() { texture }, new Vector2(Width / 2f, Height / 2f), randomizer);
+            engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, new Vector2(Width / 2f, Height / 2f), randomizer);
 
 
             foreach (var pongPlayer in players)
@@ -114,11 +121,17 @@ namespace MyGame
 
             }
 
+            foreach (var powerUp in powerups)
+            {
+                powerUp.Texture2D = ballTexture;
+                powerUp.Reset(PowerUpArea);
+            }
+
             foreach (var ball in balls)
             {
                 ball.Debug = true;
                 ball.BounceSong = blip;
-                ball.Texture2D = texture;
+                ball.Texture2D = ballTexture;
                 ball.Reset(Width, Height);
                 ball.Timer.Font = font;
                 ball.SpriteFont = font;
@@ -209,6 +222,8 @@ namespace MyGame
             var b = boundaries[0];
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
 
+            
+
             foreach (var pongPlayer in players)
             {
                 pongPlayer.Goal.SoundOn = SoundOn;
@@ -224,6 +239,10 @@ namespace MyGame
                 ball.HasSound = SoundOn;
                 ball.Update(gameTime, viewPort);
                 ball.Timer.Update(gameTime);
+                foreach (var powerUp in powerups)
+                {
+                    powerUp.Update(ball, PowerUpArea);
+                }
             }
             engine.Update();
 
@@ -261,6 +280,11 @@ namespace MyGame
             foreach (var boundary in boundaries)
             {
                 boundary.Draw(_spriteBatch);
+            }
+
+            foreach (var powerUp in powerups)
+            {
+                powerUp.Draw(_spriteBatch);
             }
             engine.Draw(_spriteBatch);
             _spriteBatch.End();

@@ -19,5 +19,10 @@ namespace MyGame
         {
             return random.Next(count);
         }
+
+        public int Next(int min, int max)
+        {
+            return random.Next(min, max);
+        }
     }
 }

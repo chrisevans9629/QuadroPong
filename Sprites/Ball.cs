@@ -27,6 +27,7 @@ namespace MyGame
 
         public void Reset(int width, int height)
         {
+            Speed = 300;
             Timer.Restart();
             var x = RandomFloat();
             var y = RandomFloat();
@@ -83,12 +84,16 @@ namespace MyGame
 
             Position = Vector2.Clamp(newPos, min, max);
 
-            Color = new Color(new Vector3(255));
+            var subColor = 300/Speed;
+
+            Color = new Color(new Vector3(1,  Math.Max(subColor,0),  Math.Max(subColor,0)));
             IsColliding = false;
         }
 
         public bool HasSound { get; set; } = true;
         public bool Debug { get; set; }
+        public Paddle? LastPosessor { get; set; }
+
         public void Reflect(Direction position)
         {
             OnCollision();
@@ -113,10 +118,11 @@ namespace MyGame
                 BounceSong.Play();
         }
 
-        public void Reflect(Vector2 vector2)
+        public void Reflect(Vector2 vector2, float power)
         {
             OnCollision();
             Acceleration = -vector2;
+            Speed += power;
         }
 
         public override void Draw(SpriteBatch batch)

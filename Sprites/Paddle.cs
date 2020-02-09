@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
+using MonoGame.Extended;
 
 namespace MyGame
 {
@@ -11,11 +13,33 @@ namespace MyGame
             _player = player;
         }
 
+        public float Power { get; set; }
+        public float ColorChange { get; set; }
         public void Update(GameTime time, Vector2 min, Vector2 maxPort, Ball ball)
         {
+            if (Power > 0)
+            {
+                var r = (float)(Math.Sin(ColorChange) / 2f) + 0.5f;
+                ColorChange += (float)time.ElapsedGameTime.TotalSeconds * 2f;
+                var pulseColor = new Vector3(1, r, r);
+                Color = new Color(pulseColor);
+            }
+            else
+            {
+                Color = Color.White;
+            }
+
+            if (ColorChange > 10)
+            {
+                ColorChange = 0;
+            }
+            
+
             if (Collision(ball))
             {
-                ball.Reflect(Center - ball.Center);
+                ball.LastPosessor = this;
+                ball.Reflect(Center - ball.Center, Power);
+                Power = 0;
             }
 
             var max = maxPort - EndPoint;
@@ -24,7 +48,9 @@ namespace MyGame
             {
                 return;
             }
+
             
+
             var newPos = Position +
                          Acceleration * (float)(Speed * time.ElapsedGameTime.TotalSeconds);
 

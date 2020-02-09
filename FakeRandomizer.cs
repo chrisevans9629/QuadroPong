@@ -1,4 +1,6 @@
-﻿namespace MyGame
+﻿using System.Threading;
+
+namespace MyGame
 {
     public class FakeRandomizer : IRandomizer
     {
@@ -18,6 +20,11 @@
         public int Next(int count)
         {
             return count;
+        }
+
+        public int Next(int min, int max)
+        {
+            return min;
         }
     }
 }
