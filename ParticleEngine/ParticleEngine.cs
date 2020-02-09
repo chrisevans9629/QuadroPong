@@ -8,10 +8,10 @@ namespace MyGame
 {
     public class ParticleEngine
     {
-        private IRandomizer random;
+        private readonly IRandomizer random;
         public Vector2 EmitterLocation { get; set; }
-        private List<Particle> particles;
-        private List<Texture2D> textures;
+        private readonly List<Particle> particles;
+        private readonly List<Texture2D> textures;
 
         public ParticleEngine(List<Texture2D> textures, Vector2 location, IRandomizer random)
         {

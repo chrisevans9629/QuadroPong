@@ -44,7 +44,7 @@ namespace MyGame
             //Acceleration = new Vector2(1.0529189f, 1.0159452f);
             Acceleration = new Vector2(x, y);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
-            
+
         }
 
         public void Update(GameTime time, Vector2 viewportSize)
@@ -74,12 +74,14 @@ namespace MyGame
             }
 
             // TODO: Add your update logic here
-            Acceleration.Normalize();
+            Acceleration = AngleToVector(this.VectorToAngle(Acceleration));
 
             var newPos = Position +
                          Acceleration * (float)(Speed * time.ElapsedGameTime.TotalSeconds);
 
             Position = Vector2.Clamp(newPos, min, max);
+
+            Color = new Color(new Vector3(255));
             IsColliding = false;
         }
 
@@ -100,16 +102,13 @@ namespace MyGame
                 Direction.Top => (0f, -randomVariation, new Vector2(0, 1)),
                 Direction.Left => (-randomVariation, 0f, new Vector2(1, 0)),
                 Direction.Right => (randomVariation, 0f, new Vector2(1, 0)),
+                _ => throw new NotImplementedException(),
             };
 
 
             Acceleration = Vector2.Reflect(Acceleration + new Vector2(x, y), normal);
         }
 
-        public float Normalize(float x, float min, float max, float from, float to)
-        {
-            return from + ((x - min) * (to - from)) / (max - min);
-        }
 
         public override void Draw(SpriteBatch batch)
         {
