@@ -15,7 +15,7 @@ namespace MyGame
         {
             if (Collision(ball))
             {
-                ReflectHelper.ReflectBall(this, ball);
+                ball.Reflect(Center - ball.Center);
             }
 
             var max = maxPort - EndPoint;

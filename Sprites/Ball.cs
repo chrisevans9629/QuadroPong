@@ -18,6 +18,8 @@ namespace MyGame
             Speed = 300;
         }
 
+       
+
         public bool IsColliding { get; set; }
         public SoundEffect BounceSong { get; set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
@@ -89,12 +91,8 @@ namespace MyGame
         public bool Debug { get; set; }
         public void Reflect(Direction position)
         {
-            IsColliding = true;
-            if (HasSound)
-                BounceSong.Play();
-
+            OnCollision();
             var randomVariation = (_random.NextFloat() - 0.5f) / 2f;
-
 
             var (x, y, normal) = position switch
             {
@@ -105,10 +103,21 @@ namespace MyGame
                 _ => throw new NotImplementedException(),
             };
 
-
             Acceleration = Vector2.Reflect(Acceleration + new Vector2(x, y), normal);
         }
 
+        private void OnCollision()
+        {
+            IsColliding = true;
+            if (HasSound)
+                BounceSong.Play();
+        }
+
+        public void Reflect(Vector2 vector2)
+        {
+            OnCollision();
+            Acceleration = -vector2;
+        }
 
         public override void Draw(SpriteBatch batch)
         {

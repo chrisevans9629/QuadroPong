@@ -74,7 +74,7 @@ namespace MyGame
             // TODO: Add your initialization logic here
             randomizer = new Randomizer();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer();
                 gameTimer.CountDuration = 3f;

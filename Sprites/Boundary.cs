@@ -8,7 +8,7 @@ namespace MyGame
         {
             if (Collision(ball))
             {
-                ReflectHelper.ReflectBall(this, ball);
+                ball.Reflect(this.OnRelativeSide(ball));
             }
         }
     }
