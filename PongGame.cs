@@ -242,18 +242,18 @@ namespace MyGame
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
 
             
-            ship.Update(gameTime, balls, viewPort, Width, Height);
+            ship.Update(gameTime, balls, Width, Height);
             foreach (var pongPlayer in players)
             {
                 pongPlayer.Goal.SoundOn = SoundOn;
-                pongPlayer.Update(gameTime, viewPort, balls, Width, Height, b.Texture2D.Width);
+                pongPlayer.Update(gameTime, viewPort, balls.Union(ship.Bullets).ToList(), Width, Height, b.Texture2D.Width);
                 if (pongPlayer.Goal.Score > 0 && pongPlayer.Goal.Score % 5 == 0 && ship.ShipState == ShipState.Dead)
                 {
                     this.ship.Start();
                 }
             }
 
-            foreach (var ball in balls)
+            foreach (var ball in balls.Union(ship.Bullets))
             {
                 if (ball.IsColliding)
                     engine.AddParticles(ball.Position);
@@ -270,7 +270,7 @@ namespace MyGame
 
             foreach (var boundary in boundaries)
             {
-                foreach (var ball in balls)
+                foreach (var ball in balls.Union(ship.Bullets))
                 {
                     boundary.Update(ball);
                 }

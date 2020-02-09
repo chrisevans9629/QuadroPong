@@ -18,30 +18,39 @@ namespace MyGame
             Speed = 300;
         }
 
-       
+
 
         public bool IsColliding { get; set; }
         public SoundEffect BounceSong { get; set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
         private bool RandomBool() => _random.NextFloat() > 0.5f;
 
-        public void Reset(int width, int height)
+        public void Reset(int width, int height, float? angle = null)
         {
             Speed = 300;
             Timer.Restart();
-            var x = RandomFloat();
-            var y = RandomFloat();
+            
 
-            if (RandomBool())
+            if (angle is float a)
             {
-                x = -x;
+                Acceleration = AngleToVector(a);
             }
+            else
+            {
+                var x = RandomFloat();
+                var y = RandomFloat();
 
-            if (RandomBool())
-            {
-                y = -y;
+                if (RandomBool())
+                {
+                    x = -x;
+                }
+
+                if (RandomBool())
+                {
+                    y = -y;
+                }
+                Acceleration = new Vector2(x, y);
             }
-            Acceleration = new Vector2(x, y);
             Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
 
         }
@@ -80,9 +89,9 @@ namespace MyGame
 
             Position = Vector2.Clamp(newPos, min, max);
 
-            var subColor = 300/Speed;
+            var subColor = 300 / Speed;
 
-            Color = new Color(new Vector3(1,  Math.Max(subColor,0),  Math.Max(subColor,0)));
+            Color = new Color(new Vector3(1, Math.Max(subColor, 0), Math.Max(subColor, 0)));
             IsColliding = false;
         }
 

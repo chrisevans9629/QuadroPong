@@ -25,11 +25,14 @@ namespace MyGame
         public Vector2 Size { get; set; } = new Vector2(1);
         public float Speed { get; set; } = 0;
         public Vector2 Acceleration { get; set; } = Vector2.Zero;
-        public Color Color { get; set; } = Color.White; 
+        public Color Color { get; set; } = Color.White;
+        public float Angle { get; set; }
+        public float AngularVelocity { get; set; }
+        public float Layer { get; set; }
         public override RectangleF Bounds() => new RectangleF(Position, new Size2(Texture2D.Width, Texture2D.Height));
         public virtual void Draw(SpriteBatch batch)
         {
-            batch.Draw(Texture2D, Position, null, Color, 0, Vector2.Zero, Size, SpriteEffects.None, 0);
+            batch.Draw(Texture2D, Position, null, Color, Angle, Vector2.Zero, Size, SpriteEffects.None,0);
         }
 
         
