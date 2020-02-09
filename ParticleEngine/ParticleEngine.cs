@@ -9,6 +9,7 @@ namespace MyGame
     public interface IParticleEngine
     {
         void AddParticles(Vector2 location);
+        void AddParticles(Vector2 location, List<Color> colors);
     }
     public class ParticleEngine : IParticleEngine
     {
@@ -31,7 +32,17 @@ namespace MyGame
             int total = 20;
             for (int i = 0; i < total; i++)
             {
-                particles.Add(GenerateNewParticle());
+                particles.Add(GenerateNewParticle(new List<Color>(){Color.White}));
+            }
+        }
+
+        public void AddParticles(Vector2 location, List<Color> colors)
+        {
+            EmitterLocation = location;
+            int total = 20;
+            for (int i = 0; i < total; i++)
+            {
+                particles.Add(GenerateNewParticle(colors));
             }
         }
 
@@ -48,7 +59,7 @@ namespace MyGame
             }
         }
 
-        private Particle GenerateNewParticle()
+        private Particle GenerateNewParticle(List<Color> colors)
         {
             Texture2D texture = textures[random.Next(textures.Count)];
             Vector2 position = EmitterLocation;
@@ -57,11 +68,13 @@ namespace MyGame
                 1f * (float)(random.NextFloat() * 2 - 1));
             float angle = 0;
             float angularVelocity = 0.1f * (float)(random.NextFloat() * 2 - 1);
+
+            var color = colors[random.Next(colors.Count)];
             //Color color = new Color(
             //    (float)random.NextFloat(),
             //    (float)random.NextFloat(),
             //    (float)random.NextFloat());
-            var color = Color.LightGray;
+            //var color = Color.LightGray;
 
             float size = (float)random.NextFloat();
             int ttl = 20 + random.Next(40);

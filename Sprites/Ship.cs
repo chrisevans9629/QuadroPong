@@ -68,10 +68,11 @@ namespace MyGame
             {
                 if (Size.X > 0)
                 {
+                    var colors = new List<Color>() {Color.Red, Color.Yellow, Color.Orange};
                     Size -= new Vector2(0.1f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    _particleEngine.AddParticles(Position - RelativeCenter);
-                    _particleEngine.AddParticles(Bounds().TopLeft);
-                    _particleEngine.AddParticles(Bounds().BottomRight);
+                    
+                    _particleEngine.AddParticles(Bounds().TopLeft, colors);
+                    _particleEngine.AddParticles(Bounds().BottomRight, colors);
                 }
             }
             else if (ShipState == ShipState.Ready)

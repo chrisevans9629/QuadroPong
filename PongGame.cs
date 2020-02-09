@@ -57,7 +57,14 @@ namespace MyGame
             foreach (var name in Enum.GetNames(typeof(Paddles)))
             {
                 var pos = (Paddles)Enum.Parse(typeof(Paddles), name);
-                players.Add(new PongPlayer(new AiPlayer(pos == Paddles.Left || pos == Paddles.Right), pos));
+                if(pos == Paddles.Right)
+                {
+                    players.Add(new PongPlayer(new Player(), pos));
+                }
+                else
+                {
+                    players.Add(new PongPlayer(new AiPlayer(pos == Paddles.Left || pos == Paddles.Right), pos));
+                }
             }
 
             
