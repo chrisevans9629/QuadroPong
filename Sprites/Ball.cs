@@ -29,7 +29,7 @@ namespace MyGame
         {
             Speed = 300;
             Timer.Restart();
-            
+            LastPosessor = null;
 
             if (angle is float a)
             {

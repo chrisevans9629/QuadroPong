@@ -21,6 +21,7 @@ namespace MyGame
         public void Load(SpriteFont font, Texture2D paddle, int goalOffset, Song goalSong)
         {
             Paddle.Texture2D = paddle;
+            Paddle.SpriteFont = font;
             Goal.SpriteFont = font;
             Goal.Offset = goalOffset;
             Goal.Song = goalSong;

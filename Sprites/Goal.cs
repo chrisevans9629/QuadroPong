@@ -22,7 +22,13 @@ namespace MyGame
         {
             if (Collision(ball))
             {
-                Score++;
+                Health--;
+
+                if (ball.LastPosessor != null)
+                {
+                    ball.LastPosessor.Score++;
+                }
+
                 if (SoundOn)
                     MediaPlayer.Play(Song);
                 ball.Reset(width, height);
@@ -30,11 +36,12 @@ namespace MyGame
             }
         }
 
-        public int Score { get; set; }
+        public int Health { get; set; } = 10;
+        //public int Score { get; set; }
         public int Offset { get; set; }
         public void Draw(SpriteBatch spriteBatch, int width)
         {
-            spriteBatch.DrawString(SpriteFont, Score.ToString(), new Vector2(width / 2f + Offset, 10), Color.White);
+            spriteBatch.DrawString(SpriteFont, Health.ToString(), new Vector2(width / 2f + Offset, 10), Color.White);
         }
     }
 }

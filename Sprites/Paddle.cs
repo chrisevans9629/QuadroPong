@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
 namespace MyGame
@@ -15,6 +16,9 @@ namespace MyGame
 
         public float Power { get; set; }
         public float ColorChange { get; set; }
+        public int Score { get; set; }
+        public SpriteFont SpriteFont { get; set; }
+
         public void Update(GameTime time, Vector2 min, Vector2 maxPort, Ball ball)
         {
             if (Power > 0)
@@ -57,6 +61,10 @@ namespace MyGame
             Position = Vector2.Clamp(newPos, min, max);
         }
 
-        
+        public override void Draw(SpriteBatch batch)
+        {
+            batch.DrawString(SpriteFont,Score.ToString(), Position - new Vector2(10), Color.White);
+            base.Draw(batch);
+        }
     }
 }

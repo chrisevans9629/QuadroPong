@@ -245,8 +245,8 @@ namespace MyGame
                 pongPlayer.Goal.SoundOn = gui.SoundOn;
                 pongPlayer.Update(gameTime, viewPort, balls.Union(ship.Bullets).ToList(), Width, Height, b.Texture2D.Width);
 
-                var score = pongPlayer.Goal.Score;
-                if (score > 0 && pongPlayer.Goal.Score % 5 == 0 && ship.ShipState == ShipState.Dead && score > ship.Score)
+                var score = pongPlayer.Paddle.Score;
+                if (score > 0 && pongPlayer.Paddle.Score % 5 == 0 && ship.ShipState == ShipState.Dead && score > ship.Score)
                 {
                     ship.Score = score;
                     this.ship.Start();
