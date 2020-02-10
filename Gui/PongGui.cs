@@ -46,6 +46,9 @@ namespace MyGame
             runningCheckBox.IsChecked = true;
         }
 
+
+       
+
         public Screen Screen { get; set; }
         public bool IsDebugging => debugginCheckBox.IsChecked;
         public bool SoundOn => soundCheckBox.IsChecked;

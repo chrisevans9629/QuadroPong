@@ -33,6 +33,7 @@ namespace MyGame
         private GuiSystem _guiSystem;
         private PongGui gui;
         private GameResult gameResult;
+        private MainMenu mainMenu;
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -108,14 +109,11 @@ namespace MyGame
         protected override void LoadContent()
         {
 
-
-
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             var ballTexture = Content.Load<Texture2D>("ball2");
             var font = Content.Load<SpriteFont>("arial");
             var paddle = Content.Load<Texture2D>("paddle");
             var paddleRot = Content.Load<Texture2D>("paddleRot");
-
             var offset = -60;
             var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
@@ -126,8 +124,10 @@ namespace MyGame
             gameResult.SpriteFont = font;
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
+
+            var MEAT = Content.Load<Texture2D>("meatball");
             ship = new Ship(engine, randomizer);
-            ship.Texture2D = Content.Load<Texture2D>("meatball");
+            ship.Texture2D = MEAT;
             ship.Position = new Vector2(Width/2f, Height/2f);
             ship.Explosions = explosions;
             ship.Engines = Content.Load<SoundEffect>("shipengines");
@@ -193,10 +193,13 @@ namespace MyGame
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font1);
             gui = new PongGui();
+            mainMenu = new MainMenu();
 
+            mainMenu.Start = StartGame;
+            
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
-                ActiveScreen = gui.Screen,
+                ActiveScreen = mainMenu.Screen//gui.Screen,
             };
 
             var backSong = music.CreateInstance();
@@ -207,7 +210,12 @@ namespace MyGame
             // TODO: use this.Content to load your game content here
         }
 
-        
+        private void StartGame()
+        {
+            
+        }
+
+
         public void SetPositions()
         {
             boundaries[0].Position = new Vector2(0);
