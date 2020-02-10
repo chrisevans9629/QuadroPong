@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended;
@@ -9,7 +10,7 @@ namespace MyGame
     {
         public SpriteFont SpriteFont { get; set; }
         public RectangleF Rectangle { get; set; }
-
+        public Paddles Paddles { get; set; }
         public Song Song { get; set; }
 
         public override RectangleF Bounds()
@@ -26,7 +27,9 @@ namespace MyGame
 
                 if (ball.LastPosessor != null)
                 {
-                    ball.LastPosessor.Score++;
+                    var pos = ball.LastPosessor.LastOrDefault(p => p.Paddles != Paddles);
+                    if (pos != null)
+                        pos.Score++;
                 }
 
                 if (SoundOn)

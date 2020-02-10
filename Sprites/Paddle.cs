@@ -7,13 +7,14 @@ namespace MyGame
 {
     public class Paddle : Sprite
     {
-        private readonly IPlayer _player;
+        private readonly IPlayerController _player;
 
-        public Paddle(IPlayer player)
+        public Paddle(IPlayerController player)
         {
             _player = player;
         }
 
+        public Paddles Paddles { get; set; }
         public float Power { get; set; }
         public float ColorChange { get; set; }
         public int Score { get; set; }
@@ -41,7 +42,7 @@ namespace MyGame
 
             if (Collision(ball))
             {
-                ball.LastPosessor = this;
+                ball.LastPosessor.Add(this);
                 ball.Reflect(Center - ball.Center, Power);
                 Power = 0;
             }

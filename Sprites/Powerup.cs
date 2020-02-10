@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 
@@ -27,9 +28,10 @@ namespace MyGame
         {
             if (Collision(ball))
             {
-                if (ball.LastPosessor == null) return;
+                if (ball.LastPosessor.Any() != true) 
+                    return;
                 SoundEffect.Play(0.3f,0,0);
-                ball.LastPosessor.Power += Power;
+                ball.LastPosessor.Last().Power += Power;
                 Reset(area);
             }
         }

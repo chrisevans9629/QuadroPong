@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MyGame
 {
-    public class Player : IPlayer
+    public class Player : IPlayerController
     {
         public bool UpdateAcceleration(Sprite sprite, Ball ball)
         {

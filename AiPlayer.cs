@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace MyGame
 {
-    public class AiPlayer : IPlayer
+    public class AiPlayer : IPlayerController
     {
         private readonly bool _isSides;
 

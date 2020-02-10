@@ -10,7 +10,7 @@ namespace MyGame
     {
         public Paddles Position { get; }
         public bool Side => Position == Paddles.Left || Position == Paddles.Right;
-        public PongPlayer(IPlayer player, Paddles position)
+        public PongPlayer(IPlayerController player, Paddles position)
         {
             Position = position;
             Paddle = new Paddle(player);
@@ -36,7 +36,8 @@ namespace MyGame
 
             var goalOffset = 5;
             var goalWidth = 1;
-
+            Paddle.Paddles = Position;
+            Goal.Paddles = Position;
             if (Position == Paddles.Bottom)
             {
                 Paddle.Position = new Vector2(halfWinWidth, Height - offset) - halfPaddleWidth;

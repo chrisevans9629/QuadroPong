@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,7 +30,7 @@ namespace MyGame
         {
             Speed = 300;
             Timer.Restart();
-            LastPosessor = null;
+            LastPosessor.Clear();
 
             if (angle is float a)
             {
@@ -101,7 +102,7 @@ namespace MyGame
 
         public bool HasSound { get; set; } = true;
         public bool Debug { get; set; }
-        public Paddle? LastPosessor { get; set; }
+        public List<Paddle>  LastPosessor { get; set; } = new List<Paddle>(100);
 
         public void Reflect(Direction position)
         {

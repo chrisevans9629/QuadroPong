@@ -1,6 +1,6 @@
 ﻿namespace MyGame
 {
-    public interface IPlayer
+    public interface IPlayerController
     {
         bool UpdateAcceleration(Sprite sprite, Ball ball);
     }
