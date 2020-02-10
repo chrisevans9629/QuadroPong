@@ -87,7 +87,7 @@ namespace MyGame
         {
             // TODO: Add your initialization logic here
             randomizer = new Randomizer();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 10; i++)
             {
                 powerups.Add(new PowerUp(randomizer));
             }
