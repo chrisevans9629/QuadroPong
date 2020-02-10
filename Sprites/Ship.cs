@@ -32,7 +32,7 @@ namespace MyGame
 
         public int Health { get; set; }
         public ShipState ShipState { get; set; } = ShipState.Dead;
-
+        public float ExplosionOccurence { get; set; }
         public void Start()
         {
             ShipState = ShipState.Coming;

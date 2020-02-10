@@ -145,8 +145,11 @@ namespace MyGame
 
             }
 
+            var powerUpSound = Content.Load<SoundEffect>("powerup");
+
             foreach (var powerUp in powerups)
             {
+                powerUp.SoundEffect = powerUpSound;
                 powerUp.Texture2D = ballTexture;
                 powerUp.Reset(PowerUpArea);
             }

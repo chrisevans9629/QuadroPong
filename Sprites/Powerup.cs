@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 
 namespace MyGame
 {
@@ -21,12 +22,13 @@ namespace MyGame
         }
 
         public float Power { get; set; } = 200f;
-
+        public SoundEffect SoundEffect { get; set; }
         public void Update(Ball ball, Rectangle area)
         {
             if (Collision(ball))
             {
                 if (ball.LastPosessor == null) return;
+                SoundEffect.Play(0.3f,0,0);
                 ball.LastPosessor.Power += Power;
                 Reset(area);
             }
