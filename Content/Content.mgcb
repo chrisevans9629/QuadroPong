@@ -115,6 +115,12 @@
 /processorParam:TextureFormat=Color
 /build:paddleRot.png
 
+#begin retromusic.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:retromusic.wav
+
 #begin Sensation.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor

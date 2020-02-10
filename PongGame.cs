@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
@@ -98,6 +99,7 @@ namespace MyGame
             base.Initialize();
         }
 
+        private SoundEffect music;
         public Rectangle PowerUpArea => new Rectangle(250, 250, Width - 250, Height - 250);
         public int Width => GraphicsDevice.Viewport.Width;
         public int Height => GraphicsDevice.Viewport.Height;
@@ -115,6 +117,10 @@ namespace MyGame
             var offset = -60;
             var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
+
+            music = Content.Load<SoundEffect>("retromusic");
+
+            
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
             ship = new Ship(engine);
@@ -183,7 +189,11 @@ namespace MyGame
             {
                 ActiveScreen = gui.Screen,
             };
-            
+
+            var backSong = music.CreateInstance();
+            backSong.IsLooped = true;
+            backSong.Volume = 0.5f;
+            backSong.Play();
 
             // TODO: use this.Content to load your game content here
         }
@@ -208,6 +218,9 @@ namespace MyGame
 
             if (!gui.IsRunning)
                 return;
+
+            
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
