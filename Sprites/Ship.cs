@@ -25,6 +25,10 @@ namespace MyGame
             _randomizer = randomizer;
             Size = Vector2.Zero;
             AngularVelocity = 1f;
+
+            EngineTimer.EveryNumOfSeconds = 0.5f;
+            EngineTimer.Restart();
+
             ExplosionTimer.EveryNumOfSeconds = 0.3f;
             ExplosionTimer.Restart();
         }
@@ -38,6 +42,8 @@ namespace MyGame
         public int Health { get; set; }
         public ShipState ShipState { get; set; } = ShipState.Dead;
         public GameTimer ExplosionTimer { get; set; } = new GameTimer();
+
+        public GameTimer EngineTimer { get; set; } = new GameTimer();
 
         public SoundEffect Engines { get; set; }
         public SoundEffect Explosions { get; set; }
@@ -53,7 +59,7 @@ namespace MyGame
             int width,
             int height)
         {
-
+            EngineTimer.Update(gameTime);
             Angle += AngularVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             switch (ShipState)
             {
@@ -71,6 +77,11 @@ namespace MyGame
 
         private void UpdateComing(GameTime gameTime, int width, int height)
         {
+            if (EngineTimer.IsCompleted)
+            {
+                EngineTimer.Restart();
+                Engines.Play(1f * Size.X, 0, 0);
+            }
             var def = new Vector2(0.25f);
 
             if (Size.X < def.X)
@@ -92,6 +103,13 @@ namespace MyGame
 
         private void UpdateReady(List<Ball> balls)
         {
+            if (EngineTimer.IsCompleted)
+            {
+                EngineTimer.Restart();
+                Engines.Play(1f * Size.X, 0, 0);
+            }
+
+
             if (Health <= 0)
             {
                 _particleEngine.AddParticles(Position - RelativeCenter);
@@ -126,7 +144,6 @@ namespace MyGame
                 {
                     ExplosionTimer.Restart();
                     Explosions.Play(0.5f, 0, 0);
-
                     var b = Bounds();
                     var x = _randomizer.Next(b.X, b.X + b.Width);
                     var y = _randomizer.Next(b.Y, b.Y + b.Height);

@@ -19,7 +19,7 @@ namespace MyGame
         }
 
 
-
+        public SoundEffect PewSound { get; set; }
         public bool IsColliding { get; set; }
         public SoundEffect BounceSong { get; set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
@@ -59,7 +59,11 @@ namespace MyGame
         {
             if (Timer.IsRunning)
                 return;
-
+            if (Timer.IsCompleted)
+            {
+                Timer.IsCompleted = false;
+                PewSound.Play(0.5f, 0, 0);
+            }
             var min = Vector2.Zero;
 
             var max = viewportSize - EndPoint;

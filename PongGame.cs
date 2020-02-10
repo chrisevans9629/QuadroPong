@@ -128,6 +128,7 @@ namespace MyGame
             ship.Texture2D = Content.Load<Texture2D>("meatball");
             ship.Position = new Vector2(Width/2f, Height/2f);
             ship.Explosions = explosions;
+            ship.Engines = Content.Load<SoundEffect>("shipengines");
 
             var bullets = new List<Ball>();
             for (int i = 0; i < 4; i++)
@@ -155,8 +156,10 @@ namespace MyGame
                 powerUp.Reset(PowerUpArea);
             }
 
+            var pew = Content.Load<SoundEffect>("pew");
             foreach (var ball in bullets)
             {
+                ball.PewSound = pew;
                 ball.BounceSong = blip;
                 ball.Texture2D = ballTexture;
                 ball.Reset(Width, Height);
@@ -165,6 +168,7 @@ namespace MyGame
             }
             foreach (var ball in balls)
             {
+                ball.PewSound = pew;
                 ball.Debug = true;
                 ball.BounceSong = blip;
                 ball.Texture2D = ballTexture;
