@@ -168,6 +168,8 @@ namespace MyGame
         }
 
         public Vector2 RelativeCenter => new Vector2(Texture2D.Width / 2f * Size.X, Texture2D.Height / 2f * Size.Y);
+        public int Score { get; set; }
+
         public override void Draw(SpriteBatch batch)
         {
             var origin = new Vector2(Texture2D.Width / 2f, Texture2D.Height / 2f);

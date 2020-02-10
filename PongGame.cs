@@ -14,6 +14,7 @@ using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Gui;
 using MonoGame.Extended.Gui.Controls;
 using MonoGame.Extended.ViewportAdapters;
+using PongGame;
 
 namespace MyGame
 {
@@ -31,11 +32,12 @@ namespace MyGame
         private Ship ship;
         private GuiSystem _guiSystem;
         private PongGui gui;
+        private GameResult gameResult;
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
 
-
+            gameResult = new GameResult();
 
             //_graphics.IsFullScreen = true;
             _graphics.PreferMultiSampling = true;
@@ -121,7 +123,7 @@ namespace MyGame
             music = Content.Load<SoundEffect>("retromusic");
 
             var explosions = Content.Load<SoundEffect>("explosion");
-            
+            gameResult.SpriteFont = font;
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
             ship = new Ship(engine, randomizer);
@@ -136,7 +138,6 @@ namespace MyGame
                 bullets.Add(new Ball(randomizer, new GameTimer()));
             }
             ship.Bullets = bullets;
-            ship.Start();
             foreach (var pongPlayer in players)
             {
                 if (pongPlayer.Side)
@@ -227,6 +228,8 @@ namespace MyGame
             if (!gui.IsRunning)
                 return;
 
+
+            gameResult.Update(players);
             
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -241,8 +244,11 @@ namespace MyGame
             {
                 pongPlayer.Goal.SoundOn = gui.SoundOn;
                 pongPlayer.Update(gameTime, viewPort, balls.Union(ship.Bullets).ToList(), Width, Height, b.Texture2D.Width);
-                if (pongPlayer.Goal.Score > 0 && pongPlayer.Goal.Score % 5 == 0 && ship.ShipState == ShipState.Dead)
+
+                var score = pongPlayer.Goal.Score;
+                if (score > 0 && pongPlayer.Goal.Score % 5 == 0 && ship.ShipState == ShipState.Dead && score > ship.Score)
                 {
+                    ship.Score = score;
                     this.ship.Start();
                 }
             }
@@ -305,6 +311,7 @@ namespace MyGame
                 powerUp.Draw(_spriteBatch);
             }
             engine.Draw(_spriteBatch);
+            gameResult.Draw(_spriteBatch, new Vector2(Width/2f, Height/2f));
             _spriteBatch.End();
             base.Draw(gameTime);
         }
