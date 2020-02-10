@@ -5,7 +5,7 @@ namespace MyGame
 {
     public class GameTimer
     {
-        public float CountDuration { get; set; } = 4f; //every  2s.
+        public float EveryNumOfSeconds { get; set; } = 4f;
 
         public float CurrentTime { get; set; }
 
@@ -17,7 +17,7 @@ namespace MyGame
             {
                 CurrentTime += (float)gameTime.ElapsedGameTime.TotalSeconds; //Time passed since last Update() 
 
-                if (CurrentTime >= CountDuration)
+                if (CurrentTime >= EveryNumOfSeconds)
                 {
                     IsRunning = false;
                     CurrentTime = 0;
@@ -31,7 +31,7 @@ namespace MyGame
         {
             IsCompleted = false;
             IsRunning = true;
-            CurrentTime = 1f;
+            CurrentTime = 0f;
         }
 
         public void Draw(SpriteBatch spriteBatch, int width, int height)

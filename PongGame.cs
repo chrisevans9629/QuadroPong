@@ -92,7 +92,7 @@ namespace MyGame
             for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer();
-                gameTimer.CountDuration = 3f;
+                gameTimer.EveryNumOfSeconds = 3f;
                 balls.Add(new Ball(randomizer, gameTimer));
             }
 
@@ -120,13 +120,14 @@ namespace MyGame
 
             music = Content.Load<SoundEffect>("retromusic");
 
+            var explosions = Content.Load<SoundEffect>("explosion");
             
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
-            ship = new Ship(engine);
+            ship = new Ship(engine, randomizer);
             ship.Texture2D = Content.Load<Texture2D>("meatball");
             ship.Position = new Vector2(Width/2f, Height/2f);
-
+            ship.Explosions = explosions;
 
             var bullets = new List<Ball>();
             for (int i = 0; i < 4; i++)

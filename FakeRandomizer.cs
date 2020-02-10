@@ -26,5 +26,10 @@ namespace MyGame
         {
             return min;
         }
+
+        public float Next(float min, float max)
+        {
+            return min;
+        }
     }
 }

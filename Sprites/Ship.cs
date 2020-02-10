@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 
@@ -16,12 +17,16 @@ namespace MyGame
     public class Ship : Sprite
     {
         private readonly IParticleEngine _particleEngine;
+        private readonly IRandomizer _randomizer;
         private List<Ball> shipBullets = new List<Ball>();
-        public Ship(IParticleEngine particleEngine)
+        public Ship(IParticleEngine particleEngine, IRandomizer randomizer)
         {
             _particleEngine = particleEngine;
+            _randomizer = randomizer;
             Size = Vector2.Zero;
             AngularVelocity = 1f;
+            ExplosionTimer.EveryNumOfSeconds = 0.3f;
+            ExplosionTimer.Restart();
         }
 
         public List<Ball>? Bullets
@@ -32,7 +37,11 @@ namespace MyGame
 
         public int Health { get; set; }
         public ShipState ShipState { get; set; } = ShipState.Dead;
-        public float ExplosionOccurence { get; set; }
+        public GameTimer ExplosionTimer { get; set; } = new GameTimer();
+
+        public SoundEffect Engines { get; set; }
+        public SoundEffect Explosions { get; set; }
+
         public void Start()
         {
             ShipState = ShipState.Coming;
@@ -44,55 +53,84 @@ namespace MyGame
             int width,
             int height)
         {
-            var def = new Vector2(0.25f);
+
             Angle += AngularVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (ShipState == ShipState.Coming)
+            switch (ShipState)
             {
-                if (Size.X < def.X)
+                case ShipState.Coming:
+                    UpdateComing(gameTime, width, height);
+                    break;
+                case ShipState.Dead:
+                    UpdateDead(gameTime);
+                    break;
+                case ShipState.Ready:
+                    UpdateReady(balls);
+                    break;
+            }
+        }
+
+        private void UpdateComing(GameTime gameTime, int width, int height)
+        {
+            var def = new Vector2(0.25f);
+
+            if (Size.X < def.X)
+            {
+                Size += new Vector2(0.1f) * (float) gameTime.ElapsedGameTime.TotalSeconds;
+            }
+            else
+            {
+                ShipState = ShipState.Ready;
+                var i = 0f;
+                var q = MathF.PI / 4;
+                foreach (var shipBullet in shipBullets)
                 {
-                    Size += new Vector2(0.1f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                }
-                else
-                {
-                    ShipState = ShipState.Ready;
-                    var i = 0f;
-                    var q = MathF.PI / 4;
-                    foreach (var shipBullet in shipBullets)
-                    {
-                        shipBullet.Reset(width, height, Angle + i);
-                        i += q;
-                    }
+                    shipBullet.Reset(width, height, Angle + i);
+                    i += q;
                 }
             }
-            else if (ShipState == ShipState.Dead)
+        }
+
+        private void UpdateReady(List<Ball> balls)
+        {
+            if (Health <= 0)
             {
-                if (Size.X > 0)
+                _particleEngine.AddParticles(Position - RelativeCenter);
+                ShipState = ShipState.Dead;
+            }
+
+            foreach (var ball in balls.Union(shipBullets))
+            {
+                if (Collision(ball))
                 {
-                    var colors = new List<Color>() {Color.Red, Color.Yellow, Color.Orange};
-                    Size -= new Vector2(0.1f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    
-                    _particleEngine.AddParticles(Bounds().TopLeft, colors);
-                    _particleEngine.AddParticles(Bounds().BottomRight, colors);
+                    if (ball.Timer.IsRunning)
+                        continue;
+                    Health--;
+                    _particleEngine.AddParticles(ball.Position);
+                    ball.Reflect(Center - ball.Center, 0);
                 }
             }
-            else if (ShipState == ShipState.Ready)
+        }
+
+        private void UpdateDead(GameTime gameTime)
+        {
+            if (Size.X > 0)
             {
-                if (Health <= 0)
+                Size -= new Vector2(0.1f) * (float) gameTime.ElapsedGameTime.TotalSeconds;
+
+                var colors = new List<Color>() {Color.Red, Color.Yellow, Color.Orange};
+
+                ExplosionTimer.Update(gameTime);
+
+
+                if (ExplosionTimer.IsCompleted)
                 {
-                    _particleEngine.AddParticles(Position - RelativeCenter);
-                    ShipState = ShipState.Dead;
-                }
-                
-                foreach (var ball in balls.Union(shipBullets))
-                {
-                    if (Collision(ball))
-                    {
-                        if(ball.Timer.IsRunning)
-                            continue;
-                        Health--;
-                        _particleEngine.AddParticles(ball.Position);
-                        ball.Reflect(Center - ball.Center, 0);
-                    }
+                    ExplosionTimer.Restart();
+                    Explosions.Play(0.5f, 0, 0);
+
+                    var b = Bounds();
+                    var x = _randomizer.Next(b.X, b.X + b.Width);
+                    var y = _randomizer.Next(b.Y, b.Y + b.Height);
+                    _particleEngine.AddParticles(new Vector2(x, y), colors);
                 }
             }
         }
@@ -118,7 +156,7 @@ namespace MyGame
             var origin = new Vector2(Texture2D.Width / 2f, Texture2D.Height / 2f);
 
             batch.Draw(Texture2D, Position, null, Color, Angle, origin, Size, SpriteEffects.None, 0);
-            if(ShipState != ShipState.Ready)
+            if (ShipState != ShipState.Ready)
                 return;
             foreach (var shipBullet in shipBullets)
             {
