@@ -21,9 +21,18 @@ namespace PongGame
         public void Update(List<PongPlayer> players)
         {
             var player = players.FirstOrDefault(p => p.Paddle.Score >= Goal);
+
             if (player != null)
             {
                 Winner = player;
+                return;
+            }
+
+            if (players.Count(p => !p.Goal.Died) == 1)
+            {
+                player = players.FirstOrDefault(p => p.Goal.Died != true);
+                Winner = player;
+                return;
             }
         }
         
