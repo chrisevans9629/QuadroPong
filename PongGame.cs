@@ -53,13 +53,15 @@ namespace MyGame
             foreach (var name in Enum.GetNames(typeof(Paddles)))
             {
                 var pos = (Paddles)Enum.Parse(typeof(Paddles), name);
-                if(pos == Paddles.Right)
+                var isSide = pos == Paddles.Left || pos == Paddles.Right;
+
+                if (pos == Paddles.Right)
                 {
-                    players.Add(new PongPlayer(new Player(), pos));
+                    players.Add(new PongPlayer(new AiPlayer(isSide), pos));
                 }
                 else
                 {
-                    players.Add(new PongPlayer(new AiPlayer(pos == Paddles.Left || pos == Paddles.Right), pos));
+                    players.Add(new PongPlayer(new AiPlayer(isSide), pos));
                 }
             }
 
@@ -116,7 +118,6 @@ namespace MyGame
             var boundary = Content.Load<Texture2D>("Boundary");
             var font1 = Content.Load<BitmapFont>("Sensation");
 
-            gameResult.SpriteFont = font;
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
 
@@ -390,9 +391,6 @@ namespace MyGame
                 powerUp.Draw(_spriteBatch);
             }
             engine.Draw(_spriteBatch);
-            gameResult.Draw(_spriteBatch, new Vector2(Width/2f, Height/2f));
-            
-            
 
             _spriteBatch.End();
             base.Draw(gameTime);

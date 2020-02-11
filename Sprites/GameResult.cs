@@ -12,9 +12,8 @@ namespace PongGame
     {
         public GameResult()
         {
-            Goal = 2;
+            Goal = 10;
         }
-        public SpriteFont? SpriteFont { get; set; }
 
         public int Goal { get; set; }
 
@@ -27,13 +26,7 @@ namespace PongGame
                 Winner = player;
             }
         }
-
-        public void Draw(SpriteBatch spriteBatch, Vector2 center)
-        {
-            if (Winner != null)
-                spriteBatch.DrawString(SpriteFont, $"Player {Winner.Position} won!", center, Color.White);
-        }
-
+        
         public void Reset()
         {
             Winner = null;
