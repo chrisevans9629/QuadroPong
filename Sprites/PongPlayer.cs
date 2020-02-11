@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 
@@ -18,8 +19,11 @@ namespace MyGame
             Goal = new Goal();
         }
 
-        public void Load(SpriteFont font, Texture2D paddle, int goalOffset, Song goalSong)
+        private SoundEffect death;
+
+        public void Load(SpriteFont font, Texture2D paddle, int goalOffset, Song goalSong, SoundEffect deathSound)
         {
+            death = deathSound;
             Paddle.Texture2D = paddle;
             Paddle.SpriteFont = font;
             Goal.SpriteFont = font;
@@ -31,8 +35,8 @@ namespace MyGame
         {
             Paddle.Power = 0;
             Paddle.Score = 0;
-            Goal.Health = 10;
-            SetPosition(width,height);
+            Goal.Health = Goal.DefaultHealth;
+            SetPosition(width, height);
         }
 
         public void SetPosition(int Width, int Height)
@@ -77,12 +81,18 @@ namespace MyGame
 
         public void Update(GameTime gameTime, Vector2 viewPort, List<Ball> balls, int width, int height, int boundarySize)
         {
+            if (Goal.Died)
+                return;
 
-            foreach (var ball1 in balls)
+            Goal.Update(balls, width, height);
+
+            if (Goal.Health <= 0 && !Goal.Died)
             {
-                Goal.Update(ball1, width, height);
+                death.Play();
+                Goal.Died = true;
             }
 
+            
 
             var ball = balls.OrderBy(p => Vector2.Distance(p.Position, Goal.Rectangle.Center)).First();
 

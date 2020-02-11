@@ -72,6 +72,12 @@
 /processorParam:TextureFormat=Color
 /build:Boundary.png
 
+#begin death.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:death.wav
+
 #begin explosion.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

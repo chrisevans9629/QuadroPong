@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -19,29 +20,36 @@ namespace MyGame
         }
 
         public bool SoundOn { get; set; } = true;
-        public void Update(Ball ball, int width, int height)
+        public void Update(List<Ball> balls, int width, int height)
         {
-            if (Collision(ball))
+            foreach (var ball in balls)
             {
-                Health--;
-
-                if (ball.LastPosessor != null)
+                if (Collision(ball))
                 {
-                    var pos = ball.LastPosessor.LastOrDefault(p => p.Paddles != Paddles);
-                    if (pos != null)
-                        pos.Score++;
-                }
+                    Health--;
 
-                if (SoundOn)
-                    MediaPlayer.Play(Song);
-                ball.Reset(width, height);
-                ball.Speed += 5;
+                    if (ball.LastPosessor != null)
+                    {
+                        var pos = ball.LastPosessor.LastOrDefault(p => p.Paddles != Paddles);
+                        if (pos != null)
+                            pos.Score++;
+                    }
+
+                    if (SoundOn)
+                        MediaPlayer.Play(Song);
+                    ball.Reset(width, height);
+                    ball.Speed += 5;
+                }
             }
+          
         }
 
-        public int Health { get; set; } = 10;
+        public const int DefaultHealth = 10;
+        public int Health { get; set; } = DefaultHealth;
         //public int Score { get; set; }
         public int Offset { get; set; }
+        public bool Died { get; set; }
+
         public void Draw(SpriteBatch spriteBatch, int width)
         {
             spriteBatch.DrawString(SpriteFont, $"{Paddles}: {Health}", new Vector2(width / 2f + Offset, 10), Color.White);

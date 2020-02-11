@@ -20,6 +20,7 @@ namespace MyGame
 {
     public class PongGame : Game
     {
+        private FrameCounter frameCounter = new FrameCounter();
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         //private Ball Ball;
@@ -117,13 +118,15 @@ namespace MyGame
             var pew = Content.Load<SoundEffect>("pew");
             var boundary = Content.Load<Texture2D>("Boundary");
             var font1 = Content.Load<BitmapFont>("Sensation");
-
+            var deathSound = Content.Load<SoundEffect>("death");
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
 
+            this.frameCounter.Load(font);
+
             var bullets = LoadShip(MEAT, explosions, engineSound);
 
-            LoadPlayers(font, paddle, goal, paddleRot);
+            LoadPlayers(font, paddle, goal, paddleRot, deathSound);
 
             LoadPowerUps(powerUpSound, ballTexture);
 
@@ -198,16 +201,16 @@ namespace MyGame
             return bullets;
         }
 
-        private void LoadPlayers(SpriteFont font, Texture2D paddle,  Song goal, Texture2D paddleRot)
+        private void LoadPlayers(SpriteFont font, Texture2D paddle,  Song goal, Texture2D paddleRot, SoundEffect death)
         {
             var offset = -240;
 
             foreach (var pongPlayer in players)
             {
                 if (pongPlayer.Side)
-                    pongPlayer.Load(font, paddle, offset, goal);
+                    pongPlayer.Load(font, paddle, offset, goal, death);
                 else
-                    pongPlayer.Load(font, paddleRot, offset, goal);
+                    pongPlayer.Load(font, paddleRot, offset, goal, death);
                 offset += 120;
             }
         }
@@ -292,7 +295,7 @@ namespace MyGame
         public bool IsInGame { get; set; }
         protected override void Update(GameTime gameTime)
         {
-
+            //frameCounter.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             _guiSystem.Update(gameTime);
@@ -316,7 +319,7 @@ namespace MyGame
                 pongPlayer.Update(gameTime, viewPort, balls.Union(ship.Bullets).ToList(), Width, Height, b.Texture2D.Width);
 
                 var score = pongPlayer.Paddle.Score;
-                if (score > 0 && pongPlayer.Paddle.Score % 5 == 0 && ship.ShipState == ShipState.Dead && score > ship.Score)
+                if (score > 0 && pongPlayer.Paddle.Score % 3 == 0 && ship.ShipState == ShipState.Dead && score > ship.Score)
                 {
                     ship.Score = score;
                     this.ship.Start();
@@ -391,7 +394,7 @@ namespace MyGame
                 powerUp.Draw(_spriteBatch);
             }
             engine.Draw(_spriteBatch);
-
+            //frameCounter.Draw(_spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

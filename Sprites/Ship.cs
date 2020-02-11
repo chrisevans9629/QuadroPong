@@ -56,6 +56,7 @@ namespace MyGame
 
         public void Start()
         {
+            Size = Vector2.Zero;
             ShipState = ShipState.Coming;
             Health = 10;
         }
