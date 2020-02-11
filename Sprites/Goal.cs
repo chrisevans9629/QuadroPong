@@ -44,7 +44,7 @@ namespace MyGame
         public int Offset { get; set; }
         public void Draw(SpriteBatch spriteBatch, int width)
         {
-            spriteBatch.DrawString(SpriteFont, Health.ToString(), new Vector2(width / 2f + Offset, 10), Color.White);
+            spriteBatch.DrawString(SpriteFont, $"{Paddles}: {Health}", new Vector2(width / 2f + Offset, 10), Color.White);
         }
     }
 }

@@ -34,5 +34,9 @@ namespace PongGame
                 spriteBatch.DrawString(SpriteFont, $"Player {Winner.Position} won!", center, Color.White);
         }
 
+        public void Reset()
+        {
+            Winner = null;
+        }
     }
 }

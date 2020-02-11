@@ -37,20 +37,12 @@ namespace MyGame
         public PongGame()
         {
             _graphics = new GraphicsDeviceManager(this);
-
             gameResult = new GameResult();
-
-            //_graphics.IsFullScreen = true;
             _graphics.PreferMultiSampling = true;
-
-
-
             _graphics.PreferredBackBufferHeight = 1000;
             _graphics.PreferredBackBufferWidth = 1000;
-
             this.Window.AllowUserResizing = true;
             Window.ClientSizeChanged += WindowOnClientSizeChanged;
-
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             for (int i = 0; i < 4; i++)
@@ -108,111 +100,178 @@ namespace MyGame
         public int Height => GraphicsDevice.Viewport.Height;
         protected override void LoadContent()
         {
-
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             var ballTexture = Content.Load<Texture2D>("ball2");
             var font = Content.Load<SpriteFont>("arial");
             var paddle = Content.Load<Texture2D>("paddle");
             var paddleRot = Content.Load<Texture2D>("paddleRot");
-            var offset = -60;
             var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
-
-            music = Content.Load<SoundEffect>("retromusic");
-
             var explosions = Content.Load<SoundEffect>("explosion");
+            music = Content.Load<SoundEffect>("retromusic");
+            var MEAT = Content.Load<Texture2D>("meatball");
+            var engineSound = Content.Load<SoundEffect>("shipengines");
+            var powerUpSound = Content.Load<SoundEffect>("powerup");
+            var pew = Content.Load<SoundEffect>("pew");
+            var boundary = Content.Load<Texture2D>("Boundary");
+            var font1 = Content.Load<BitmapFont>("Sensation");
+
             gameResult.SpriteFont = font;
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
 
-            var MEAT = Content.Load<Texture2D>("meatball");
-            ship = new Ship(engine, randomizer);
-            ship.Texture2D = MEAT;
-            ship.Position = new Vector2(Width/2f, Height/2f);
-            ship.Explosions = explosions;
-            ship.Engines = Content.Load<SoundEffect>("shipengines");
+            var bullets = LoadShip(MEAT, explosions, engineSound);
 
-            var bullets = new List<Ball>();
-            for (int i = 0; i < 4; i++)
-            {
-                bullets.Add(new Ball(randomizer, new GameTimer()));
-            }
-            ship.Bullets = bullets;
-            foreach (var pongPlayer in players)
-            {
-                if (pongPlayer.Side)
-                    pongPlayer.Load(font, paddle, offset, goal);
-                else
-                    pongPlayer.Load(font, paddleRot, offset, goal);
-                offset += 30;
+            LoadPlayers(font, paddle, goal, paddleRot);
 
-            }
+            LoadPowerUps(powerUpSound, ballTexture);
 
-            var powerUpSound = Content.Load<SoundEffect>("powerup");
+            LoadBalls(bullets, pew, blip, ballTexture, font);
 
-            foreach (var powerUp in powerups)
-            {
-                powerUp.SoundEffect = powerUpSound;
-                powerUp.Texture2D = ballTexture;
-                powerUp.Reset(PowerUpArea);
-            }
-
-            var pew = Content.Load<SoundEffect>("pew");
-            foreach (var ball in bullets)
-            {
-                ball.PewSound = pew;
-                ball.BounceSong = blip;
-                ball.Texture2D = ballTexture;
-                ball.Reset(Width, Height);
-                ball.Timer.Font = font;
-                ball.SpriteFont = font;
-            }
-            foreach (var ball in balls)
-            {
-                ball.PewSound = pew;
-                ball.Debug = true;
-                ball.BounceSong = blip;
-                ball.Texture2D = ballTexture;
-                ball.Reset(Width, Height);
-                ball.Timer.Font = font;
-                ball.SpriteFont = font;
-            }
-
-            var boundary = Content.Load<Texture2D>("Boundary");
-
-            foreach (var boundary1 in boundaries)
-            {
-                boundary1.Texture2D = boundary;
-            }
+            LoadBoundaries(boundary);
 
             SetPositions();
 
+            LoadGui(font1);
+
+            LoadMusic();
+            ResetGame();
+        }
+
+        private void LoadMusic()
+        {
+            var backSong = music.CreateInstance();
+            backSong.IsLooped = true;
+            backSong.Volume = 0.5f;
+            backSong.Play();
+        }
+
+        private void LoadGui(BitmapFont font1)
+        {
             var viewportAdapter = new DefaultViewportAdapter(GraphicsDevice);
             var guiRenderer = new GuiSpriteBatchRenderer(GraphicsDevice, () => Matrix.Identity);
-            var font1 = Content.Load<BitmapFont>("Sensation");
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font1);
             gui = new PongGui();
             mainMenu = new MainMenu();
 
             mainMenu.Start = StartGame;
-            
+
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
-                ActiveScreen = mainMenu.Screen//gui.Screen,
+                ActiveScreen = mainMenu.Screen //gui.Screen,
             };
 
-            var backSong = music.CreateInstance();
-            backSong.IsLooped = true;
-            backSong.Volume = 0.5f;
-            backSong.Play();
-
-            // TODO: use this.Content to load your game content here
+            gui.Main = BackToMainMenu;
         }
+
+        private void BackToMainMenu()
+        {
+            _guiSystem.ActiveScreen = mainMenu.Screen;
+            IsInGame = false;
+        }
+
+        private void LoadBoundaries(Texture2D boundary)
+        {
+            foreach (var boundary1 in boundaries)
+            {
+                boundary1.Texture2D = boundary;
+            }
+        }
+
+        private List<Ball> LoadShip(Texture2D MEAT, SoundEffect explosions, SoundEffect engineSound)
+        {
+            ship = new Ship(engine, randomizer);
+            ship.Texture2D = MEAT;
+            ship.Position = new Vector2(Width / 2f, Height / 2f);
+            ship.Explosions = explosions;
+            ship.Engines = engineSound;
+
+            var bullets = new List<Ball>();
+            for (int i = 0; i < 4; i++)
+            {
+                bullets.Add(new Ball(randomizer, new GameTimer()));
+            }
+
+            ship.Bullets = bullets;
+            return bullets;
+        }
+
+        private void LoadPlayers(SpriteFont font, Texture2D paddle,  Song goal, Texture2D paddleRot)
+        {
+            var offset = -240;
+
+            foreach (var pongPlayer in players)
+            {
+                if (pongPlayer.Side)
+                    pongPlayer.Load(font, paddle, offset, goal);
+                else
+                    pongPlayer.Load(font, paddleRot, offset, goal);
+                offset += 120;
+            }
+        }
+
+        private void LoadPowerUps(SoundEffect powerUpSound, Texture2D ballTexture)
+        {
+            foreach (var powerUp in powerups)
+            {
+                powerUp.SoundEffect = powerUpSound;
+                powerUp.Texture2D = ballTexture;
+            }
+        }
+
+        private void LoadBalls(List<Ball> bullets, SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
+        {
+            foreach (var ball in bullets)
+            {
+                ball.PewSound = pew;
+                ball.BounceSong = blip;
+                ball.Texture2D = ballTexture;
+                ball.Timer.Font = font;
+                ball.SpriteFont = font;
+            }
+
+            foreach (var ball in balls)
+            {
+                ball.PewSound = pew;
+                ball.BounceSong = blip;
+                ball.Texture2D = ballTexture;
+                ball.Timer.Font = font;
+                ball.SpriteFont = font;
+            }
+        }
+
+        private void ResetGame()
+        {
+            foreach (var ball in balls)
+            {
+                ball.Reset(Width, Height);
+            }
+
+            foreach (var shipBullet in ship.Bullets ?? new List<Ball>())
+            {
+                shipBullet.Reset(Width, Height);
+            }
+
+            foreach (var powerUp in powerups)
+            {
+                powerUp.Reset(PowerUpArea);
+            }
+
+            foreach (var pongPlayer in players)
+            {
+                pongPlayer.Reset(Width,Height);
+            }
+
+            ship.Reset();
+            gameResult.Reset();
+        }
+
 
         private void StartGame()
         {
-            
+            _guiSystem.ActiveScreen = gui.Screen;
+            IsInGame = true;
         }
 
 
@@ -229,23 +288,25 @@ namespace MyGame
             }
         }
 
+        public bool IsInGame { get; set; }
         protected override void Update(GameTime gameTime)
         {
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
             _guiSystem.Update(gameTime);
+
+
+            if(!IsInGame)
+                return;
 
             if (!gui.IsRunning)
                 return;
 
-
             gameResult.Update(players);
             
-
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
             var b = boundaries[0];
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
-
             
             ship.Update(gameTime, balls, Width, Height);
             foreach (var pongPlayer in players)
@@ -283,6 +344,14 @@ namespace MyGame
                     boundary.Update(ball);
                 }
             }
+
+            if (gameResult.Winner != null)
+            {
+                mainMenu.Winner = $"{gameResult.Winner.Position} won!";
+                ResetGame();
+                BackToMainMenu();
+            }
+
             base.Update(gameTime);
         }
 
@@ -293,9 +362,11 @@ namespace MyGame
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
+            _guiSystem.Draw(gameTime);
+
+
             ship.Draw(_spriteBatch);
 
-            _guiSystem.Draw(gameTime);
 
             foreach (var ball in balls)
             {
@@ -320,6 +391,9 @@ namespace MyGame
             }
             engine.Draw(_spriteBatch);
             gameResult.Draw(_spriteBatch, new Vector2(Width/2f, Height/2f));
+            
+            
+
             _spriteBatch.End();
             base.Draw(gameTime);
         }

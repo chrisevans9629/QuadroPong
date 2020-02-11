@@ -1,4 +1,5 @@
-﻿using MonoGame.Extended;
+﻿using System;
+using MonoGame.Extended;
 using MonoGame.Extended.Gui;
 using MonoGame.Extended.Gui.Controls;
 
@@ -16,9 +17,16 @@ namespace MyGame
             {
                 Content = new StackPanel()
                 {
-                    Margin = new Thickness(10),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(20),
                     Items =
                     {
+                        new Button()
+                        {
+                            Name = "main",
+                            Content = "Main Menu",
+                            Width = 100
+                        },
                         new CheckBox()
                         {
                             Name = "Running",
@@ -34,10 +42,12 @@ namespace MyGame
                             Name = "Debug",
                             Content = "Debug",
                         },
+                        
                     }
-                }
+                },
+                
             };
-
+            Screen.FindControl<Button>("main").Clicked += (sender, args) => Main();
             runningCheckBox = Screen.FindControl<CheckBox>("Running");
             soundCheckBox = Screen.FindControl<CheckBox>("Sound");
             debugginCheckBox = Screen.FindControl<CheckBox>("Debug");
@@ -47,8 +57,8 @@ namespace MyGame
         }
 
 
-       
 
+        public Action Main { get; set; }
         public Screen Screen { get; set; }
         public bool IsDebugging => debugginCheckBox.IsChecked;
         public bool SoundOn => soundCheckBox.IsChecked;

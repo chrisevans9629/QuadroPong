@@ -16,6 +16,10 @@ namespace MyGame
                     Margin = new Thickness(10),
                     Items =
                     {
+                        new Label()
+                        {
+                            Name = "winner"
+                        },
                         new Button()
                         {
                             Name = "start",
@@ -36,12 +40,14 @@ namespace MyGame
                 }
             };
 
-            src.FindControl<Button>("start").Clicked += (sender, args) => Start();
-            src.FindControl<Button>("settings").Clicked += (sender, args) => Settings();
-
+            src.FindControl<Button>("start").Clicked += (sender, args) => Start?.Invoke();
+            src.FindControl<Button>("settings").Clicked += (sender, args) => Settings?.Invoke();
+            label = src.FindControl<Label>("winner");
             Screen = src;
         }
 
+        private Label label;
+        public string? Winner { get => label.Content?.ToString(); set => label.Content = value; }
         public Action Start { get; set; }
         public Action Settings { get; set; }
         public Screen Screen { get; set; }

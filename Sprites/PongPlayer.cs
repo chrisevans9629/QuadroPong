@@ -27,6 +27,14 @@ namespace MyGame
             Goal.Song = goalSong;
         }
 
+        public void Reset(int width, int height)
+        {
+            Paddle.Power = 0;
+            Paddle.Score = 0;
+            Goal.Health = 10;
+            SetPosition(width,height);
+        }
+
         public void SetPosition(int Width, int Height)
         {
             var offset = 30;

@@ -33,6 +33,11 @@ namespace MyGame
             ExplosionTimer.Restart();
         }
 
+        public void Reset()
+        {
+            ShipState = ShipState.Dead;
+            Score = 0;
+        }
         public List<Ball>? Bullets
         {
             get => ShipState == ShipState.Ready ? shipBullets : new List<Ball>();
@@ -42,7 +47,8 @@ namespace MyGame
         public int Health { get; set; }
         public ShipState ShipState { get; set; } = ShipState.Dead;
         public GameTimer ExplosionTimer { get; set; } = new GameTimer();
-
+        public Vector2 RelativeCenter => new Vector2(Texture2D.Width / 2f * Size.X, Texture2D.Height / 2f * Size.Y);
+        public int Score { get; set; }
         public GameTimer EngineTimer { get; set; } = new GameTimer();
 
         public SoundEffect Engines { get; set; }
@@ -167,8 +173,7 @@ namespace MyGame
             return Circle().Intersects(sprite.Bounds());
         }
 
-        public Vector2 RelativeCenter => new Vector2(Texture2D.Width / 2f * Size.X, Texture2D.Height / 2f * Size.Y);
-        public int Score { get; set; }
+        
 
         public override void Draw(SpriteBatch batch)
         {
