@@ -66,9 +66,13 @@ namespace MyGame
             {
                 
                 var state = GamePad.GetState(PlayerIndex.One);
-
+                if (state.Buttons.A == ButtonState.Pressed)
+                {
+                    selectedButton?.Click();
+                }
                 var left = state.ThumbSticks.Left;
-
+                if(left == Vector2.Zero)
+                    return;
                 if (left.Y > 0.5f)
                 {
                     start.IsPressed = true;
@@ -85,12 +89,6 @@ namespace MyGame
                     start.IsPressed = false;
                     selectedButton = null;
                 }
-                if (state.Buttons.A == ButtonState.Pressed)
-                {
-                    selectedButton?.Click();
-                }
-
-
             }
         }
 
