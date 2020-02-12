@@ -34,8 +34,16 @@ namespace MyGame
                 if (ability.HasLeftXThumbStick && ability.HasLeftYThumbStick && HasPressedA)
                 {
                     var left = state.ThumbSticks.Left;
-                    Console.WriteLine($"{PlayerIndex}:{left}");
                     sprite.Acceleration = new Vector2(left.X, -left.Y);
+
+                    if (left == Vector2.Zero)
+                    {
+                        return new InputResult(){HasMoved = false, IsHandled = true};
+                    }
+
+                    Console.WriteLine($"{PlayerIndex}:{left}");
+
+
                     return new InputResult() { HasMoved = true, IsHandled = true };
                 }
             }

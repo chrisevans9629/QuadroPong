@@ -49,7 +49,9 @@ namespace MyGame
 
             var max = maxPort - EndPoint;
 
-            if (!_player.UpdateAcceleration(this, ball).HasMoved)
+            var accel = _player.UpdateAcceleration(this, ball);
+
+            if (!accel.HasMoved)
             {
                 return;
             }
