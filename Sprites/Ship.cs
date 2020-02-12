@@ -64,17 +64,18 @@ namespace MyGame
             GameTime gameTime,
             List<Ball> balls,
             int width,
-            int height)
+            int height,
+            bool isSoundOn)
         {
             EngineTimer.Update(gameTime);
             Angle += AngularVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             switch (ShipState)
             {
                 case ShipState.Coming:
-                    UpdateComing(gameTime, width, height);
+                    UpdateComing(gameTime, width, height, isSoundOn);
                     break;
                 case ShipState.Dead:
-                    UpdateDead(gameTime);
+                    UpdateDead(gameTime, isSoundOn);
                     break;
                 case ShipState.Ready:
                     UpdateReady(balls);
@@ -82,18 +83,19 @@ namespace MyGame
             }
         }
 
-        private void UpdateComing(GameTime gameTime, int width, int height)
+        private void UpdateComing(GameTime gameTime, int width, int height, bool isSoundOn)
         {
             if (EngineTimer.IsCompleted)
             {
                 EngineTimer.Restart();
-                Engines.Play(1f * Size.X, 0, 0);
+                if (isSoundOn)
+                    Engines.Play(1f * Size.X, 0, 0);
             }
             var def = new Vector2(0.25f);
 
             if (Size.X < def.X)
             {
-                Size += new Vector2(0.1f) * (float) gameTime.ElapsedGameTime.TotalSeconds;
+                Size += new Vector2(0.1f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             else
             {
@@ -136,13 +138,13 @@ namespace MyGame
             }
         }
 
-        private void UpdateDead(GameTime gameTime)
+        private void UpdateDead(GameTime gameTime, bool isSoundOn)
         {
             if (Size.X > 0)
             {
-                Size -= new Vector2(0.05f) * (float) gameTime.ElapsedGameTime.TotalSeconds;
+                Size -= new Vector2(0.05f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                var colors = new List<Color>() {Color.Red, Color.Yellow, Color.Orange};
+                var colors = new List<Color>() { Color.Red, Color.Yellow, Color.Orange };
 
                 ExplosionTimer.Update(gameTime);
 
@@ -150,7 +152,8 @@ namespace MyGame
                 if (ExplosionTimer.IsCompleted)
                 {
                     ExplosionTimer.Restart();
-                    Explosions.Play(0.5f, 0, 0);
+                    if (isSoundOn)
+                        Explosions.Play(0.5f, 0, 0);
                     var b = Bounds();
                     var x = _randomizer.Next(b.X, b.X + b.Width);
                     var y = _randomizer.Next(b.Y, b.Y + b.Height);
@@ -174,7 +177,7 @@ namespace MyGame
             return Circle().Intersects(sprite.Bounds());
         }
 
-        
+
 
         public override void Draw(SpriteBatch batch)
         {

@@ -132,12 +132,16 @@ namespace MyGame
             ResetGame();
         }
 
+        public SoundEffectInstance musicSoundEffect { get; set; }
+        private float defaultVolume = 0.5f;
         private void LoadMusic()
         {
             var backSong = music.CreateInstance();
             backSong.IsLooped = true;
-            backSong.Volume = 0.5f;
+            backSong.Volume = defaultVolume;
             backSong.Play();
+            musicSoundEffect = backSong;
+            
         }
 
         private void LoadGui(BitmapFont font1)
@@ -297,12 +301,21 @@ namespace MyGame
             if (!gui.IsRunning)
                 return;
 
+            if (!gui.SoundOn)
+            {
+                musicSoundEffect.Volume = 0;
+            }
+            else
+            {
+                musicSoundEffect.Volume = defaultVolume;
+            }
+
             gameResult.Update(players);
 
             var b = boundaries[0];
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
 
-            ship.Update(gameTime, balls, Width, Height);
+            ship.Update(gameTime, balls, Width, Height, gui.SoundOn);
             foreach (var pongPlayer in players)
             {
                 pongPlayer.Goal.SoundOn = gui.SoundOn;
@@ -326,7 +339,7 @@ namespace MyGame
                 ball.Timer.Update(gameTime);
                 foreach (var powerUp in powerups)
                 {
-                    powerUp.Update(ball, PowerUpArea);
+                    powerUp.Update(ball, PowerUpArea, gui.SoundOn);
                 }
             }
             engine.Update();

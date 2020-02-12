@@ -24,13 +24,14 @@ namespace MyGame
 
         public float Power { get; set; } = 200f;
         public SoundEffect SoundEffect { get; set; }
-        public void Update(Ball ball, Rectangle area)
+        public void Update(Ball ball, Rectangle area, bool isSoundOn)
         {
             if (Collision(ball))
             {
-                if (ball.LastPosessor.Any() != true) 
+                if (ball.LastPosessor.Any() != true)
                     return;
-                SoundEffect.Play(0.3f,0,0);
+                if (isSoundOn)
+                    SoundEffect.Play(0.3f, 0, 0);
                 ball.LastPosessor.Last().Power += Power;
                 Reset(area);
             }

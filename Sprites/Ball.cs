@@ -63,7 +63,8 @@ namespace MyGame
             if (Timer.IsCompleted)
             {
                 Timer.IsCompleted = false;
-                PewSound.Play(0.5f, 0, 0);
+                if (HasSound)
+                    PewSound.Play(0.5f, 0, 0);
             }
             var min = Vector2.Zero;
 
@@ -102,7 +103,7 @@ namespace MyGame
 
         public bool HasSound { get; set; } = true;
         public bool Debug { get; set; }
-        public List<Paddle>  LastPosessor { get; set; } = new List<Paddle>(100);
+        public List<Paddle> LastPosessor { get; set; } = new List<Paddle>(100);
 
         public void Reflect(Direction position)
         {
