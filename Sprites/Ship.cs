@@ -140,7 +140,7 @@ namespace MyGame
         {
             if (Size.X > 0)
             {
-                Size -= new Vector2(0.1f) * (float) gameTime.ElapsedGameTime.TotalSeconds;
+                Size -= new Vector2(0.05f) * (float) gameTime.ElapsedGameTime.TotalSeconds;
 
                 var colors = new List<Color>() {Color.Red, Color.Yellow, Color.Orange};
 

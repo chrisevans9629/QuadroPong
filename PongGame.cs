@@ -51,22 +51,12 @@ namespace MyGame
                 boundaries.Add(new Boundary());
             }
 
-            foreach (var name in Enum.GetNames(typeof(Paddles)))
-            {
-                var pos = (Paddles)Enum.Parse(typeof(Paddles), name);
-                var isSide = pos == Paddles.Left || pos == Paddles.Right;
+            //var isSide = pos == Paddles.Left || pos == Paddles.Right;
 
-                if (pos == Paddles.Right)
-                {
-                    players.Add(new PongPlayer(new Player(), pos));
-                }
-                else
-                {
-                    players.Add(new PongPlayer(new AiPlayer(isSide), pos));
-                }
-            }
-
-            
+            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One)), Paddles.Right));
+            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left));
+            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top));
+            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom));
         }
 
         private void WindowOnClientSizeChanged(object sender, EventArgs e)
@@ -120,7 +110,7 @@ namespace MyGame
             var font1 = Content.Load<BitmapFont>("Sensation");
             var deathSound = Content.Load<SoundEffect>("death");
 
-            engine = new ParticleEngine(new List<Texture2D>() { ballTexture },  randomizer);
+            engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, randomizer);
 
             this.frameCounter.Load(font);
 
@@ -201,7 +191,7 @@ namespace MyGame
             return bullets;
         }
 
-        private void LoadPlayers(SpriteFont font, Texture2D paddle,  Song goal, Texture2D paddleRot, SoundEffect death)
+        private void LoadPlayers(SpriteFont font, Texture2D paddle, Song goal, Texture2D paddleRot, SoundEffect death)
         {
             var offset = -240;
 
@@ -264,7 +254,7 @@ namespace MyGame
 
             foreach (var pongPlayer in players)
             {
-                pongPlayer.Reset(Width,Height);
+                pongPlayer.Reset(Width, Height);
             }
 
             ship.Reset();
@@ -301,17 +291,17 @@ namespace MyGame
             _guiSystem.Update(gameTime);
 
 
-            if(!IsInGame)
+            if (!IsInGame)
                 return;
 
             if (!gui.IsRunning)
                 return;
 
             gameResult.Update(players);
-            
+
             var b = boundaries[0];
             var viewPort = GraphicsDevice.Viewport.Bounds.Size.ToVector2();
-            
+
             ship.Update(gameTime, balls, Width, Height);
             foreach (var pongPlayer in players)
             {
@@ -366,7 +356,6 @@ namespace MyGame
 
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
-            _guiSystem.Draw(gameTime);
 
 
             ship.Draw(_spriteBatch);
@@ -394,6 +383,8 @@ namespace MyGame
                 powerUp.Draw(_spriteBatch);
             }
             engine.Draw(_spriteBatch);
+            _guiSystem.Draw(gameTime);
+
             //frameCounter.Draw(_spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
