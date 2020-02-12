@@ -78,7 +78,7 @@ namespace MyGame
                     UpdateDead(gameTime, isSoundOn);
                     break;
                 case ShipState.Ready:
-                    UpdateReady(balls);
+                    UpdateReady(balls, isSoundOn);
                     break;
             }
         }
@@ -110,12 +110,13 @@ namespace MyGame
             }
         }
 
-        private void UpdateReady(List<Ball> balls)
+        private void UpdateReady(List<Ball> balls, bool isSoundOn)
         {
             if (EngineTimer.IsCompleted)
             {
                 EngineTimer.Restart();
-                Engines.Play(1f * Size.X, 0, 0);
+                if (isSoundOn)
+                    Engines.Play(1f * Size.X, 0, 0);
             }
 
 

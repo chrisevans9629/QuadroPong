@@ -13,6 +13,7 @@ namespace MyGame
     }
 
 
+
     public class PowerUp : Sprite
     {
         private readonly IRandomizer _randomizer;
@@ -62,6 +63,7 @@ namespace MyGame
                     {
                         last.Size = new Vector2(2,1);
                     }
+                    last.AddTimedPowerup(PowerUpType, 10, () => last.Size = new Vector2(1));
                     Reset(area);
                 }
             }
