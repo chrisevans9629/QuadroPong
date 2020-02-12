@@ -68,14 +68,16 @@ namespace MyGame
             SetPositions();
         }
 
+        private PowerupManager manager;
         private IRandomizer randomizer;
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            manager = new PowerupManager();
             randomizer = new Randomizer();
             for (int i = 0; i < 10; i++)
             {
-                powerups.Add(new PowerUp(randomizer));
+                powerups.Add(new PowerUp(randomizer, manager));
             }
             for (int i = 0; i < 1; i++)
             {
@@ -310,7 +312,7 @@ namespace MyGame
             {
                 musicSoundEffect.Volume = defaultVolume;
             }
-
+            manager.UpdateTimedPowerup(gameTime);
             gameResult.Update(players);
 
             var b = boundaries[0];

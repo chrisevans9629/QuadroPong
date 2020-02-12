@@ -9,11 +9,11 @@ Four player pong made using monogame.
 - [ ] Powerups
   - [x] Bigger Paddle
   - [x] Tiny Paddle
-  - [ ] Bigger Ball
-  - [ ] Tiny Ball
+  - [x] Bigger Ball
+  - [x] Tiny Ball
   - [ ] Stun Paddle
   - [ ] Hold Paddle
-  - [ ] Fast Paddle
+  - [x] Fast Paddle
   - [x] Fast Ball
 - [ ] Bosses
   - [x] Meatball Man Bullet Hell

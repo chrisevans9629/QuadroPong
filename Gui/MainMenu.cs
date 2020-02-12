@@ -77,17 +77,13 @@ namespace MyGame
                 {
                     start.IsPressed = true;
                     selectedButton = start;
+                    settings.IsPressed = false;
                 }
                 else if (left.Y < -0.5f)
                 {
                     settings.IsPressed = true;
                     selectedButton = settings;
-                }
-                else
-                {
-                    settings.IsPressed = false;
                     start.IsPressed = false;
-                    selectedButton = null;
                 }
             }
         }
