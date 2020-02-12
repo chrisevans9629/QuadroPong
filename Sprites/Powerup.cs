@@ -12,14 +12,9 @@ namespace MyGame
         FastPaddle,
         BiggerPaddle,
         SmallerPaddle,
+        StunPaddle,
         BiggerBall,
         SmallerBall,
-    }
-
-    public interface IPowerupManager
-    {
-        void AddTimedPowerup(Sprite sprite,PowerUpType type, float seconds, Action completeAction);
-        void UpdateTimedPowerup(GameTime gameTimer);
     }
 
     public class PowerUp : Sprite
@@ -55,7 +50,8 @@ namespace MyGame
                     PowerUpType.SmallerPaddle => Color.Red,
                     PowerUpType.BiggerBall => Color.Purple,
                     PowerUpType.SmallerBall => Color.MediumPurple,
-                    _ => throw new NotImplementedException()
+                    PowerUpType.StunPaddle => Color.Yellow,
+                _ => throw new NotImplementedException()
                 };
         }
 
@@ -81,7 +77,7 @@ namespace MyGame
                 }
                 else
                 {
-                    if (UpdatePaddlePowerups(ball, area)) 
+                    if (!UpdatePaddlePowerups(ball, area)) 
                         return;
                 }
               
@@ -93,24 +89,25 @@ namespace MyGame
         private bool UpdatePaddlePowerups(Ball ball, Rectangle area)
         {
             if (ball.LastPosessor.Any() != true)
-                return true;
+                return false;
+            var last = ball.LastPosessor.Last();
 
             if (PowerUpType == PowerUpType.FastBall)
             {
-                ball.LastPosessor.Last().Power += Power;
-                Reset(area);
+                last.Power += Power;
+            }
+            else if (PowerUpType == PowerUpType.StunPaddle)
+            {
+                last.IsStunned = true;
+                _powerupManager.AddTimedPowerup(last, PowerUpType, 3, () => last.IsStunned = false);
             }
             else if (PowerUpType == PowerUpType.FastPaddle)
             {
-                var last = ball.LastPosessor.Last();
                 last.Speed += 100;
                 _powerupManager.AddTimedPowerup(last, PowerUpType, 10, () => last.Speed -= 100);
-                Reset(area);
             }
             else if (PowerUpType == PowerUpType.BiggerPaddle)
             {
-                var last = ball.LastPosessor.Last();
-
                 if (last.Paddles == Paddles.Left || last.Paddles == Paddles.Right)
                 {
                     last.Size = new Vector2(1, 2);
@@ -121,12 +118,9 @@ namespace MyGame
                 }
 
                 _powerupManager.AddTimedPowerup(last, PowerUpType, 10, () => last.Size = new Vector2(1));
-                Reset(area);
             }
             else if (PowerUpType == PowerUpType.SmallerPaddle)
             {
-                var last = ball.LastPosessor.Last();
-
                 if (last.Paddles == Paddles.Left || last.Paddles == Paddles.Right)
                 {
                     last.Size = new Vector2(1, 0.5f);
@@ -135,12 +129,10 @@ namespace MyGame
                 {
                     last.Size = new Vector2(0.5f, 1);
                 }
-
                 _powerupManager.AddTimedPowerup(last, PowerUpType, 10, () => last.Size = new Vector2(1));
-                Reset(area);
             }
-
-            return false;
+            Reset(area);
+            return true;
         }
     }
 }

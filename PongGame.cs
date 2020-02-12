@@ -53,10 +53,7 @@ namespace MyGame
 
             //var isSide = pos == Paddles.Left || pos == Paddles.Right;
 
-            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right));
-            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left));
-            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top));
-            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom));
+           
         }
 
         private void WindowOnClientSizeChanged(object sender, EventArgs e)
@@ -113,7 +110,10 @@ namespace MyGame
             var deathSound = Content.Load<SoundEffect>("death");
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, randomizer);
-
+            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine));
+            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine));
+            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top, engine));
+            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom, engine));
             this.frameCounter.Load(font);
 
             var bullets = LoadShip(MEAT, explosions, engineSound);

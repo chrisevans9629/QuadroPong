@@ -11,10 +11,10 @@ namespace MyGame
     {
         public Paddles Position { get; }
         public bool Side => Position == Paddles.Left || Position == Paddles.Right;
-        public PongPlayer(IPlayerController player, Paddles position)
+        public PongPlayer(IPlayerController player, Paddles position, IParticleEngine particleEngine)
         {
             Position = position;
-            Paddle = new Paddle(player);
+            Paddle = new Paddle(player, particleEngine);
             Paddle.Speed = 500;
             Goal = new Goal();
         }

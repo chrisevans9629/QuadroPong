@@ -10,10 +10,12 @@ namespace MyGame
     public class Paddle : Sprite
     {
         private readonly IPlayerController _player;
+        private readonly IParticleEngine _particleEngine;
 
-        public Paddle(IPlayerController player)
+        public Paddle(IPlayerController player, IParticleEngine particleEngine)
         {
             _player = player;
+            _particleEngine = particleEngine;
         }
 
         public Paddles Paddles { get; set; }
@@ -21,6 +23,8 @@ namespace MyGame
         public float ColorChange { get; set; }
         public int Score { get; set; }
         public SpriteFont SpriteFont { get; set; }
+        public bool IsStunned { get; set; }
+
         public override RectangleF Bounds() => new RectangleF(Position, new Size2(Texture2D.Width * Size.X, Texture2D.Height * Size.Y));
 
      
@@ -55,6 +59,11 @@ namespace MyGame
 
             var max = maxPort - EndPoint;
 
+            if (IsStunned)
+            {
+                _particleEngine.AddParticles(Center, new List<Color>(){Color.Yellow, Color.Orange});
+                return;
+            }
             var accel = _player.UpdateAcceleration(this, ball);
 
             if (!accel.HasMoved)

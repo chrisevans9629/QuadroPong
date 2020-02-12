@@ -11,7 +11,7 @@ Four player pong made using monogame.
   - [x] Tiny Paddle
   - [x] Bigger Ball
   - [x] Tiny Ball
-  - [ ] Stun Paddle
+  - [x] Stun Paddle
   - [ ] Hold Paddle
   - [x] Fast Paddle
   - [x] Fast Ball
@@ -30,6 +30,7 @@ Four player pong made using monogame.
 - [ ] Main Menu
   - [x] Start
   - [ ] Reset
+  - [ ] Quit
   - [ ] Settings
     - [ ] Volume
     - [ ] Music
