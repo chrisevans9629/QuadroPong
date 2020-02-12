@@ -12,8 +12,9 @@ namespace MyGame
             _isSides = isSides;
         }
 
-        public bool UpdateAcceleration(Sprite sprite, Ball ball)
+        public InputResult UpdateAcceleration(Sprite sprite, Ball ball)
         {
+            var moved = false;
             if (_isSides)
             {
                 var playerY = sprite.Position.Y + (sprite.Texture2D.Height / 2f);
@@ -22,20 +23,17 @@ namespace MyGame
 
                 if (Math.Abs(ballY - playerY) < 10)
                 {
-                    return false;
                 }
-
-                if (ballY > playerY)
+                else if (ballY > playerY)
                 {
                     sprite.Acceleration = new Vector2(0, 1);
+                    moved = true;
+
                 }
                 else if (ballY < playerY)
                 {
                     sprite.Acceleration = new Vector2(0, -1);
-                }
-                else
-                {
-                    return false;
+                    moved = true;
                 }
             }
             else
@@ -46,27 +44,20 @@ namespace MyGame
 
                 if (Math.Abs(ballX - playerX) < 10)
                 {
-                    return false;
                 }
-
-                if (ballX > playerX)
+                else if (ballX > playerX)
                 {
                     sprite.Acceleration = new Vector2(1, 0);
+                    moved = true;
                 }
                 else if (ballX < playerX)
                 {
                     sprite.Acceleration = new Vector2(-1, 0);
-                }
-                else
-                {
-                    return false;
+                    moved = true;
                 }
             }
 
-            
-            
-
-            return true;
+            return new InputResult(){HasMoved = moved, IsHandled = true};
         }
     }
 }

@@ -103,7 +103,7 @@ namespace MyGame
 
             if (this.Position == Paddles.Left)
             {
-                Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(width4, boundarySize), ball);
+                Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(width4 * 3, boundarySize), ball);
             }
             else if (Position == Paddles.Right)
             {
@@ -111,7 +111,7 @@ namespace MyGame
             }
             else if (Position == Paddles.Top)
             {
-                Paddle.Update(gameTime, new Vector2(boundarySize, 0), viewPort - new Vector2(boundarySize, height4), ball);
+                Paddle.Update(gameTime, new Vector2(boundarySize, 0), viewPort - new Vector2(boundarySize, height4 * 3), ball);
             }
             else
             {

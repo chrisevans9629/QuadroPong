@@ -4,9 +4,13 @@
     //{
     //    bool IsConnected { get; }
     //}
-
+    public struct InputResult
+    {
+        public bool HasMoved { get; set; }
+        public bool IsHandled { get; set; }
+    }
     public interface IPlayerController
     {
-        bool UpdateAcceleration(Sprite sprite, Ball ball);
+        InputResult UpdateAcceleration(Sprite sprite, Ball ball);
     }
 }
