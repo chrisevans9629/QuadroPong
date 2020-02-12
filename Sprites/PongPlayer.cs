@@ -33,6 +33,7 @@ namespace MyGame
 
         public void Reset(int width, int height)
         {
+            Goal.Died = false;  
             Paddle.Power = 0;
             Paddle.Score = 0;
             Goal.Health = Goal.DefaultHealth;
@@ -96,14 +97,25 @@ namespace MyGame
 
             var ball = balls.OrderBy(p => Vector2.Distance(p.Position, Goal.Rectangle.Center)).First();
 
+            var width4 = width / 4f;
+            var height4 = height / 4f;
 
-            if (Side)
+
+            if (this.Position == Paddles.Left)
             {
-                Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(0, boundarySize), ball);
+                Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(width4, boundarySize), ball);
+            }
+            else if (Position == Paddles.Right)
+            {
+                Paddle.Update(gameTime, new Vector2(width4 * 3, boundarySize), viewPort - new Vector2(0, boundarySize), ball);
+            }
+            else if (Position == Paddles.Top)
+            {
+                Paddle.Update(gameTime, new Vector2(boundarySize, 0), viewPort - new Vector2(boundarySize, height4), ball);
             }
             else
             {
-                Paddle.Update(gameTime, new Vector2(boundarySize, 0), viewPort - new Vector2(boundarySize, 0), ball);
+                Paddle.Update(gameTime, new Vector2(boundarySize, height4 * 3), viewPort - new Vector2(boundarySize, 0), ball);
             }
         }
 

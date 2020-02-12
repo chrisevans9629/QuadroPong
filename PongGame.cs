@@ -58,7 +58,7 @@ namespace MyGame
 
                 if (pos == Paddles.Right)
                 {
-                    players.Add(new PongPlayer(new AiPlayer(isSide), pos));
+                    players.Add(new PongPlayer(new Player(), pos));
                 }
                 else
                 {

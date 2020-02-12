@@ -16,6 +16,14 @@ namespace MyGame
             {
                 sprite.Acceleration = new Vector2(0, 1);
             }
+            else if (state.IsKeyDown(Keys.Left))
+            {
+                sprite.Acceleration = new Vector2(-1,0);
+            }
+            else if (state.IsKeyDown(Keys.Right))
+            {
+                sprite.Acceleration = new Vector2(1,0);
+            }
             else
             {
                 return false;
