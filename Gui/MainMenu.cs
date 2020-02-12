@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Gui;
 using MonoGame.Extended.Gui.Controls;
@@ -40,10 +42,56 @@ namespace MyGame
                 }
             };
 
-            src.FindControl<Button>("start").Clicked += (sender, args) => Start?.Invoke();
-            src.FindControl<Button>("settings").Clicked += (sender, args) => Settings?.Invoke();
+             start = src.FindControl<Button>("start");
+            start.Clicked += (sender, args) => Start?.Invoke();
+             settings = src.FindControl<Button>("settings");
+            settings.Clicked += (sender, args) => Settings?.Invoke();
+            settings.IsPressed = true;
             label = src.FindControl<Label>("winner");
+            
+            
+            
             Screen = src;
+        }
+
+        private Button start;
+        private Button settings;
+        private Button? selectedButton;
+        public void Update()
+        {
+            if(!Screen.IsVisible)
+                return;
+            var capabilities = GamePad.GetCapabilities(PlayerIndex.One);
+            if (capabilities.IsConnected && capabilities.HasLeftYThumbStick && capabilities.HasAButton)
+            {
+                
+                var state = GamePad.GetState(PlayerIndex.One);
+
+                var left = state.ThumbSticks.Left;
+
+                if (left.Y > 0.5f)
+                {
+                    start.IsPressed = true;
+                    selectedButton = start;
+                }
+                else if (left.Y < -0.5f)
+                {
+                    settings.IsPressed = true;
+                    selectedButton = settings;
+                }
+                else
+                {
+                    settings.IsPressed = false;
+                    start.IsPressed = false;
+                    selectedButton = null;
+                }
+                if (state.Buttons.A == ButtonState.Pressed)
+                {
+                    selectedButton?.Click();
+                }
+
+
+            }
         }
 
         private Label label;

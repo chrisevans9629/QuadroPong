@@ -293,7 +293,8 @@ namespace MyGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             _guiSystem.Update(gameTime);
-
+            
+            mainMenu.Update();
 
             if (!IsInGame)
                 return;
