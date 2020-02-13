@@ -160,12 +160,13 @@ namespace MyGame
             mainMenu = new MainMenu();
 
             mainMenu.Start = StartGame;
+            mainMenu.Quit = Exit;
 
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
                 ActiveScreen = mainMenu.Screen //gui.Screen,
             };
-
+            
             gui.Main = BackToMainMenu;
         }
 

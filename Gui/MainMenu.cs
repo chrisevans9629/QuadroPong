@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -11,6 +12,9 @@ namespace MyGame
     {
         public MainMenu()
         {
+            var padding = new Thickness(50, 20);
+            var margin = new Thickness(10);
+
             var src = new Screen()
             {
                 Content = new StackPanel()
@@ -26,73 +30,134 @@ namespace MyGame
                         {
                             Name = "start",
                             Content = "Start",
-                            Padding = new Thickness(50,20),
-                            Margin = new Thickness(10)
+                            Padding = padding,
+                            Margin = margin
                         },
                         new Button()
                         {
                             Name = "settings",
                             Content = "Settings",
-                            Padding = new Thickness(50,20),
-                            Margin = new Thickness(10)
-                        }
+                            Padding = padding,
+                            Margin = margin
+                        },
+                        new Button()
+                        {
+                            Name = "quit",
+                            Content = "Quit",
+                            Padding = padding,
+                            Margin = margin
+                        },
                     },
                     HorizontalAlignment = HorizontalAlignment.Centre,
                     VerticalAlignment = VerticalAlignment.Centre
                 }
             };
 
-             start = src.FindControl<Button>("start");
+            var start = src.FindControl<Button>("start");
             start.Clicked += (sender, args) => Start?.Invoke();
-             settings = src.FindControl<Button>("settings");
+            var settings = src.FindControl<Button>("settings");
             settings.Clicked += (sender, args) => Settings?.Invoke();
-            settings.IsPressed = true;
             label = src.FindControl<Label>("winner");
-            
-            
-            
+
+            var quitButton = src.FindControl<Button>("quit");
+            quitButton.Clicked += (sender, args) => Quit?.Invoke();
+
+            start.IsPressed = true;
+
+            Buttons.Add(start);
+            Buttons.Add(settings);
+            Buttons.Add(quitButton);
+
             Screen = src;
         }
 
-        private Button start;
-        private Button settings;
-        private Button? selectedButton;
+        public List<Button> Buttons { get; set; } = new List<Button>();
+
+        private int selectedButton;
         public void Update()
         {
-            if(!Screen.IsVisible)
+            if (!Screen.IsVisible)
                 return;
             var capabilities = GamePad.GetCapabilities(PlayerIndex.One);
             if (capabilities.IsConnected && capabilities.HasLeftYThumbStick && capabilities.HasAButton)
             {
-                
+
                 var state = GamePad.GetState(PlayerIndex.One);
                 if (state.Buttons.A == ButtonState.Pressed)
                 {
-                    selectedButton?.Click();
+                    Buttons[selectedButton]?.Click();
                 }
                 var left = state.ThumbSticks.Left;
-                if(left == Vector2.Zero)
+                if (left == Vector2.Zero)
                     return;
                 if (left.Y > 0.5f)
                 {
-                    start.IsPressed = true;
-                    selectedButton = start;
-                    settings.IsPressed = false;
+                    if(wasUp)
+                        return;
+                    if (selectedButton > 0)
+                    {
+                        selectedButton--;
+                    }
+                    foreach (var button in Buttons)
+                    {
+                        if (button == Buttons[selectedButton])
+                        {
+                            button.IsPressed = true;
+                        }
+                        else
+                        {
+                            button.IsPressed = false;
+                        }
+                    }
+
+                    wasUp = true;
+                    //start.IsPressed = true;
+                    //selectedButton = start;
+                    //settings.IsPressed = false;
                 }
                 else if (left.Y < -0.5f)
                 {
-                    settings.IsPressed = true;
-                    selectedButton = settings;
-                    start.IsPressed = false;
+                    if(wasDown)
+                        return;
+                    if (selectedButton < Buttons.Count-1)
+                    {
+                        selectedButton++;
+                    }
+                    foreach (var button in Buttons)
+                    {
+                        if (button == Buttons[selectedButton])
+                        {
+                            button.IsPressed = true;
+                        }
+                        else
+                        {
+                            button.IsPressed = false;
+                        }
+                    }
+
+                    //settings.IsPressed = true;
+                    //selectedButton = settings;
+                    //start.IsPressed = false;
+                    wasDown = true;
+                }
+                else
+                {
+                    wasUp = false;
+                    wasDown = false;
                 }
             }
         }
 
+        private bool wasUp;
+        private bool wasDown;
         private Label label;
         public string? Winner { get => label.Content?.ToString(); set => label.Content = value; }
         public Action Start { get; set; }
         public Action Settings { get; set; }
+        public Action Quit { get; set; }
         public Screen Screen { get; set; }
+
+
 
     }
 }
