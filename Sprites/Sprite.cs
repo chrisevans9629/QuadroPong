@@ -18,7 +18,7 @@ namespace MyGame
         }
         public Vector2 Position { get; set; }
 
-        public Vector2 Center => Position + new Vector2(Texture2D.Width / 2f * Size.X, Texture2D.Height / 2f * Size.Y);
+        public Vector2 Center => Position + new Vector2(Source?.Width ?? Texture2D.Width / 2f * Size.X,Source?.Height ?? Texture2D.Height / 2f * Size.Y);
 
         public Vector2 EndPoint => new Vector2( Texture2D.Width * Size.X, Texture2D.Height * Size.Y);
         public Texture2D? Texture2D { get; set; }
@@ -29,10 +29,11 @@ namespace MyGame
         public float Angle { get; set; }
         public float AngularVelocity { get; set; }
         public float Layer { get; set; }
-        public override RectangleF Bounds() => new RectangleF(Position, new Size2(Texture2D.Width, Texture2D.Height));
+        public Rectangle? Source { get; set; } = null;
+        public override RectangleF Bounds() => new RectangleF(Position, new Size2(Source?.Width ?? Texture2D.Width,Source?.Height ?? Texture2D.Height));
         public virtual void Draw(SpriteBatch batch)
         {
-            batch.Draw(Texture2D, Position, null, Color, Angle, Vector2.Zero, Size, SpriteEffects.None,0);
+            batch.Draw(Texture2D, Position, Source, Color, Angle, Vector2.Zero, Size, SpriteEffects.None,0);
         }
 
         

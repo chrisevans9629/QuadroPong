@@ -173,7 +173,7 @@ namespace MyGame
             var pos = Position;
             return new Circle(pos.X, pos.Y, Texture2D.Width / 2f * Size.X);
         }
-        protected override bool IsColliding(Sprite sprite)
+        protected override bool IsColliding(Collider sprite)
         {
             return Circle().Intersects(sprite.Bounds());
         }

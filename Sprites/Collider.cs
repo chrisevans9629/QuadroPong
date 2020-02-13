@@ -9,7 +9,7 @@ namespace MyGame
     {
         public abstract RectangleF Bounds();
 
-        private  List<Sprite> lastCollisions = new List<Sprite>();
+        private  List<Collider> lastCollisions = new List<Collider>();
 
 
         public bool BetweenX(Sprite sprite)
@@ -53,7 +53,7 @@ namespace MyGame
             return Direction.None;
         }
 
-        protected virtual bool IsColliding(Sprite sprite)
+        protected virtual bool IsColliding(Collider sprite)
         {
             var myBounds = Bounds();
             var spriteBounds = sprite.Bounds();
@@ -61,7 +61,7 @@ namespace MyGame
             var isColliding = myBounds.Intersects(spriteBounds);
             return isColliding;
         }
-        public virtual bool Collision(Sprite sprite)
+        public virtual bool Collision(Collider sprite)
         {
             var isColliding = IsColliding(sprite);
             if (isColliding)

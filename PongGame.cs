@@ -15,6 +15,7 @@ using MonoGame.Extended.Gui;
 using MonoGame.Extended.Gui.Controls;
 using MonoGame.Extended.ViewportAdapters;
 using PongGame;
+using PongGame.Sprites;
 
 namespace MyGame
 {
@@ -23,6 +24,7 @@ namespace MyGame
         private FrameCounter frameCounter = new FrameCounter();
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private AstroidManager astroidManager;
         //private Ball Ball;
         // private GameTimer gameTimer;
         private ParticleEngine engine;
@@ -72,6 +74,8 @@ namespace MyGame
             // TODO: Add your initialization logic here
             manager = new PowerupManager();
             randomizer = new Randomizer();
+            astroidManager = new AstroidManager(randomizer);
+
             for (int i = 0; i < 10; i++)
             {
                 powerups.Add(new PowerUp(randomizer, manager));
@@ -108,7 +112,7 @@ namespace MyGame
             var boundary = Content.Load<Texture2D>("Boundary");
             var font1 = Content.Load<BitmapFont>("Sensation");
             var deathSound = Content.Load<SoundEffect>("death");
-
+            astroidManager.Load(Content.Load<Texture2D>("astroids"));
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, randomizer);
             players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine));
             players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine));
@@ -135,7 +139,7 @@ namespace MyGame
         }
 
         public SoundEffectInstance musicSoundEffect { get; set; }
-        private float defaultVolume = 0.5f;
+        private float defaultVolume = 0.2f;
         private void LoadMusic()
         {
             var backSong = music.CreateInstance();
@@ -303,7 +307,7 @@ namespace MyGame
 
             if (!gui.IsRunning)
                 return;
-
+            astroidManager.Update(gameTime, balls.Union(ship.Bullets).ToList(), Width, Height);
             if (!gui.SoundOn)
             {
                 musicSoundEffect.Volume = 0;
@@ -398,6 +402,7 @@ namespace MyGame
             {
                 powerUp.Draw(_spriteBatch);
             }
+            astroidManager.Draw(_spriteBatch);
             engine.Draw(_spriteBatch);
             _guiSystem.Draw(gameTime);
 
