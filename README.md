@@ -18,7 +18,7 @@ Four player pong made using monogame.
 - [ ] Bosses
   - [x] Meatball Man Bullet Hell
   - [ ] Flying Saucer stun & fire ball
-  - [ ] Astroids
+  - [x] Astroids
   - [ ] French Fries & Drink that rotates the map
 - [ ] Multiplayer
   - [x] Offline
