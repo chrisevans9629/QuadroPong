@@ -52,7 +52,7 @@ namespace MyGame
 
             if (ballReady)
             {
-                var direct = _player.GetDirectional(Center - new Vector2(width / 2f, height / 2f));
+                var direct = _player.GetDirectional(Center - new Vector2(-width / 2f, height / 2f));
                 if (_player.TriggerPressed().Value)
                 {
                     ball.Reflect(new Vector2(-direct.Value.X, direct.Value.Y), Power);
