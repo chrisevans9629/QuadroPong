@@ -6,13 +6,13 @@ Four player pong made using monogame.
 
 ## Features
 
-- [ ] Powerups
+- [x] Powerups
   - [x] Bigger Paddle
   - [x] Tiny Paddle
   - [x] Bigger Ball
   - [x] Tiny Ball
   - [x] Stun Paddle
-  - [ ] Hold Paddle
+  - [x] Hold Paddle
   - [x] Fast Paddle
   - [x] Fast Ball
 - [ ] Bosses

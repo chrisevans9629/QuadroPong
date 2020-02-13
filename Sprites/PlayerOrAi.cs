@@ -1,4 +1,8 @@
-﻿namespace MyGame
+﻿using System;
+using System.Linq;
+using Microsoft.Xna.Framework;
+
+namespace MyGame
 {
     public class PlayerOrAi : IPlayerController
     {
@@ -22,6 +26,29 @@
                 }
             }
             return AiPlayer.UpdateAcceleration(sprite, ball);
+        }
+
+        public InputResult<bool> TriggerPressed()
+        {
+            foreach (var playerController in UserPlayers)
+            {
+                var result = playerController.TriggerPressed();
+                if (result.IsHandled)
+                    return result;
+            }
+            return AiPlayer.TriggerPressed();
+        }
+
+        public InputResult<Vector2> GetDirectional(Vector2 defaultVector2)
+        {
+            foreach (var items in UserPlayers)
+            {
+                var d = items.GetDirectional(defaultVector2);
+                if (d.IsHandled)
+                    return d;
+            }
+
+            return AiPlayer.GetDirectional(defaultVector2);
         }
     }
 }

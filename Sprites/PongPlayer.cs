@@ -103,19 +103,19 @@ namespace MyGame
 
             if (this.Position == Paddles.Left)
             {
-                Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(width4 * 3, boundarySize), ball);
+                Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(width4 * 3, boundarySize), ball, width, height);
             }
             else if (Position == Paddles.Right)
             {
-                Paddle.Update(gameTime, new Vector2(width4 * 3, boundarySize), viewPort - new Vector2(0, boundarySize), ball);
+                Paddle.Update(gameTime, new Vector2(width4 * 3, boundarySize), viewPort - new Vector2(0, boundarySize), ball, width, height);
             }
             else if (Position == Paddles.Top)
             {
-                Paddle.Update(gameTime, new Vector2(boundarySize, 0), viewPort - new Vector2(boundarySize, height4 * 3), ball);
+                Paddle.Update(gameTime, new Vector2(boundarySize, 0), viewPort - new Vector2(boundarySize, height4 * 3), ball, width, height);
             }
             else
             {
-                Paddle.Update(gameTime, new Vector2(boundarySize, height4 * 3), viewPort - new Vector2(boundarySize, 0), ball);
+                Paddle.Update(gameTime, new Vector2(boundarySize, height4 * 3), viewPort - new Vector2(boundarySize, 0), ball, width, height);
             }
         }
 

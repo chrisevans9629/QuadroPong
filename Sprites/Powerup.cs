@@ -12,6 +12,7 @@ namespace MyGame
         FastPaddle,
         BiggerPaddle,
         SmallerPaddle,
+        HoldPaddle,
         StunPaddle,
         BiggerBall,
         SmallerBall,
@@ -51,6 +52,7 @@ namespace MyGame
                     PowerUpType.BiggerBall => Color.Purple,
                     PowerUpType.SmallerBall => Color.MediumPurple,
                     PowerUpType.StunPaddle => Color.Yellow,
+                    PowerUpType.HoldPaddle => Color.Orange,
                 _ => throw new NotImplementedException()
                 };
         }
@@ -95,6 +97,10 @@ namespace MyGame
             if (PowerUpType == PowerUpType.FastBall)
             {
                 last.Power += Power;
+            }
+            else if (PowerUpType == PowerUpType.HoldPaddle)
+            {
+                last.HasHoldPaddle = true;
             }
             else if (PowerUpType == PowerUpType.StunPaddle)
             {

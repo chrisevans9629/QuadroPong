@@ -55,5 +55,19 @@ namespace MyGame
             return new InputResult() { HasMoved = moved, IsHandled = true };
         }
 
+        public InputResult<bool> TriggerPressed()
+        {
+            var state = Keyboard.GetState();
+            if (HasPressedEnter)
+                return new InputResult<bool>() { IsHandled = true, Value = state.IsKeyDown(Keys.Space) };
+            return new InputResult<bool>();
+        }
+
+        public InputResult<Vector2> GetDirectional(Vector2 defaultVector2)
+        {
+            if(HasPressedEnter)
+                return new InputResult<Vector2>(){IsHandled = true, Value = defaultVector2};
+            return new InputResult<Vector2>(){Value = defaultVector2};
+        }
     }
 }

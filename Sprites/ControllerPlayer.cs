@@ -50,6 +50,36 @@ namespace MyGame
             return new InputResult();
         }
 
+        public InputResult<bool> TriggerPressed()
+        {
+            var ability = GamePad.GetCapabilities(PlayerIndex);
+            IsConnected = ability.IsConnected;
+            if (ability.IsConnected && ability.HasRightTrigger && HasPressedA)
+            {
+                var state = GamePad.GetState(PlayerIndex);
+                return new InputResult<bool>(){Value = state.Triggers.Right > 0 , IsHandled = true};
+            }
+            return new InputResult<bool>();
+        }
+
+        public InputResult<Vector2> GetDirectional(Vector2 defaultVector2)
+        {
+            var ability = GamePad.GetCapabilities(PlayerIndex);
+            IsConnected = ability.IsConnected;
+            if (ability.IsConnected && ability.HasRightYThumbStick && ability.HasRightXThumbStick && HasPressedA)
+            {
+                var state = GamePad.GetState(PlayerIndex);
+                var left = state.ThumbSticks.Right;
+                if (left == Vector2.Zero)
+                {
+                    return new InputResult<Vector2>(){IsHandled = true, Value = defaultVector2};
+                }
+                return new InputResult<Vector2>(){IsHandled = true, Value = left };
+            }
+
+            return new InputResult<Vector2>(){IsHandled = false, Value = defaultVector2};
+        }
+
         public bool IsConnected { get; set; }
     }
 }

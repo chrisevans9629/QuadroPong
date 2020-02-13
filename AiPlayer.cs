@@ -40,7 +40,7 @@ namespace MyGame
             {
                 var playerX = sprite.Position.X + (sprite.Texture2D.Width / 2f);
 
-                var ballX = ball.Position.X + ball.Texture2D.Width/ 2f;
+                var ballX = ball.Position.X + ball.Texture2D.Width / 2f;
 
                 if (Math.Abs(ballX - playerX) < 10)
                 {
@@ -57,7 +57,17 @@ namespace MyGame
                 }
             }
 
-            return new InputResult(){HasMoved = moved, IsHandled = true};
+            return new InputResult() { HasMoved = moved, IsHandled = true };
+        }
+
+        public InputResult<bool> TriggerPressed()
+        {
+            return new InputResult<bool>() { Value = true, IsHandled = true };
+        }
+
+        public InputResult<Vector2> GetDirectional(Vector2 defaultVector2)
+        {
+            return new InputResult<Vector2>() { Value = defaultVector2, IsHandled = true };
         }
     }
 }
