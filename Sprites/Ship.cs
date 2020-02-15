@@ -33,6 +33,19 @@ namespace MyGame
             ExplosionTimer.Restart();
         }
 
+        public override void Dispose()
+        {
+            foreach (var bullet in this.shipBullets)
+            {
+                bullet?.Dispose();
+            }
+            this.Engines?.Dispose();
+            this.Explosions?.Dispose();
+            
+
+            base.Dispose();
+        }
+
         public void Reset()
         {
             ShipState = ShipState.Dead;

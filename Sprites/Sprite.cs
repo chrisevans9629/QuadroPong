@@ -5,7 +5,7 @@ using MonoGame.Extended;
 
 namespace MyGame
 {
-    public class Sprite : Collider
+    public class Sprite : Collider, IDisposable
     {
         public Vector2 AngleToVector(float angle)
         {
@@ -36,7 +36,10 @@ namespace MyGame
             batch.Draw(Texture2D, Position, Source, Color, Angle, Vector2.Zero, Size, SpriteEffects.None,0);
         }
 
-        
 
+        public virtual void Dispose()
+        {
+            Texture2D?.Dispose();
+        }
     }
 }

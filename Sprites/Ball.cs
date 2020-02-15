@@ -19,6 +19,17 @@ namespace MyGame
             Speed = 300;
         }
 
+        public override void Dispose()
+        {
+            PewSound?.Dispose();
+            BounceSong?.Dispose();
+            foreach (var paddle in this.LastPosessor)
+            {
+                paddle?.Dispose();
+            }
+            base.Dispose();
+        }
+
 
         public SoundEffect PewSound { get; set; }
         public bool IsColliding { get; set; }

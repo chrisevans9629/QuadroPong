@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
@@ -6,12 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MyGame
 {
-    public interface IParticleEngine
-    {
-        void AddParticles(Vector2 location);
-        void AddParticles(Vector2 location, List<Color> colors);
-    }
-    public class ParticleEngine : IParticleEngine
+    public class ParticleEngine : IParticleEngine, IDisposable
     {
         private readonly IRandomizer random;
         public Vector2 EmitterLocation { get; set; }
@@ -87,6 +83,19 @@ namespace MyGame
             for (int index = 0; index < particles.Count; index++)
             {
                 particles[index].Draw(spriteBatch);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var particle in this.particles)
+            {
+                particle?.Dispose();
+            }
+
+            foreach (var texture2D in this.textures)
+            {
+                texture2D?.Dispose();
             }
         }
     }

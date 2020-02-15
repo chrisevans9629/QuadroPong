@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -7,7 +8,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace MyGame
 {
-    public class PongPlayer
+    public class PongPlayer : IDisposable
     {
         public Paddles Position { get; }
         public bool Side => Position == Paddles.Left || Position == Paddles.Right;
@@ -123,6 +124,13 @@ namespace MyGame
         {
             Paddle.Draw(spriteBatch);
             Goal.Draw(spriteBatch, width);
+        }
+
+        public void Dispose()
+        {
+            death?.Dispose();
+            Paddle?.Dispose();
+            Goal?.Dispose();
         }
     }
 }

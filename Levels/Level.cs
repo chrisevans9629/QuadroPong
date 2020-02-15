@@ -14,7 +14,7 @@ namespace MyGame.Levels
 
         }
 
-        public virtual void LoadContent(ContentManager ContentManager, Point windowSize)
+        public virtual void LoadContent(ContentManager Content, Point windowSize)
         {
 
         }

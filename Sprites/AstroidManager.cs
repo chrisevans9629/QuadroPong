@@ -7,7 +7,7 @@ using MyGame;
 
 namespace PongGame.Sprites
 {
-    public class AstroidManager
+    public class AstroidManager : IDisposable
     {
         private readonly IRandomizer _randomizer;
 
@@ -60,6 +60,14 @@ namespace PongGame.Sprites
             foreach (var astroid in Sprites)
             {
                 astroid.Draw(spriteBatch);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var astroid in this.Sprites)
+            {
+                astroid?.Dispose();
             }
         }
     }

@@ -29,6 +29,13 @@ namespace MyGame
             _powerupManager = powerupManager;
             Color = Color.Blue;
         }
+
+        public override void Dispose()
+        {
+            this.SoundEffect?.Dispose();
+            base.Dispose();
+        }
+
         public void Reset(Rectangle area)
         {
             var x = _randomizer.Next(area.X, area.Width);

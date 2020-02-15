@@ -32,6 +32,30 @@ namespace MyGame.Levels
             }
         }
 
+        public override void Dispose()
+        {
+            astroidManager?.Dispose();
+            engine?.Dispose();
+            foreach (var ball in balls)
+            {
+                ball?.Dispose();
+            }
+            foreach (var pongPlayer in this.players)
+            {
+                pongPlayer?.Dispose();
+            }
+            foreach (var boundary in boundaries)
+            {
+                boundary?.Dispose();
+            }
+            foreach (var powerUp in powerups)
+            {
+                powerUp.Dispose();
+            }
+            ship.Dispose();
+            base.Dispose();
+        }
+
         public override void Initialize()
         {
             // TODO: Add your initialization logic here

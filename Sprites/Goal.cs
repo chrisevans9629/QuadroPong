@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,7 +8,7 @@ using MonoGame.Extended;
 
 namespace MyGame
 {
-    public class Goal : Collider
+    public class Goal : Collider, IDisposable
     {
         public SpriteFont SpriteFont { get; set; }
         public RectangleF Rectangle { get; set; }
@@ -53,6 +54,11 @@ namespace MyGame
         public void Draw(SpriteBatch spriteBatch, int width)
         {
             spriteBatch.DrawString(SpriteFont, $"{Paddles}: {Health}", new Vector2(width / 2f + Offset, 10), Color.White);
+        }
+
+        public void Dispose()
+        {
+            Song?.Dispose();
         }
     }
 }

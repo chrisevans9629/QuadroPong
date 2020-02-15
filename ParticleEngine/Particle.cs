@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MyGame
 {
-    public class Particle
+    public class Particle : IDisposable
     {
         public Texture2D Texture { get; set; }
         public Vector2 Position { get; set; }
@@ -41,6 +42,11 @@ namespace MyGame
 
             spriteBatch.Draw(Texture, Position, sourceRectangle, Color,
                 Angle, origin, Size, SpriteEffects.None, 0f);
+        }
+
+        public void Dispose()
+        {
+            Texture?.Dispose();
         }
     }
 }
