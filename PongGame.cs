@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
+using Akavache;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,6 +36,7 @@ namespace MyGame
 
         public PongGame()
         {
+            Akavache.Registrations.Start("PongGame");
             _graphics = new GraphicsDeviceManager(this);
             _graphics.PreferMultiSampling = true;
             _graphics.PreferredBackBufferHeight = 1000;
@@ -43,6 +45,12 @@ namespace MyGame
             Window.ClientSizeChanged += WindowOnClientSizeChanged;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            BlobCache.Shutdown().Wait();
+            base.OnExiting(sender, args);
         }
 
         protected override void Initialize()
