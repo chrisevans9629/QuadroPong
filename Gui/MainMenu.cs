@@ -8,23 +8,46 @@ using MonoGame.Extended.Gui.Controls;
 
 namespace MyGame
 {
-    public class MainMenu
+    public interface IGui
     {
+        Screen Screen { get; }
+        void Update();
+    }
+
+   
+    public interface IPongGame
+    {
+        int Width { get; }
+        int Height { get; }
+        void StartGameTeams();
+        void StartGame4Player();
+        void StartGameClassic();
+        void ShowMainMenu();
+        void ShowSettings();
+        void Exit();
+    }
+    
+    public class MainMenu : IGui
+    {
+        private readonly IPongGame _pongGame;
+
         public Button Button(string text)
         {
-            var t = new Button(){Content = text, Name = text, Padding = padding, Margin = margin};
+            var t = new Button(){Content = text, Name = text, Padding = _padding, Margin = _margin};
             Buttons.Add(t);
             return t;
         }
-        Thickness padding = new Thickness(50, 20);
-        Thickness margin = new Thickness(10);
-        public Action StartTeamsAction { get; set; }
-        public MainMenu()
+
+        readonly Thickness _padding = new Thickness(50, 20);
+        readonly Thickness _margin = new Thickness(10);
+        public MainMenu(
+            IPongGame pongGame)
         {
+            _pongGame = pongGame;
             var start = Button("Start 4 Player");
             var start2 = Button("Start 2 Player");
             var startTeams = Button("Start 4 Player Teams");
-            startTeams.Clicked += (sender, args) => StartTeamsAction?.Invoke();
+            startTeams.Clicked += (sender, args) => pongGame.StartGameTeams();
             var settings = Button("Settings");
             var quit = Button("Quit");
 
@@ -50,12 +73,12 @@ namespace MyGame
                     VerticalAlignment = VerticalAlignment.Centre
                 }
             };
-            start2.Clicked += (sender, args) => Start2?.Invoke();
-            start.Clicked += (sender, args) => Start?.Invoke();
-            settings.Clicked += (sender, args) => Settings?.Invoke();
+            start2.Clicked += (sender, args) => pongGame.StartGameClassic();
+            start.Clicked += (sender, args) => pongGame.StartGame4Player();
+            settings.Clicked += (sender, args) => pongGame.ShowSettings();
             label = src.FindControl<Label>("winner");
 
-            quit.Clicked += (sender, args) => Quit?.Invoke();
+            quit.Clicked += (sender, args) => pongGame.Exit();
 
             start.IsPressed = true;
 
@@ -144,12 +167,6 @@ namespace MyGame
         private bool wasDown;
         private Label label;
         public string? Winner { get => label.Content?.ToString(); set => label.Content = value; }
-        public Action Start { get; set; }
-        public Action Settings { get; set; }
-        public Action Quit { get; set; }
         public Screen Screen { get; set; }
-
-        public Action Start2 { get; set; }
-
     }
 }

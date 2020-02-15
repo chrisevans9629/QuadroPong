@@ -1,18 +1,22 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using MonoGame.Extended;
 using MonoGame.Extended.Gui;
 using MonoGame.Extended.Gui.Controls;
 
 namespace MyGame
 {
-    public class PongGui
+    public class PongGui : IGui
     {
+        private readonly IPongGame _pongGame;
+        private readonly ISettings _settings;
         private CheckBox debugginCheckBox;
         private CheckBox runningCheckBox;
         private CheckBox soundCheckBox;
 
-        public PongGui()
+        public PongGui(IPongGame pongGame, ISettings settings)
         {
+            _pongGame = pongGame;
+            _settings = settings;
             Screen = new Screen()
             {
                 Content = new StackPanel()
@@ -30,7 +34,7 @@ namespace MyGame
                         new CheckBox()
                         {
                             Name = "Running",
-                            Content = "Start",
+                            Content = "Paused",
                         },
                         new CheckBox()
                         {
@@ -47,18 +51,23 @@ namespace MyGame
                 },
                 
             };
-            Screen.FindControl<Button>("main").Clicked += (sender, args) => Main();
+            Screen.FindControl<Button>("main").Clicked += (sender, args) => pongGame.ShowMainMenu();
             runningCheckBox = Screen.FindControl<CheckBox>("Running");
             soundCheckBox = Screen.FindControl<CheckBox>("Sound");
             debugginCheckBox = Screen.FindControl<CheckBox>("Debug");
 
-            soundCheckBox.IsChecked = true;
-            runningCheckBox.IsChecked = true;
+            debugginCheckBox.IsChecked = settings.IsDebugging;
+            soundCheckBox.IsChecked = settings.IsSoundOn;
+            runningCheckBox.IsChecked = settings.IsPaused;
         }
 
 
-
-        public Action Main { get; set; }
+        public void Update()
+        {
+            _settings.IsDebugging = IsDebugging;
+            _settings.IsSoundOn = SoundOn;
+            _settings.IsPaused = IsRunning;
+        }
         public Screen Screen { get; set; }
         public bool IsDebugging => debugginCheckBox.IsChecked;
         public bool SoundOn => soundCheckBox.IsChecked;

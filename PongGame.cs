@@ -21,22 +21,23 @@ using PongGame.Sprites;
 
 namespace MyGame
 {
-    public class PongGame : Game
+    public class PongGame : Game, IPongGame
     {
         private FrameCounter frameCounter = new FrameCounter();
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-      
 
+        private Settings _settings;
         private GuiSystem _guiSystem;
-        private PongGui gui;
-        private MainMenu mainMenu;
+        private IGui gui;
+        //private MainMenu mainMenu;
 
         Level? level;
 
         public PongGame()
         {
             Akavache.Registrations.Start("PongGame");
+            _settings = new Settings();
             _graphics = new GraphicsDeviceManager(this);
             _graphics.PreferMultiSampling = true;
             _graphics.PreferredBackBufferHeight = 1000;
@@ -94,25 +95,24 @@ namespace MyGame
             var guiRenderer = new GuiSpriteBatchRenderer(GraphicsDevice, () => Matrix.Identity);
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font1);
-            gui = new PongGui();
-            mainMenu = new MainMenu
-            {
-                Start = StartGame,
-                Quit = Exit, 
-                Start2 = StartGame2, 
-                StartTeamsAction = StartGameTeams
-            };
-
+            //gui = new PongGui();
+            //mainMenu = new MainMenu
+            //{
+            //    Start = StartGame,
+            //    Quit = Exit, 
+            //    Start2 = StartGame2, 
+            //    StartTeamsAction = StartGameTeams
+            //};
+            gui = new MainMenu(this);
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
-                ActiveScreen = mainMenu.Screen //gui.Screen,
+                ActiveScreen = gui.Screen //gui.Screen,
             };
-            
-            gui.Main = BackToMainMenu;
         }
 
-        private void StartGameTeams()
+        public void StartGameTeams()
         {
+            gui = new PongGui(this, _settings);
             _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = true;
             //level?.Dispose();
@@ -121,8 +121,9 @@ namespace MyGame
             level.LoadContent(Content, new Point(Width, Height));
             level.BackToMenu = o => BackToMainMenu();
         }
-        private void StartGame2()
+        public void StartGameClassic()
         {
+            gui = new PongGui(this, _settings);
             _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = true;
             //level?.Dispose();
@@ -132,15 +133,28 @@ namespace MyGame
             level.BackToMenu = o => BackToMainMenu();
         }
 
+        public void ShowMainMenu()
+        {
+            BackToMainMenu();
+        }
+
+        public void ShowSettings()
+        {
+            gui = new SettingsGui(this);
+            _guiSystem.ActiveScreen = gui.Screen;
+        }
+
         private void BackToMainMenu()
         {
-            _guiSystem.ActiveScreen = mainMenu.Screen;
+            gui = new MainMenu(this);
+            _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = false;
         }
 
       
-        private void StartGame()
+        public void StartGame4Player()
         {
+            gui = new PongGui(this, _settings);
             _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = true;
             //level?.Dispose();
@@ -170,14 +184,14 @@ namespace MyGame
                 Exit();
             _guiSystem.Update(gameTime);
             
-            mainMenu.Update();
+            gui.Update();
 
             if (!IsInGame)
                 return;
 
-            if (!gui.IsRunning)
+            if (_settings.IsPaused)
                 return;
-            if (!gui.SoundOn)
+            if (!_settings.IsSoundOn)
             {
                 musicSoundEffect.Volume = 0;
             }
@@ -186,7 +200,7 @@ namespace MyGame
                 musicSoundEffect.Volume = defaultVolume;
             }
             
-            level?.Update(gameTime, new GameState(){Width = Width, Height = Height, IsDebug = gui.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = gui.SoundOn});
+            level?.Update(gameTime, new GameState(){Width = Width, Height = Height, IsDebug = _settings.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = _settings.IsSoundOn});
             
 
             base.Update(gameTime);
