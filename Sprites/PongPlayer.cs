@@ -12,15 +12,19 @@ namespace MyGame
     {
         public Paddles Position { get; }
         public bool Side => Position == Paddles.Left || Position == Paddles.Right;
-        public PongPlayer(IPlayerController player, Paddles position, IParticleEngine particleEngine)
+        public PongPlayer(
+            IPlayerController player, 
+            Paddles position, 
+            IParticleEngine particleEngine,
+            Goal? goal = null)
         {
             Position = position;
             Paddle = new Paddle(player, particleEngine);
             Paddle.Speed = 500;
-            Goal = new Goal();
+            this.Goal ??= new Goal();
         }
 
-        private SoundEffect death;
+        private SoundEffect? death;
 
         public void Load(SpriteFont font, Texture2D paddle, int goalOffset, Song goalSong, SoundEffect deathSound)
         {
@@ -90,7 +94,7 @@ namespace MyGame
 
             if (Goal.Health <= 0 && !Goal.Died)
             {
-                death.Play();
+                death?.Play();
                 Goal.Died = true;
             }
 

@@ -92,6 +92,7 @@ namespace MyGame
             mainMenu.Start = StartGame;
             mainMenu.Quit = Exit;
             mainMenu.Start2 = StartGame2;
+            mainMenu.StartTeamsAction = StartGameTeams;
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
                 ActiveScreen = mainMenu.Screen //gui.Screen,
@@ -100,6 +101,16 @@ namespace MyGame
             gui.Main = BackToMainMenu;
         }
 
+        private void StartGameTeams()
+        {
+            _guiSystem.ActiveScreen = gui.Screen;
+            IsInGame = true;
+            //level?.Dispose();
+            this.level = new RegularPongLevel(true);
+            level.Initialize();
+            level.LoadContent(Content, new Point(Width, Height));
+            level.BackToMenu = o => BackToMainMenu();
+        }
         private void StartGame2()
         {
             _guiSystem.ActiveScreen = gui.Screen;

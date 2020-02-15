@@ -18,13 +18,17 @@ namespace MyGame
         }
         Thickness padding = new Thickness(50, 20);
         Thickness margin = new Thickness(10);
-
+        public Action StartTeamsAction { get; set; }
         public MainMenu()
         {
             var start = Button("Start 4 Player");
             var start2 = Button("Start 2 Player");
+            var startTeams = Button("Start 4 Player Teams");
+            startTeams.Clicked += (sender, args) => StartTeamsAction?.Invoke();
             var settings = Button("Settings");
             var quit = Button("Quit");
+
+
             var src = new Screen()
             {
                 Content = new StackPanel()
@@ -38,6 +42,7 @@ namespace MyGame
                         },
                         start,
                         start2,
+                        startTeams,
                         settings,
                         quit,
                     },

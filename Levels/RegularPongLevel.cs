@@ -17,10 +17,10 @@ namespace MyGame.Levels
         private List<PongPlayer> players = new List<PongPlayer>();
         private GameResult gameResult = new GameResult();
         private IRandomizer? randomizer;
-
-        public RegularPongLevel()
+        private bool _hasTeams;
+        public RegularPongLevel(bool hasTeams = false)
         {
-            
+            _hasTeams = hasTeams;
         }
 
         public override void Dispose()
@@ -60,8 +60,23 @@ namespace MyGame.Levels
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, randomizer);
 
-            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine));
-            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine));
+            if (_hasTeams)
+            {
+                var goalLeft = new Goal();
+                var goalRight = new Goal();
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, goalRight));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, goalLeft));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Three)), Paddles.Right, engine, goalRight));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)), Paddles.Left, engine, goalLeft));
+
+            }
+            else
+            {
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine));
+            }
+
+
             var pew = Content.Load<SoundEffect>("pew");
             var blip = Content.Load<SoundEffect>("blip");
             var font = Content.Load<SpriteFont>("arial");
@@ -72,7 +87,7 @@ namespace MyGame.Levels
         }
         private void LoadPlayers(SpriteFont font, Texture2D paddle, Song goal, Texture2D paddleRot, SoundEffect death)
         {
-            var offset = -240;
+            var offset = -60;
 
             foreach (var pongPlayer in players)
             {
