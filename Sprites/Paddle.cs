@@ -57,7 +57,7 @@ namespace MyGame
                 {
                     ball.Reflect(new Vector2(-direct.Value.X, direct.Value.Y), Power);
                     Power = 0;
-                    ball.Speed = 400f;
+                    ball.Speed = Ball.DefaultSpeed + 100f;
                     HasHoldPaddle = false;
                     ballReady = false;
                 }

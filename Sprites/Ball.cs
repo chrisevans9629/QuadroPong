@@ -16,7 +16,7 @@ namespace MyGame
         {
             _random = random;
             Timer = gameTimer;
-            Speed = 300;
+            Speed = DefaultSpeed;
         }
 
         public override void Dispose()
@@ -30,6 +30,7 @@ namespace MyGame
             base.Dispose();
         }
 
+        public const float DefaultSpeed = 400;
 
         public SoundEffect PewSound { get; set; }
         public bool IsColliding { get; set; }
@@ -39,7 +40,7 @@ namespace MyGame
 
         public void Reset(int width, int height, float? angle = null)
         {
-            Speed = 300;
+            Speed = DefaultSpeed;
             Timer.Restart();
             LastPosessor.Clear();
 
@@ -113,7 +114,7 @@ namespace MyGame
 
             Position = Vector2.Clamp(newPos, min, max);
 
-            var subColor = 300 / Speed;
+            var subColor = DefaultSpeed / Speed;
 
             Color = new Color(new Vector3(1, Math.Max(subColor, 0), Math.Max(subColor, 0)));
             IsColliding = false;

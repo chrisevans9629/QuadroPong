@@ -20,7 +20,7 @@ namespace MyGame
         {
             Position = position;
             Paddle = new Paddle(player, particleEngine);
-            Paddle.Speed = 500;
+            Paddle.Speed = 300;
             this.Goal ??= new Goal();
         }
 

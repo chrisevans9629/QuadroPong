@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -84,6 +86,7 @@ namespace MyGame.Levels
 
             LoadBalls(pew, blip, ballTexture, font);
             SetPositions(windowSize.X, windowSize.Y);
+            ResetGame(windowSize.X, windowSize.Y);
         }
         private void LoadPlayers(SpriteFont font, Texture2D paddle, Song goal, Texture2D paddleRot, SoundEffect death)
         {

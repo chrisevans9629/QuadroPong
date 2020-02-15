@@ -87,12 +87,14 @@ namespace MyGame
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font1);
             gui = new PongGui();
-            mainMenu = new MainMenu();
+            mainMenu = new MainMenu
+            {
+                Start = StartGame,
+                Quit = Exit, 
+                Start2 = StartGame2, 
+                StartTeamsAction = StartGameTeams
+            };
 
-            mainMenu.Start = StartGame;
-            mainMenu.Quit = Exit;
-            mainMenu.Start2 = StartGame2;
-            mainMenu.StartTeamsAction = StartGameTeams;
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
                 ActiveScreen = mainMenu.Screen //gui.Screen,
