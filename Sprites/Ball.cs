@@ -87,18 +87,22 @@ namespace MyGame
             if (Math.Abs(Position.X - min.X) < 1)
             {
                 Acceleration = Vector2.Reflect(Acceleration, new Vector2(1, 0));
+                OnCollision();
             }
             else if (Math.Abs(Position.X - max.X) < 1)
             {
                 Acceleration = Vector2.Reflect(Acceleration, new Vector2(1, 0));
+                OnCollision();
             }
             else if (Math.Abs(Position.Y - min.Y) < 1)
             {
                 Acceleration = Vector2.Reflect(Acceleration, new Vector2(0, 1));
+                OnCollision();
             }
             else if (Math.Abs(Position.Y - max.Y) < 1)
             {
                 Acceleration = Vector2.Reflect(Acceleration, new Vector2(0, 1));
+                OnCollision();
             }
 
             // TODO: Add your update logic here
