@@ -31,7 +31,7 @@ namespace MyGame
         private PongGui gui;
         private MainMenu mainMenu;
 
-        Level fourPlayer = new FourPlayerLevel();
+        Level? level;
 
         public PongGame()
         {
@@ -47,8 +47,8 @@ namespace MyGame
 
         protected override void Initialize()
         {
-            fourPlayer.Initialize();
-            fourPlayer.BackToMenu = o => BackToMainMenu();
+            level?.Initialize();
+            //fourPlayer.BackToMenu = o => BackToMainMenu();
             base.Initialize();
         }
 
@@ -58,7 +58,7 @@ namespace MyGame
             _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
             _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
             _graphics.ApplyChanges();
-            fourPlayer.WindowResized();
+            level?.WindowResized();
         }
        
 
@@ -73,7 +73,7 @@ namespace MyGame
 
             this.frameCounter.Load(font);
             LoadMusic();
-            fourPlayer.LoadContent(Content, new Point(Width, Height));
+            level?.LoadContent(Content, new Point(Width, Height));
             LoadGui(font1);
         }
 
@@ -91,13 +91,24 @@ namespace MyGame
 
             mainMenu.Start = StartGame;
             mainMenu.Quit = Exit;
-
+            mainMenu.Start2 = StartGame2;
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
                 ActiveScreen = mainMenu.Screen //gui.Screen,
             };
             
             gui.Main = BackToMainMenu;
+        }
+
+        private void StartGame2()
+        {
+            _guiSystem.ActiveScreen = gui.Screen;
+            IsInGame = true;
+            //level?.Dispose();
+            this.level = new RegularPongLevel();
+            level.Initialize();
+            level.LoadContent(Content, new Point(Width, Height));
+            level.BackToMenu = o => BackToMainMenu();
         }
 
         private void BackToMainMenu()
@@ -111,6 +122,11 @@ namespace MyGame
         {
             _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = true;
+            //level?.Dispose();
+            this.level = new FourPlayerLevel();
+            level.Initialize();
+            level.LoadContent(Content, new Point(Width, Height));
+            level.BackToMenu = o => BackToMainMenu();
         }
         private void LoadMusic()
         {
@@ -149,7 +165,7 @@ namespace MyGame
                 musicSoundEffect.Volume = defaultVolume;
             }
             
-            fourPlayer.Update(gameTime, new GameState(){Width = Width, Height = Height, IsDebug = gui.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = gui.SoundOn});
+            level?.Update(gameTime, new GameState(){Width = Width, Height = Height, IsDebug = gui.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = gui.SoundOn});
             
 
             base.Update(gameTime);
@@ -163,7 +179,7 @@ namespace MyGame
             // TODO: Add your drawing code here
             _spriteBatch.Begin();
 
-            fourPlayer.Draw(_spriteBatch, gameTime, new Point(Width, Height));
+            level?.Draw(_spriteBatch, gameTime, new Point(Width, Height));
             
             _guiSystem.Draw(gameTime);
 

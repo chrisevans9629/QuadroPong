@@ -10,11 +10,21 @@ namespace MyGame
 {
     public class MainMenu
     {
+        public Button Button(string text)
+        {
+            var t = new Button(){Content = text, Name = text, Padding = padding, Margin = margin};
+            Buttons.Add(t);
+            return t;
+        }
+        Thickness padding = new Thickness(50, 20);
+        Thickness margin = new Thickness(10);
+
         public MainMenu()
         {
-            var padding = new Thickness(50, 20);
-            var margin = new Thickness(10);
-
+            var start = Button("Start 4 Player");
+            var start2 = Button("Start 2 Player");
+            var settings = Button("Settings");
+            var quit = Button("Quit");
             var src = new Screen()
             {
                 Content = new StackPanel()
@@ -26,47 +36,24 @@ namespace MyGame
                         {
                             Name = "winner"
                         },
-                        new Button()
-                        {
-                            Name = "start",
-                            Content = "Start",
-                            Padding = padding,
-                            Margin = margin
-                        },
-                        new Button()
-                        {
-                            Name = "settings",
-                            Content = "Settings",
-                            Padding = padding,
-                            Margin = margin
-                        },
-                        new Button()
-                        {
-                            Name = "quit",
-                            Content = "Quit",
-                            Padding = padding,
-                            Margin = margin
-                        },
+                        start,
+                        start2,
+                        settings,
+                        quit,
                     },
                     HorizontalAlignment = HorizontalAlignment.Centre,
                     VerticalAlignment = VerticalAlignment.Centre
                 }
             };
-
-            var start = src.FindControl<Button>("start");
+            start2.Clicked += (sender, args) => Start2?.Invoke();
             start.Clicked += (sender, args) => Start?.Invoke();
-            var settings = src.FindControl<Button>("settings");
             settings.Clicked += (sender, args) => Settings?.Invoke();
             label = src.FindControl<Label>("winner");
 
-            var quitButton = src.FindControl<Button>("quit");
-            quitButton.Clicked += (sender, args) => Quit?.Invoke();
+            quit.Clicked += (sender, args) => Quit?.Invoke();
 
             start.IsPressed = true;
 
-            Buttons.Add(start);
-            Buttons.Add(settings);
-            Buttons.Add(quitButton);
 
             Screen = src;
         }
@@ -157,7 +144,7 @@ namespace MyGame
         public Action Quit { get; set; }
         public Screen Screen { get; set; }
 
-
+        public Action Start2 { get; set; }
 
     }
 }
