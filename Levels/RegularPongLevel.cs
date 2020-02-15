@@ -17,6 +17,12 @@ namespace MyGame.Levels
         private List<PongPlayer> players = new List<PongPlayer>();
         private GameResult gameResult = new GameResult();
         private IRandomizer? randomizer;
+
+        public RegularPongLevel()
+        {
+            
+        }
+
         public override void Dispose()
         {
             foreach (var ball in balls)
