@@ -59,14 +59,16 @@ namespace MyGame
             Goal.Paddles = Position;
 
             var topPos = new Vector2(0,positionOffset);
-
+            var ballOffset = 30;
             if (Position == Paddles.Bottom)
             {
+                Paddle.BallLaunchOffset = new Vector2(0,ballOffset);
                 Paddle.Position = new Vector2(halfWinWidth, Height - offset) - halfPaddleWidth - topPos;
                 Goal.Rectangle = new Rectangle(0, Height - goalOffset, Width, goalWidth);
             }
             else if (Position == Paddles.Top)
             {
+                Paddle.BallLaunchOffset = new Vector2(0, -ballOffset);
                 Paddle.Position = new Vector2(halfWinWidth, offset) - halfPaddleWidth + topPos;
                 Goal.Rectangle = new Rectangle(0, goalOffset, Width, goalWidth);
             }
@@ -76,11 +78,13 @@ namespace MyGame
 
             if (Position == Paddles.Left)
             {
+                Paddle.BallLaunchOffset = new Vector2(-ballOffset, 0);
                 Paddle.Position = new Vector2(offset, halfWinHeight) - halfPaddleHeight + sidePos;
                 Goal.Rectangle = new Rectangle(goalOffset, 0, goalWidth, Height);
             }
             else if (Position == Paddles.Right)
             {
+                Paddle.BallLaunchOffset = new Vector2(ballOffset, 0);
                 Paddle.Position = new Vector2(Width - offset, halfWinHeight) - halfPaddleHeight - sidePos;
                 Goal.Rectangle = new Rectangle(Width - goalOffset, 0, goalWidth, Height);
             }

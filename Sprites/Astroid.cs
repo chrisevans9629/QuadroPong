@@ -48,7 +48,7 @@ namespace PongGame.Sprites
             {
                 if (Collision(ball))
                 {
-                    ball.Reflect((Position + RelativeCenter) - ball.Center, 0);
+                    ball.Reflect((Position + new Vector2(-RelativeCenter.X, RelativeCenter.Y)) - ball.Center, 0);
                 }
             }
 

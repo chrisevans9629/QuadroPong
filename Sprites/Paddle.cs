@@ -25,7 +25,7 @@ namespace MyGame
         public SpriteFont SpriteFont { get; set; }
         public bool IsStunned { get; set; }
         public bool HasHoldPaddle { get; set; }
-
+        public Vector2 BallLaunchOffset { get; set; }
         public override RectangleF Bounds() => new RectangleF(Position, new Size2(Texture2D.Width * Size.X, Texture2D.Height * Size.Y));
 
         private bool ballReady;
@@ -78,7 +78,7 @@ namespace MyGame
                 }
                 else
                 {
-                    ball.Reflect(Center - ball.Center, Power);
+                    ball.Reflect(Center + BallLaunchOffset - ball.Center, Power);
                     Power = 0;
                 }
             }

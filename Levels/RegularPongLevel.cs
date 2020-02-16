@@ -40,7 +40,7 @@ namespace MyGame.Levels
         public override void Initialize()
         {
             PongGame.Width = 1000;
-            PongGame.Height = 500;
+            PongGame.Height = 700;
 
             randomizer = new Randomizer();
             for (int i = 0; i < 1; i++)
