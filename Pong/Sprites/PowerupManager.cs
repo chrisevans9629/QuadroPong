@@ -7,15 +7,19 @@ namespace MyGame
 {
     public class PowerupManager : IPowerupManager
     {
+        Dictionary<Sprite, Dictionary<PowerUpType, PowerupStore>> TimedPowerups { get; set; } = new Dictionary<Sprite, Dictionary<PowerUpType, PowerupStore>>();
+
         class PowerupStore
         {
             public GameTimer GameTimer { get; set; }
             public Action Complete { get; set; }
         }
 
-        
+        public bool HasPowerup(Sprite sprite, PowerUpType type)
+        {
+            return TimedPowerups.ContainsKey(sprite) && TimedPowerups[sprite].ContainsKey(type);
+        }
 
-        Dictionary<Sprite, Dictionary<PowerUpType, PowerupStore>> TimedPowerups { get; set; } = new Dictionary<Sprite, Dictionary<PowerUpType, PowerupStore>>();
 
         public void AddTimedPowerup(Sprite sprite,PowerUpType type, float seconds, Action completeAction)
         {
