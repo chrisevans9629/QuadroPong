@@ -30,7 +30,7 @@ namespace MyGame
             base.Dispose();
         }
 
-        public const float DefaultSpeed = 400;
+        public const float DefaultSpeed = 500;
 
         public SoundEffect PewSound { get; set; }
         public bool IsColliding { get; set; }

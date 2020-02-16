@@ -15,6 +15,7 @@ namespace MyGame
         public Button Button(string text, Action action, bool visible = true)
         {
             var t = new Button(){Content = text, Name = text, Padding = _padding, Margin = _margin, IsVisible = visible};
+            t.Style();
             Buttons.Add(t);
             t.Clicked += (sender, args) => action();
             return t;

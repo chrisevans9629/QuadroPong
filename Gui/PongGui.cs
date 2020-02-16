@@ -46,12 +46,14 @@ namespace MyGame
                             Name = "Debug",
                             Content = "Debug",
                         },
-                        
+
                     }
                 },
-                
+
             };
-            Screen.FindControl<Button>("main").Clicked += (sender, args) => pongGame.ShowMainMenu();
+            var btn = Screen.FindControl<Button>("main");
+            btn.Clicked += (sender, args) => pongGame.ShowMainMenu();
+            btn.Style();
             runningCheckBox = Screen.FindControl<CheckBox>("Running");
             soundCheckBox = Screen.FindControl<CheckBox>("Sound");
             debugginCheckBox = Screen.FindControl<CheckBox>("Debug");

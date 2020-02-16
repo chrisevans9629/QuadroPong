@@ -23,14 +23,14 @@ Four player pong made using monogame.
 - [ ] Multiplayer
   - [x] Offline
   - [ ] Online
-- [ ] Gamemodes
+- [x] Gamemodes
   - [x] 4 Player
-  - [ ] 2 Player
-  - [ ] 4 Player Teams
+  - [x] 2 Player
+  - [x] 4 Player Teams
 - [ ] Main Menu
   - [x] Start
-  - [ ] Reset
-  - [ ] Quit
+  - [x] Reset
+  - [x] Quit
   - [ ] Settings
     - [ ] Volume
     - [ ] Music

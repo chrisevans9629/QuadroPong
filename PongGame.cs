@@ -86,10 +86,28 @@ namespace MyGame
             _graphics.ApplyChanges();
             level?.WindowResized();
         }
-       
 
-        public int Width => GraphicsDevice.Viewport.Width;
-        public int Height => GraphicsDevice.Viewport.Height;
+
+        public int Width
+        {
+            get => GraphicsDevice.Viewport.Width;
+            set
+            {
+                _graphics.PreferredBackBufferWidth = value;
+                _graphics.ApplyChanges();
+            }
+        }
+
+        public int Height
+        {
+            get => GraphicsDevice.Viewport.Height;
+            set
+            {
+                _graphics.PreferredBackBufferHeight = value;
+                _graphics.ApplyChanges();
+            }
+        }
+
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
