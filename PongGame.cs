@@ -112,6 +112,7 @@ namespace MyGame
 
         public void StartGameTeams()
         {
+            _settings.IsPaused = false;
             gui = new PongGui(this, _settings);
             _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = true;
@@ -123,6 +124,7 @@ namespace MyGame
         }
         public void StartGameClassic()
         {
+            _settings.IsPaused = false;
             gui = new PongGui(this, _settings);
             _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = true;
@@ -148,12 +150,13 @@ namespace MyGame
         {
             gui = new MainMenu(this);
             _guiSystem.ActiveScreen = gui.Screen;
-            IsInGame = false;
+            _settings.IsPaused = true;
         }
 
       
         public void StartGame4Player()
         {
+            _settings.IsPaused = false;
             gui = new PongGui(this, _settings);
             _guiSystem.ActiveScreen = gui.Screen;
             IsInGame = true;
@@ -177,6 +180,13 @@ namespace MyGame
         public SoundEffectInstance musicSoundEffect { get; set; }
         private float defaultVolume = 0.2f;
         public bool IsInGame { get; set; }
+        public void ResumeGame()
+        {
+            _settings.IsPaused = false;
+            gui = new PongGui(this, _settings);
+            _guiSystem.ActiveScreen = gui.Screen;
+        }
+
         protected override void Update(GameTime gameTime)
         {
             //frameCounter.Update((float)gameTime.ElapsedGameTime.TotalSeconds);

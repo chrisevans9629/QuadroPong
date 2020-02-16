@@ -25,16 +25,19 @@ namespace MyGame
         void ShowMainMenu();
         void ShowSettings();
         void Exit();
+        bool IsInGame { get; }
+        void ResumeGame();
     }
     
     public class MainMenu : IGui
     {
         private readonly IPongGame _pongGame;
 
-        public Button Button(string text)
+        public Button Button(string text, Action action, bool visible = true)
         {
-            var t = new Button(){Content = text, Name = text, Padding = _padding, Margin = _margin};
+            var t = new Button(){Content = text, Name = text, Padding = _padding, Margin = _margin, IsVisible = visible};
             Buttons.Add(t);
+            t.Clicked += (sender, args) => action();
             return t;
         }
 
@@ -44,12 +47,11 @@ namespace MyGame
             IPongGame pongGame)
         {
             _pongGame = pongGame;
-            var start = Button("Start 4 Player");
-            var start2 = Button("Start 2 Player");
-            var startTeams = Button("Start 4 Player Teams");
-            startTeams.Clicked += (sender, args) => pongGame.StartGameTeams();
-            var settings = Button("Settings");
-            var quit = Button("Quit");
+            var start = Button("Start 4 Player", pongGame.StartGame4Player);
+            var start2 = Button("Start 2 Player", pongGame.StartGameClassic);
+            var startTeams = Button("Start 4 Player Teams", pongGame.StartGameTeams);
+            var settings = Button("Settings", pongGame.ShowSettings);
+            var quit = Button("Quit",pongGame.Exit);
 
 
             var src = new Screen()
@@ -63,6 +65,7 @@ namespace MyGame
                         {
                             Name = "winner"
                         },
+                        Button("Resume",pongGame.ResumeGame, pongGame.IsInGame),
                         start,
                         start2,
                         startTeams,
@@ -73,16 +76,8 @@ namespace MyGame
                     VerticalAlignment = VerticalAlignment.Centre
                 }
             };
-            start2.Clicked += (sender, args) => pongGame.StartGameClassic();
-            start.Clicked += (sender, args) => pongGame.StartGame4Player();
-            settings.Clicked += (sender, args) => pongGame.ShowSettings();
             label = src.FindControl<Label>("winner");
-
-            quit.Clicked += (sender, args) => pongGame.Exit();
-
             start.IsPressed = true;
-
-
             Screen = src;
         }
 
