@@ -24,13 +24,7 @@ namespace MyGame.Levels
         private PowerupManager manager;
         private IRandomizer randomizer;
         public Rectangle PowerUpArea(int Width, int Height) => new Rectangle(250, 250, Width - 250, Height - 250);
-        public FourPlayerLevel()
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                boundaries.Add(new Boundary());
-            }
-        }
+        
 
         public override void Dispose()
         {
@@ -58,6 +52,10 @@ namespace MyGame.Levels
 
         public override void Initialize()
         {
+            for (int i = 0; i < 4; i++)
+            {
+                boundaries.Add(new Boundary());
+            }
             // TODO: Add your initialization logic here
             manager = new PowerupManager();
             randomizer = new Randomizer();
@@ -165,9 +163,12 @@ namespace MyGame.Levels
             {
                 //mainMenu.Winner = $"{gameResult.Winner.Position} won!";
                 ResetGame(Width, Height);
-                BackToMenu($"{gameResult.Winner.Position} won!");
+                //todo: make gui to show winner
+                PongGame.ShowMainMenu();
+                //BackToMenu($"{gameResult.Winner.Position} won!");
                 //BackToMainMenu();
             }
+            base.Update(gameTime, gameState);
         }
 
        
@@ -305,6 +306,10 @@ namespace MyGame.Levels
             }
             astroidManager.Draw(_spriteBatch);
             engine.Draw(_spriteBatch);
+        }
+
+        public FourPlayerLevel(IPongGame pongGame) : base(pongGame)
+        {
         }
     }
 }

@@ -19,11 +19,9 @@ namespace MyGame.Levels
         private List<PongPlayer> players = new List<PongPlayer>();
         private GameResult gameResult = new GameResult();
         private IRandomizer? randomizer;
-        private bool _hasTeams;
-        public RegularPongLevel(bool hasTeams = false)
-        {
-            _hasTeams = hasTeams;
-        }
+        public bool HasTeams { get; set; }
+
+        
 
         public override void Dispose()
         {
@@ -62,7 +60,7 @@ namespace MyGame.Levels
 
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, randomizer);
 
-            if (_hasTeams)
+            if (HasTeams)
             {
                 var goalLeft = new Goal();
                 var goalRight = new Goal();
@@ -133,6 +131,8 @@ namespace MyGame.Levels
         }
         public override void Update(GameTime gameTime, GameState gameState)
         {
+
+
             var Width = gameState.Width;
             var Height = gameState.Height;
             gameResult.Update(players);
@@ -160,9 +160,13 @@ namespace MyGame.Levels
             {
                 //mainMenu.Winner = $"{gameResult.Winner.Position} won!";
                 ResetGame(Width, Height);
-                BackToMenu($"{gameResult.Winner.Position} won!");
+                
+                PongGame.ShowMainMenu();
+                
+                //BackToMenu($"{gameResult.Winner.Position} won!");
                 //BackToMainMenu();
             }
+            base.Update(gameTime, gameState);
         }
 
         public override void Draw(SpriteBatch _spriteBatch, GameTime gameTime, Point window)
@@ -183,6 +187,10 @@ namespace MyGame.Levels
 
 
             engine.Draw(_spriteBatch);
+        }
+
+        public RegularPongLevel(IPongGame pongGame) : base(pongGame)
+        {
         }
     }
 }

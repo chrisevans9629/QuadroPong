@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
 using Akavache;
+using DryIoc;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,25 +24,41 @@ namespace MyGame
 {
     public class PongGame : Game, IPongGame
     {
-        private FrameCounter frameCounter = new FrameCounter();
-        private GraphicsDeviceManager _graphics;
+        private readonly GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Settings _settings;
         private GuiSystem _guiSystem;
-        private IGui gui;
+        private IGui _gui;
         //private MainMenu mainMenu;
-
+        private readonly ISettings _settings;
+        private readonly FrameCounter _frameCounter;
         Level? level;
-
+        private Container container;
         public PongGame()
         {
             Akavache.Registrations.Start("PongGame");
-            _settings = new Settings();
-            _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferMultiSampling = true;
-            _graphics.PreferredBackBufferHeight = 1000;
-            _graphics.PreferredBackBufferWidth = 1000;
+            container = new Container();
+
+
+            container.Register<ISettings, Settings>(Reuse.Singleton);
+            container.Register<FrameCounter>();
+            container.RegisterInstance<IPongGame>(this);
+            container.Register<MainMenuGui>();
+            container.Register<PongGui>();
+            container.Register<SettingsGui>();
+                
+            container.Register<RegularPongLevel>(setup: Setup.With(allowDisposableTransient: true));
+            container.Register<FourPlayerLevel>(setup: Setup.With(allowDisposableTransient: true));
+
+
+            _frameCounter = container.Resolve<FrameCounter>();
+
+            _settings = container.Resolve<ISettings>();
+
+            _graphics = new GraphicsDeviceManager(this)
+            {
+                PreferMultiSampling = true, PreferredBackBufferHeight = 1000, PreferredBackBufferWidth = 1000
+            };
             this.Window.AllowUserResizing = true;
             Window.ClientSizeChanged += WindowOnClientSizeChanged;
             Content.RootDirectory = "Content";
@@ -80,7 +97,7 @@ namespace MyGame
             var font1 = Content.Load<BitmapFont>("Sensation");
             music = Content.Load<SoundEffect>("retromusic");
 
-            this.frameCounter.Load(font);
+            this._frameCounter.Load(font);
             LoadMusic();
             level?.LoadContent(Content, new Point(Width, Height));
             LoadGui(font1);
@@ -95,44 +112,36 @@ namespace MyGame
             var guiRenderer = new GuiSpriteBatchRenderer(GraphicsDevice, () => Matrix.Identity);
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font1);
-            //gui = new PongGui();
-            //mainMenu = new MainMenu
-            //{
-            //    Start = StartGame,
-            //    Quit = Exit, 
-            //    Start2 = StartGame2, 
-            //    StartTeamsAction = StartGameTeams
-            //};
-            gui = new MainMenu(this);
+            
+            _gui = container.Resolve<MainMenuGui>();
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
-                ActiveScreen = gui.Screen //gui.Screen,
+                ActiveScreen = _gui.Screen //gui.Screen,
             };
         }
 
         public void StartGameTeams()
         {
             _settings.IsPaused = false;
-            gui = new PongGui(this, _settings);
-            _guiSystem.ActiveScreen = gui.Screen;
+            _gui = container.Resolve<PongGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
             IsInGame = true;
-            //level?.Dispose();
-            this.level = new RegularPongLevel(true);
+            var lvl = container.Resolve<RegularPongLevel>();
+            lvl.HasTeams = true;
+            this.level = lvl;//new RegularPongLevel(true);
+            
             level.Initialize();
             level.LoadContent(Content, new Point(Width, Height));
-            level.BackToMenu = o => BackToMainMenu();
         }
         public void StartGameClassic()
         {
             _settings.IsPaused = false;
-            gui = new PongGui(this, _settings);
-            _guiSystem.ActiveScreen = gui.Screen;
+            _gui = container.Resolve<PongGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
             IsInGame = true;
-            //level?.Dispose();
-            this.level = new RegularPongLevel();
+            this.level = container.Resolve<RegularPongLevel>();
             level.Initialize();
             level.LoadContent(Content, new Point(Width, Height));
-            level.BackToMenu = o => BackToMainMenu();
         }
 
         public void ShowMainMenu()
@@ -142,14 +151,14 @@ namespace MyGame
 
         public void ShowSettings()
         {
-            gui = new SettingsGui(this);
-            _guiSystem.ActiveScreen = gui.Screen;
+            _gui = container.Resolve<SettingsGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
         }
 
         private void BackToMainMenu()
         {
-            gui = new MainMenu(this);
-            _guiSystem.ActiveScreen = gui.Screen;
+            _gui = container.Resolve<MainMenuGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
             _settings.IsPaused = true;
         }
 
@@ -157,14 +166,12 @@ namespace MyGame
         public void StartGame4Player()
         {
             _settings.IsPaused = false;
-            gui = new PongGui(this, _settings);
-            _guiSystem.ActiveScreen = gui.Screen;
+            _gui = container.Resolve<PongGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
             IsInGame = true;
-            //level?.Dispose();
-            this.level = new FourPlayerLevel();
+            this.level = container.Resolve<FourPlayerLevel>();
             level.Initialize();
             level.LoadContent(Content, new Point(Width, Height));
-            level.BackToMenu = o => BackToMainMenu();
         }
         private void LoadMusic()
         {
@@ -183,8 +190,8 @@ namespace MyGame
         public void ResumeGame()
         {
             _settings.IsPaused = false;
-            gui = new PongGui(this, _settings);
-            _guiSystem.ActiveScreen = gui.Screen;
+            _gui = container.Resolve<PongGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
         }
 
         protected override void Update(GameTime gameTime)
@@ -194,7 +201,7 @@ namespace MyGame
                 Exit();
             _guiSystem.Update(gameTime);
             
-            gui.Update();
+            _gui.Update();
 
             if (!IsInGame)
                 return;

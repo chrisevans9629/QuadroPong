@@ -8,28 +8,7 @@ using MonoGame.Extended.Gui.Controls;
 
 namespace MyGame
 {
-    public interface IGui
-    {
-        Screen Screen { get; }
-        void Update();
-    }
-
-   
-    public interface IPongGame
-    {
-        int Width { get; }
-        int Height { get; }
-        void StartGameTeams();
-        void StartGame4Player();
-        void StartGameClassic();
-        void ShowMainMenu();
-        void ShowSettings();
-        void Exit();
-        bool IsInGame { get; }
-        void ResumeGame();
-    }
-    
-    public class MainMenu : IGui
+    public class MainMenuGui : IGui
     {
         private readonly IPongGame _pongGame;
 
@@ -43,10 +22,11 @@ namespace MyGame
 
         readonly Thickness _padding = new Thickness(50, 20);
         readonly Thickness _margin = new Thickness(10);
-        public MainMenu(
+        public MainMenuGui(
             IPongGame pongGame)
         {
             _pongGame = pongGame;
+            var resume = Button("Resume", pongGame.ResumeGame, pongGame.IsInGame);
             var start = Button("Start 4 Player", pongGame.StartGame4Player);
             var start2 = Button("Start 2 Player", pongGame.StartGameClassic);
             var startTeams = Button("Start 4 Player Teams", pongGame.StartGameTeams);
@@ -65,7 +45,7 @@ namespace MyGame
                         {
                             Name = "winner"
                         },
-                        Button("Resume",pongGame.ResumeGame, pongGame.IsInGame),
+                        resume,
                         start,
                         start2,
                         startTeams,
@@ -104,7 +84,7 @@ namespace MyGame
                 {
                     if(wasUp)
                         return;
-                    if (selectedButton > 0)
+                    if (selectedButton > 0 && Buttons[selectedButton-1].IsVisible)
                     {
                         selectedButton--;
                     }
@@ -129,7 +109,7 @@ namespace MyGame
                 {
                     if(wasDown)
                         return;
-                    if (selectedButton < Buttons.Count-1)
+                    if (selectedButton < Buttons.Count-1 && Buttons[selectedButton+1].IsVisible)
                     {
                         selectedButton++;
                     }
