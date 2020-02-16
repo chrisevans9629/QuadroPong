@@ -27,6 +27,10 @@ Four player pong made using monogame.
   - [x] 4 Player
   - [x] 2 Player
   - [x] 4 Player Teams
+- [ ] Show Player stats in the corners
+  - [ ] Powerups
+  - [ ] Healthbar
+  - [ ] Points
 - [ ] Main Menu
   - [x] Start
   - [x] Reset
