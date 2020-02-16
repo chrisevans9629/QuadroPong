@@ -267,6 +267,13 @@ namespace MyGame.Levels
             ship.Reset();
             gameResult.Reset();
         }
+
+        public override void WindowResized()
+        {
+            SetPositions(PongGame.Width, PongGame.Height);
+            base.WindowResized();
+        }
+
         public void SetPositions(int Width, int Height)
         {
             boundaries[0].Position = new Vector2(0);

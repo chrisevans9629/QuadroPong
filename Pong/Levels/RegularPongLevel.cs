@@ -37,6 +37,12 @@ namespace MyGame.Levels
             base.Dispose();
         }
 
+        public override void WindowResized()
+        {
+            SetPositions(PongGame.Width,PongGame.Height);
+            base.WindowResized();
+        }
+
         public override void Initialize()
         {
             PongGame.Width = 1000;

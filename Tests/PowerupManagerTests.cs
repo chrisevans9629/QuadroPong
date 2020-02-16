@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Tests
 {
-    public class PowerupManagerTests
+    public class PowerUpManagerTests
     {
         private PowerupManager powerupManager;
         [SetUp]

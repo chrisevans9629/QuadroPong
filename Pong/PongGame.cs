@@ -57,8 +57,11 @@ namespace MyGame
 
             _graphics = new GraphicsDeviceManager(this)
             {
-                PreferMultiSampling = true, PreferredBackBufferHeight = 1000, PreferredBackBufferWidth = 1000
+                PreferMultiSampling = true, 
+                PreferredBackBufferHeight = 1000, 
+                PreferredBackBufferWidth = 1000,
             };
+            
             this.Window.AllowUserResizing = true;
             Window.ClientSizeChanged += WindowOnClientSizeChanged;
             Content.RootDirectory = "Content";
