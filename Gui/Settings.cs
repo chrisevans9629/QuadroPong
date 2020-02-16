@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Akavache;
 
 namespace MyGame
@@ -8,6 +9,8 @@ namespace MyGame
         private IBlobCache blobCache;
         private bool _isSoundOn;
         private bool _isDebugging;
+        private bool _hasAstroids;
+        private float _masterVolume;
 
         public Settings()
         {
@@ -15,31 +18,40 @@ namespace MyGame
 
             blobCache.GetOrCreateObject(nameof(IsDebugging), () => false).Subscribe(b => _isDebugging = b);
             blobCache.GetOrCreateObject(nameof(IsSoundOn), () => false).Subscribe(b => _isSoundOn = b);
+            blobCache.GetOrCreateObject(nameof(HasAstroids), () => true).Subscribe(b => _hasAstroids = b);
+            blobCache.GetOrCreateObject(nameof(MasterVolume), () => 10f).Subscribe(b => _masterVolume = b);
         }
         public bool IsPaused { get; set; }
 
+        void Set<T>(ref T prop, T value, [CallerMemberName] string? property = null)
+        {
+            if (prop?.Equals(value) == true)
+                return;
+            prop = value;
+            blobCache.InsertObject(property, value);
+        }
         public bool IsDebugging
         {
             get => _isDebugging;
-            set
-            {
-                if(_isDebugging == value)
-                    return;
-                _isDebugging = value;
-                blobCache.InsertObject(nameof(IsDebugging), value);
-            }
+            set => Set(ref _isDebugging, value);
         }
 
         public bool IsSoundOn
         {
             get => _isSoundOn;
-            set
-            {
-                if(_isSoundOn == value)
-                    return;
-                _isSoundOn = value;
-                blobCache.InsertObject(nameof(IsSoundOn), value);
-            }
+            set => Set(ref _isSoundOn, value);
+        }
+
+        public bool HasAstroids
+        {
+            get => _hasAstroids;
+            set => Set(ref _hasAstroids, value);
+        }
+
+        public float MasterVolume
+        {
+            get => _masterVolume;
+            set => Set(ref _masterVolume, value);
         }
     }
 }
