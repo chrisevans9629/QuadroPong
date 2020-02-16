@@ -52,6 +52,8 @@ namespace MyGame.Levels
 
         public override void Initialize()
         {
+            PongGame.Width = 1000;
+            PongGame.Height = 1000;
             for (int i = 0; i < 4; i++)
             {
                 boundaries.Add(new Boundary());
@@ -272,7 +274,7 @@ namespace MyGame.Levels
 
             foreach (var pongPlayer in players)
             {
-                pongPlayer.SetPosition(Width, Height);
+                pongPlayer.SetPosition(Width, Height,0);
             }
         }
 

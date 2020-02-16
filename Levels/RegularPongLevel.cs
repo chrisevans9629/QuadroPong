@@ -21,7 +21,7 @@ namespace MyGame.Levels
         private IRandomizer? randomizer;
         public bool HasTeams { get; set; }
 
-        
+
 
         public override void Dispose()
         {
@@ -41,7 +41,7 @@ namespace MyGame.Levels
         {
             PongGame.Width = 1000;
             PongGame.Height = 500;
-            
+
             randomizer = new Randomizer();
             for (int i = 0; i < 1; i++)
             {
@@ -85,8 +85,9 @@ namespace MyGame.Levels
             LoadPlayers(font, paddle, goal, paddleRot, deathSound);
 
             LoadBalls(pew, blip, ballTexture, font);
-            SetPositions(windowSize.X, windowSize.Y);
             ResetGame(windowSize.X, windowSize.Y);
+            SetPositions(windowSize.X, windowSize.Y);
+
         }
         private void LoadPlayers(SpriteFont font, Texture2D paddle, Song goal, Texture2D paddleRot, SoundEffect death)
         {
@@ -107,6 +108,7 @@ namespace MyGame.Levels
             {
                 ball.Reset(Width, Height);
             }
+
             foreach (var pongPlayer in players)
             {
                 pongPlayer.Reset(Width, Height);
@@ -115,9 +117,21 @@ namespace MyGame.Levels
         }
         public void SetPositions(int Width, int Height)
         {
-            foreach (var pongPlayer in players)
+            var offset = 40;
+            var lefts = players.Where(p => p.Position == Paddles.Left);
+            var i = 0;
+            foreach (var pongPlayer in lefts)
             {
-                pongPlayer.SetPosition(Width, Height);
+                pongPlayer.SetPosition(Width, Height, i);
+                i += offset;
+            }
+
+            var rights = players.Where(p => p.Position == Paddles.Right);
+            i = 0;
+            foreach (var pongPlayer in rights)
+            {
+                pongPlayer.SetPosition(Width, Height, i);
+                i += offset;
             }
         }
         private void LoadBalls(SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
@@ -162,9 +176,9 @@ namespace MyGame.Levels
             {
                 //mainMenu.Winner = $"{gameResult.Winner.Position} won!";
                 ResetGame(Width, Height);
-                
+
                 PongGame.ShowMainMenu();
-                
+
                 //BackToMenu($"{gameResult.Winner.Position} won!");
                 //BackToMainMenu();
             }

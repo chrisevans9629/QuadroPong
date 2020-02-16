@@ -36,16 +36,17 @@ namespace MyGame
             Goal.Song = goalSong;
         }
 
+        private float _positionOffset = 0;
         public void Reset(int width, int height)
         {
             Goal.Died = false;  
             Paddle.Power = 0;
             Paddle.Score = 0;
             Goal.Health = Goal.DefaultHealth;
-            SetPosition(width, height);
+            SetPosition(width, height, _positionOffset);
         }
 
-        public void SetPosition(int Width, int Height)
+        public void SetPosition(int Width, int Height, float positionOffset)
         {
             var offset = 30;
             var paddleWidth = Paddle.Texture2D.Width;
@@ -56,28 +57,31 @@ namespace MyGame
             var goalWidth = 1;
             Paddle.Paddles = Position;
             Goal.Paddles = Position;
+
+            var topPos = new Vector2(0,positionOffset);
+
             if (Position == Paddles.Bottom)
             {
-                Paddle.Position = new Vector2(halfWinWidth, Height - offset) - halfPaddleWidth;
+                Paddle.Position = new Vector2(halfWinWidth, Height - offset) - halfPaddleWidth - topPos;
                 Goal.Rectangle = new Rectangle(0, Height - goalOffset, Width, goalWidth);
             }
             else if (Position == Paddles.Top)
             {
-                Paddle.Position = new Vector2(halfWinWidth, offset) - halfPaddleWidth;
+                Paddle.Position = new Vector2(halfWinWidth, offset) - halfPaddleWidth + topPos;
                 Goal.Rectangle = new Rectangle(0, goalOffset, Width, goalWidth);
             }
-
+            var sidePos = new Vector2(positionOffset,0);
             var halfPaddleHeight = new Vector2(0, Paddle.Texture2D.Height / 2f);
             var halfWinHeight = Height / 2f;
 
             if (Position == Paddles.Left)
             {
-                Paddle.Position = new Vector2(offset, halfWinHeight) - halfPaddleHeight;
+                Paddle.Position = new Vector2(offset, halfWinHeight) - halfPaddleHeight + sidePos;
                 Goal.Rectangle = new Rectangle(goalOffset, 0, goalWidth, Height);
             }
             else if (Position == Paddles.Right)
             {
-                Paddle.Position = new Vector2(Width - offset, halfWinHeight) - halfPaddleHeight;
+                Paddle.Position = new Vector2(Width - offset, halfWinHeight) - halfPaddleHeight - sidePos;
                 Goal.Rectangle = new Rectangle(Width - goalOffset, 0, goalWidth, Height);
             }
         }
