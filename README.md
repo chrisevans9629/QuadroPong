@@ -1,9 +1,16 @@
 # Quadropong
 
 Four player pong made using monogame.
-
 ![](pong.gif)
 
+Astroids, Powerups, and local 4 player controller support!
+![](pong2.gif)
+
+Boss Battles!
+![](pong3.gif)
+
+Classic Pong
+![](pong4.gif)
 ## Features
 
 - [x] Powerups
