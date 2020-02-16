@@ -40,6 +40,7 @@ namespace MyGame
                     {
                         Button("Main Menu", pongGame.ShowMainMenu),
                         CheckBox("Has Astroids", settings.HasAstroids, p => settings.HasAstroids = p.IsChecked),
+                        CheckBox("Is Fullscreen", settings.IsFullScreen, p => settings.IsFullScreen = p.IsChecked),
                         Stack(
                             Button("-", () => settings.MasterVolume--),
                             Label(settings.MasterVolume.ToString(), p => ((Label)p).Content = settings.MasterVolume),

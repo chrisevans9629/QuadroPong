@@ -46,7 +46,9 @@ Classic Pong
     - [ ] Volume
     - [ ] Music
     - [ ] Sound
+    - [ ] Fullscreen
     - [ ] Game Settings
       - [ ] Powerups
       - [ ] Bosses
+      - [x] Astroids
         

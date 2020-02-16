@@ -7,5 +7,6 @@
         bool IsSoundOn { get; set; }
         bool HasAstroids { get; set; }
         float MasterVolume { get; set; }
+        bool IsFullScreen { get; set; }
     }
 }

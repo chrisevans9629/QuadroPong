@@ -11,6 +11,7 @@ namespace MyGame
         private bool _isDebugging;
         private bool _hasAstroids;
         private float _masterVolume;
+        private bool _isFullScreen;
 
         public Settings()
         {
@@ -20,16 +21,11 @@ namespace MyGame
             blobCache.GetOrCreateObject(nameof(IsSoundOn), () => false).Subscribe(b => _isSoundOn = b);
             blobCache.GetOrCreateObject(nameof(HasAstroids), () => true).Subscribe(b => _hasAstroids = b);
             blobCache.GetOrCreateObject(nameof(MasterVolume), () => 10f).Subscribe(b => _masterVolume = b);
+            blobCache.GetOrCreateObject(nameof(IsFullScreen), () => false).Subscribe(b => _isFullScreen = b);
         }
         public bool IsPaused { get; set; }
 
-        void Set<T>(ref T prop, T value, [CallerMemberName] string? property = null)
-        {
-            if (prop?.Equals(value) == true)
-                return;
-            prop = value;
-            blobCache.InsertObject(property, value);
-        }
+        
         public bool IsDebugging
         {
             get => _isDebugging;
@@ -52,6 +48,20 @@ namespace MyGame
         {
             get => _masterVolume;
             set => Set(ref _masterVolume, value);
+        }
+
+        public bool IsFullScreen
+        {
+            get => _isFullScreen;
+            set => Set(ref _isFullScreen,value);
+        }
+
+        void Set<T>(ref T prop, T value, [CallerMemberName] string? property = null)
+        {
+            if (prop?.Equals(value) == true)
+                return;
+            prop = value;
+            blobCache.InsertObject(property, value);
         }
     }
 }

@@ -60,6 +60,7 @@ namespace MyGame
                 PreferMultiSampling = true, 
                 PreferredBackBufferHeight = 1000, 
                 PreferredBackBufferWidth = 1000,
+                IsFullScreen = _settings.IsFullScreen,
             };
             
             this.Window.AllowUserResizing = true;
@@ -84,9 +85,9 @@ namespace MyGame
         private void WindowOnClientSizeChanged(object sender, EventArgs e)
         {
             _guiSystem.ClientSizeChanged();
-            _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
-            _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
-            _graphics.ApplyChanges();
+           // _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+           // _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+           // _graphics.ApplyChanges();
             level?.WindowResized();
         }
 
@@ -223,7 +224,11 @@ namespace MyGame
             _guiSystem.Update(gameTime);
             
             _gui.Update();
-
+            if (_graphics.IsFullScreen != _settings.IsFullScreen)
+            {
+                _graphics.IsFullScreen = _settings.IsFullScreen;
+                _graphics.ApplyChanges();
+            }
             if (!IsInGame)
                 return;
 
