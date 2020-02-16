@@ -13,6 +13,7 @@ namespace MyGame.Levels
 {
     public class FourPlayerLevel : Level
     {
+        private readonly ISettings _settings;
         private AstroidManager astroidManager;
         private ParticleEngine engine;
         private List<Ball> balls = new List<Ball>();
@@ -24,7 +25,7 @@ namespace MyGame.Levels
         private PowerupManager manager;
         private IRandomizer randomizer;
         public Rectangle PowerUpArea(int Width, int Height) => new Rectangle(250, 250, Width - 250, Height - 250);
-        
+
 
         public override void Dispose()
         {
@@ -116,7 +117,8 @@ namespace MyGame.Levels
         {
             var Width = gameState.Width;
             var Height = gameState.Height;
-            astroidManager.Update(gameTime, balls.Union(ship.Bullets).ToList(), Width, Height);
+            if (_settings.HasAstroids)
+                astroidManager.Update(gameTime, balls.Union(ship.Bullets).ToList(), Width, Height);
 
             manager.UpdateTimedPowerup(gameTime);
             gameResult.Update(players);
@@ -173,8 +175,8 @@ namespace MyGame.Levels
             base.Update(gameTime, gameState);
         }
 
-       
-       
+
+
         private void LoadBoundaries(Texture2D boundary)
         {
             foreach (var boundary1 in boundaries)
@@ -274,7 +276,7 @@ namespace MyGame.Levels
 
             foreach (var pongPlayer in players)
             {
-                pongPlayer.SetPosition(Width, Height,0);
+                pongPlayer.SetPosition(Width, Height, 0);
             }
         }
 
@@ -306,12 +308,14 @@ namespace MyGame.Levels
             {
                 powerUp.Draw(_spriteBatch);
             }
-            astroidManager.Draw(_spriteBatch);
+            if (_settings.HasAstroids)
+                astroidManager.Draw(_spriteBatch);
             engine.Draw(_spriteBatch);
         }
 
-        public FourPlayerLevel(IPongGame pongGame) : base(pongGame)
+        public FourPlayerLevel(IPongGame pongGame, ISettings settings) : base(pongGame)
         {
+            _settings = settings;
         }
     }
 }

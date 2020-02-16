@@ -39,7 +39,7 @@ namespace MyGame
                     Items =
                     {
                         Button("Main Menu", pongGame.ShowMainMenu),
-                        CheckBox("Has Astroids", settings.HasAstroids),
+                        CheckBox("Has Astroids", settings.HasAstroids, p => settings.HasAstroids = p.IsChecked),
                         Stack(
                             Button("-", () => settings.MasterVolume--),
                             Label(settings.MasterVolume.ToString(), p => ((Label)p).Content = settings.MasterVolume),
@@ -82,7 +82,7 @@ namespace MyGame
             return stack;
         }
 
-        public CheckBox CheckBox(string text, bool isChecked, Action<Control>? update = null)
+        public CheckBox CheckBox(string text, bool isChecked, Action<CheckBox>? update = null)
         {
             var t = new CheckBox()
             {
@@ -92,7 +92,7 @@ namespace MyGame
                 Margin = _margin,
                 IsChecked = isChecked,
             };
-            Add(t, update);
+            Add(t, control => update?.Invoke(control as CheckBox));
             return t;
         }
         public Button Button(string text, Action action, Action<Control>? update = null)
