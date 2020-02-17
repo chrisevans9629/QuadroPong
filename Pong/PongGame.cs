@@ -121,7 +121,7 @@ namespace MyGame
 
             this._frameCounter.Load(font);
             LoadMusic();
-            level?.LoadContent(Content, new Point(Width, Height));
+            level?.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
             LoadGui(font1);
         }
 
@@ -153,7 +153,7 @@ namespace MyGame
             this.level = lvl;//new RegularPongLevel(true);
             
             level.Initialize();
-            level.LoadContent(Content, new Point(Width, Height));
+            level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }
         public void StartGameClassic()
         {
@@ -163,7 +163,7 @@ namespace MyGame
             IsInGame = true;
             this.level = container.Resolve<RegularPongLevel>();
             level.Initialize();
-            level.LoadContent(Content, new Point(Width, Height));
+            level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }
 
         public void ShowMainMenu()
@@ -193,7 +193,7 @@ namespace MyGame
             IsInGame = true;
             this.level = container.Resolve<FourPlayerLevel>();
             level.Initialize();
-            level.LoadContent(Content, new Point(Width, Height));
+            level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }
         private void LoadMusic()
         {

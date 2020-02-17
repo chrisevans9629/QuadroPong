@@ -11,7 +11,7 @@ namespace MyGame
     {
         private readonly IRandomizer _random;
         public GameTimer Timer { get; }
-        public SpriteFont SpriteFont { get; set; }
+        public SpriteFont? SpriteFont { get; set; }
         public Ball(IRandomizer random, GameTimer gameTimer)
         {
             _random = random;
@@ -32,9 +32,9 @@ namespace MyGame
 
         public const float DefaultSpeed = 500;
 
-        public SoundEffect PewSound { get; set; }
-        public bool IsColliding { get; set; }
-        public SoundEffect BounceSong { get; set; }
+        public SoundEffect? PewSound { get; set; }
+        public bool IsBallColliding { get; set; }
+        public SoundEffect? BounceSong { get; set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
         private bool RandomBool() => _random.NextFloat() > 0.5f;
 
@@ -67,7 +67,7 @@ namespace MyGame
                 //y = 0;
                 Acceleration = new Vector2(x, y);
             }
-            Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D.Height / 2f);
+            Position = new Vector2(width / 2f, height / 2f) - new Vector2(0, Texture2D?.Height ?? 1f / 2f);
 
         }
 
@@ -79,7 +79,7 @@ namespace MyGame
             {
                 Timer.IsCompleted = false;
                 if (HasSound)
-                    PewSound.Play(0.5f, 0, 0);
+                    PewSound?.Play(0.5f, 0, 0);
             }
             var min = Vector2.Zero;
 
@@ -117,7 +117,7 @@ namespace MyGame
             var subColor = DefaultSpeed / Speed;
 
             Color = new Color(new Vector3(1, Math.Max(subColor, 0), Math.Max(subColor, 0)));
-            IsColliding = false;
+            IsBallColliding = false;
         }
 
         public bool HasSound { get; set; } = true;
@@ -143,9 +143,9 @@ namespace MyGame
 
         private void OnCollision()
         {
-            IsColliding = true;
+            IsBallColliding = true;
             if (HasSound)
-                BounceSong.Play();
+                BounceSong?.Play();
         }
 
         public void Reflect(Vector2 vector2, float power)

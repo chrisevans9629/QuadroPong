@@ -7,10 +7,28 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using Newtonsoft.Json;
 using PongGame;
 
 namespace MyGame.Levels
 {
+    public class ContentManagerWrapper : IContentManager
+    {
+        private readonly ContentManager _contentManager;
+
+        public ContentManagerWrapper(ContentManager contentManager)
+        {
+            _contentManager = contentManager;
+        }
+        public T Load<T>(string assetName)
+        {
+            return _contentManager.Load<T>(assetName);
+        }
+    }
+    public interface IContentManager
+    {
+        T Load<T>(string assetName);
+    }
     public class RegularPongLevel : Level
     {
         private ParticleEngine? engine;
@@ -58,7 +76,11 @@ namespace MyGame.Levels
             base.Initialize();
         }
 
-        public override void LoadContent(ContentManager Content, Point windowSize)
+        public override void SaveGame()
+        {
+        }
+
+        public override void LoadContent(IContentManager Content, Point windowSize)
         {
             var ballTexture = Content.Load<Texture2D>("ball2");
             var paddle = Content.Load<Texture2D>("paddle");
@@ -95,7 +117,12 @@ namespace MyGame.Levels
             SetPositions(windowSize.X, windowSize.Y);
 
         }
-        private void LoadPlayers(SpriteFont font, Texture2D paddle, Song goal, Texture2D paddleRot, SoundEffect death)
+        private void LoadPlayers(
+            SpriteFont font, 
+            Texture2D paddle, 
+            Song goal, 
+            Texture2D paddleRot, 
+            SoundEffect death)
         {
             var offset = -60;
 
@@ -168,7 +195,7 @@ namespace MyGame.Levels
 
             foreach (var ball in balls)
             {
-                if (ball.IsColliding)
+                if (ball.IsBallColliding)
                     engine.AddParticles(ball.Position);
                 ball.Debug = gameState.IsDebug;
                 ball.HasSound = gameState.IsSoundOn;
@@ -211,6 +238,7 @@ namespace MyGame.Levels
             engine.Draw(_spriteBatch);
         }
 
+        
         public RegularPongLevel(IPongGame pongGame) : base(pongGame)
         {
         }

@@ -34,7 +34,7 @@ namespace MyGame
     public class PlayerStats
     {
         public Vector2 Position { get; set; }
-        public SpriteFont SpriteFont { get; set; }
+        public SpriteFont? SpriteFont { get; set; }
         public int Score { get; set; }
         public int Health { get; set; }
         public PlayerName PlayerName { get; set; }
@@ -96,7 +96,7 @@ namespace MyGame
         public void SetPosition(int Width, int Height, float positionOffset)
         {
             var offset = 30;
-            var paddleWidth = Paddle.Texture2D.Width;
+            var paddleWidth = Paddle.Texture2D?.Width ?? 1f;
             var halfPaddleWidth = new Vector2(paddleWidth / 2f, 0);
             var halfWinWidth = Width / 2f;
 
@@ -121,7 +121,7 @@ namespace MyGame
                 Goal.Rectangle = new Rectangle(0, goalOffset, Width, goalWidth);
             }
             var sidePos = new Vector2(positionOffset,0);
-            var halfPaddleHeight = new Vector2(0, Paddle.Texture2D.Height / 2f);
+            var halfPaddleHeight = new Vector2(0, Paddle.Texture2D?.Height ?? 1f / 2f);
             var halfWinHeight = Height / 2f;
 
             if (Position == Paddles.Left)

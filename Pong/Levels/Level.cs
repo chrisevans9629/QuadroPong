@@ -10,6 +10,10 @@ namespace MyGame.Levels
     {
         protected readonly IPongGame PongGame;
 
+        public Level()
+        {
+            
+        }
         public Level(IPongGame pongGame)
         {
             PongGame = pongGame;
@@ -19,7 +23,7 @@ namespace MyGame.Levels
 
         }
 
-        public virtual void LoadContent(ContentManager Content, Point windowSize)
+        public virtual void LoadContent(IContentManager Content, Point windowSize)
         {
 
         }
@@ -38,6 +42,10 @@ namespace MyGame.Levels
 
         }
 
+        public virtual void SaveGame()
+        {
+
+        }
         public virtual void Draw(SpriteBatch batch, GameTime gameTime, Point window)
         {
 

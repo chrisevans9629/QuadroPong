@@ -76,7 +76,7 @@ namespace MyGame.Levels
             }
         }
 
-        public override void LoadContent(ContentManager Content, Point windowSize)
+        public override void LoadContent(IContentManager Content, Point windowSize)
         {
             var font = Content.Load<SpriteFont>("arial");
 
@@ -142,7 +142,7 @@ namespace MyGame.Levels
 
             foreach (var ball in balls.Union(ship.Bullets))
             {
-                if (ball.IsColliding)
+                if (ball.IsBallColliding)
                     engine.AddParticles(ball.Position);
                 ball.Debug = gameState.IsDebug;
                 ball.HasSound = gameState.IsSoundOn;
