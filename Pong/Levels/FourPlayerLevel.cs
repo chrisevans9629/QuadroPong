@@ -94,10 +94,10 @@ namespace MyGame.Levels
             var deathSound = Content.Load<SoundEffect>("death");
             astroidManager.Load(Content.Load<Texture2D>("astroids"));
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, randomizer);
-            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine));
-            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine));
-            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top, engine));
-            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom, engine));
+            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, PlayerName.PlayerOne));
+            players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, PlayerName.PlayerTwo));
+            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top, engine, PlayerName.PlayerThree));
+            players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom, engine, PlayerName.PlayerFour));
 
             var bullets = LoadShip(MEAT, explosions, engineSound, windowSize);
 

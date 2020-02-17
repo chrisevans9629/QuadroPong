@@ -72,16 +72,16 @@ namespace MyGame.Levels
             {
                 var goalLeft = new Goal();
                 var goalRight = new Goal();
-                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, goalRight));
-                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, goalLeft));
-                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Three)), Paddles.Right, engine, goalRight));
-                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)), Paddles.Left, engine, goalLeft));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, PlayerName.PlayerOne, goalRight));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, PlayerName.PlayerTwo, goalLeft));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Three)), Paddles.Right, engine, PlayerName.PlayerThree, goalRight));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)), Paddles.Left, engine, PlayerName.PlayerFour, goalLeft));
 
             }
             else
             {
-                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine));
-                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, PlayerName.PlayerOne));
+                players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, PlayerName.PlayerTwo));
             }
 
 

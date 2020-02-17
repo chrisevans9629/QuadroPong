@@ -105,9 +105,12 @@ namespace MyGame
             Position = Vector2.Clamp(newPos, min, max);
         }
 
+        public PlayerName PlayerName { get; set; }
         public override void Draw(SpriteBatch batch)
         {
-            batch.DrawString(SpriteFont, Score.ToString(), Position - new Vector2(10), Color.White);
+            var name = (int) PlayerName;
+
+            batch.DrawString(SpriteFont, name.ToString(), Position - new Vector2(10), PlayerName.ToColor());
             base.Draw(batch);
         }
     }

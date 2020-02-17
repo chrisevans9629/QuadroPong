@@ -22,7 +22,7 @@ namespace MyGame
                 Content = new StackPanel()
                 {
                     HorizontalAlignment = HorizontalAlignment.Left,
-                    Margin = new Thickness(20),
+                    Margin = new Thickness(20,100),
                     Items =
                     {
                         new Button()

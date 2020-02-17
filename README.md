@@ -36,8 +36,8 @@ Classic Pong
   - [x] 4 Player Teams
 - [ ] Show Player stats in the corners
   - [ ] Powerups
-  - [ ] Healthbar
-  - [ ] Points
+  - [x] Healthbar
+  - [x] Points
 - [ ] Main Menu
   - [x] Start
   - [x] Reset
@@ -46,7 +46,7 @@ Classic Pong
     - [ ] Volume
     - [ ] Music
     - [ ] Sound
-    - [ ] Fullscreen
+    - [x] Fullscreen
     - [ ] Game Settings
       - [ ] Powerups
       - [ ] Bosses
