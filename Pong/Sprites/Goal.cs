@@ -8,19 +8,35 @@ using MonoGame.Extended;
 
 namespace MyGame
 {
-    public class Goal : Collider, IDisposable
+    public class GoalState
     {
-        public SpriteFont SpriteFont { get; set; }
+        public const int DefaultHealth = 10;
+
         public RectangleF Rectangle { get; set; }
         public Paddles Paddles { get; set; }
-        public Song Song { get; set; }
+        public int Health { get; set; } = DefaultHealth;
+        public int Offset { get; set; }
+        public bool Died { get; set; }
+        public bool SoundOn { get; set; } = true;
+
+    }
+    public class Goal : Collider, IDisposable
+    {
+        public GoalState State { get; set; } = new GoalState();
+        public SpriteFont? SpriteFont { get; set; }
+        public RectangleF Rectangle { get => State.Rectangle; set=>State.Rectangle = value; }
+        public Paddles Paddles { get=>State.Paddles; set=>State.Paddles =value; }
+        public Song? Song { get; set; }
+        public int Health { get=>State.Health; set=>State.Health=value; }
+        public int Offset { get=>State.Offset; set=>State.Offset=value; }
+        public bool Died { get=>State.Died; set=>State.Died=value; }
+        public bool SoundOn { get=>State.SoundOn; set=>State.SoundOn=value; }
 
         public override RectangleF Bounds()
         {
             return Rectangle;
         }
 
-        public bool SoundOn { get; set; } = true;
         public void Update(List<Ball> balls, int width, int height)
         {
             foreach (var ball in balls)
@@ -44,12 +60,6 @@ namespace MyGame
             }
           
         }
-
-        public const int DefaultHealth = 10;
-        public int Health { get; set; } = DefaultHealth;
-        //public int Score { get; set; }
-        public int Offset { get; set; }
-        public bool Died { get; set; }
 
         public void Draw(SpriteBatch spriteBatch, int width)
         {

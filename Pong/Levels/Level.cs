@@ -41,7 +41,10 @@ namespace MyGame.Levels
         {
 
         }
+        public virtual void LoadGame()
+        {
 
+        }
         public virtual void SaveGame()
         {
 

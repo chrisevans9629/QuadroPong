@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using DryIoc;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -31,30 +32,61 @@ namespace MyGame
                 };
         }
     }
-    public class PlayerStats
+
+    public class PlayerStatsState
     {
         public Vector2 Position { get; set; }
-        public SpriteFont? SpriteFont { get; set; }
         public int Score { get; set; }
         public int Health { get; set; }
         public PlayerName PlayerName { get; set; }
+    }
+    public class PlayerStats
+    {
+        public SpriteFont? SpriteFont { get; set; }
+        public PlayerStatsState State { get; set; } = new PlayerStatsState();
+
+
         public void Draw(SpriteBatch spriteBatch)
         {
             var one = new Vector2(0,1);
-            spriteBatch.DrawString(SpriteFont, PlayerName.ToString(), Position, PlayerName.ToColor());
-            spriteBatch.DrawString(SpriteFont,$"Score: {Score}", Position + one * 30f,Color.White);
-            spriteBatch.DrawString(SpriteFont,$"Health: {Health}", Position + one * 60f,Color.White);
+            spriteBatch.DrawString(SpriteFont, State.PlayerName.ToString(), State.Position, State.PlayerName.ToColor());
+            spriteBatch.DrawString(SpriteFont,$"Score: {State.Score}", State.Position + one * 30f,Color.White);
+            spriteBatch.DrawString(SpriteFont,$"Health: {State.Health}", State.Position + one * 60f,Color.White);
         }
     }
+
+    public class PongPlayerState
+    {
+        public PlayerStatsState StatsState { get; set; } = new PlayerStatsState();
+        public Paddles Position { get; set; }
+        public PaddleState PaddleState { get; set; } = new PaddleState();
+        public GoalState GoalState { get; set; } = new GoalState();
+    }
+
 
     public class PongPlayer : IDisposable
     {
         private Paddles? _statsPosition;
         private float _positionOffset = 0;
         private SoundEffect? death;
+        private PongPlayerState _state = new PongPlayerState();
 
-        public Paddles Position { get; }
-        public bool Side => Position == Paddles.Left || Position == Paddles.Right;
+        public PongPlayerState State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                this.Paddle.State = value.PaddleState;
+                this.Goal.State = value.GoalState;
+                this.PlayerStats.State = value.StatsState;
+            }
+        }
+        public PlayerStats PlayerStats { get; set; }
+
+        public Paddle Paddle { get; set; }
+        public Goal Goal { get; set; }
+        public bool Side => State.Position == Paddles.Left || State.Position == Paddles.Right;
         public PongPlayer(
             IPlayerController player, 
             Paddles position, 
@@ -64,14 +96,12 @@ namespace MyGame
             Paddles? statsPosition = null)
         {
             _statsPosition = statsPosition;
-            Position = position;
-            Paddle = new Paddle(player, particleEngine) {PlayerName = playerName};
-            Paddle.Speed = 300;
+            State.Position = position;
+            Paddle = new Paddle(player, particleEngine) {PlayerName = playerName, Speed = 300};
             this.Goal ??= new Goal();
-            PlayerStats = new PlayerStats(){PlayerName = playerName};
+            PlayerStats = new PlayerStats {State = {PlayerName = playerName}};
         }
 
-        public PlayerStats PlayerStats { get; set; }
 
         public void Load(SpriteFont font, Texture2D paddle, int goalOffset, Song goalSong, SoundEffect deathSound)
         {
@@ -89,7 +119,7 @@ namespace MyGame
             Goal.Died = false;  
             Paddle.Power = 0;
             Paddle.Score = 0;
-            Goal.Health = Goal.DefaultHealth;
+            Goal.Health = GoalState.DefaultHealth;
             SetPosition(width, height, _positionOffset);
         }
 
@@ -102,19 +132,19 @@ namespace MyGame
 
             var goalOffset = 5;
             var goalWidth = 1;
-            Paddle.Paddles = Position;
-            Goal.Paddles = Position;
+            Paddle.Paddles = State. Position;
+            Goal.Paddles = State.Position;
 
             var topPos = new Vector2(0,positionOffset);
             var ballOffset = 30;
 
-            if (Position == Paddles.Bottom)
+            if (State.Position == Paddles.Bottom)
             {
                 Paddle.BallLaunchOffset = new Vector2(0,ballOffset);
                 Paddle.Position = new Vector2(halfWinWidth, Height - offset) - halfPaddleWidth - topPos;
                 Goal.Rectangle = new Rectangle(0, Height - goalOffset, Width, goalWidth);
             }
-            else if (Position == Paddles.Top)
+            else if (State.Position == Paddles.Top)
             {
                 Paddle.BallLaunchOffset = new Vector2(0, -ballOffset);
                 Paddle.Position = new Vector2(halfWinWidth, offset) - halfPaddleWidth + topPos;
@@ -124,13 +154,13 @@ namespace MyGame
             var halfPaddleHeight = new Vector2(0, Paddle.Texture2D?.Height ?? 1f / 2f);
             var halfWinHeight = Height / 2f;
 
-            if (Position == Paddles.Left)
+            if (State.Position == Paddles.Left)
             {
                 Paddle.BallLaunchOffset = new Vector2(-ballOffset, 0);
                 Paddle.Position = new Vector2(offset, halfWinHeight) - halfPaddleHeight + sidePos;
                 Goal.Rectangle = new Rectangle(goalOffset, 0, goalWidth, Height);
             }
-            else if (Position == Paddles.Right)
+            else if (State.Position == Paddles.Right)
             {
                 Paddle.BallLaunchOffset = new Vector2(ballOffset, 0);
                 Paddle.Position = new Vector2(Width - offset, halfWinHeight) - halfPaddleHeight - sidePos;
@@ -143,7 +173,7 @@ namespace MyGame
         private void SetStatsPosition(int width, int height)
         {
             var offset = 100;
-            _statsPosition ??= Position;
+            _statsPosition ??= State.Position;
             var pos = _statsPosition switch
                 {
                     Paddles.Left => Vector2.One * 20,
@@ -151,16 +181,15 @@ namespace MyGame
                     Paddles.Right => new Vector2(width-offset, height-offset),
                     Paddles.Bottom => new Vector2(20, height-offset)
                 };
-            PlayerStats.Position = pos;
+            PlayerStats.State.Position = pos;
         }
 
-        public Paddle Paddle { get; set; }
-        public Goal Goal { get; set; }
+      
 
         public void Update(GameTime gameTime, Vector2 viewPort, List<Ball> balls, int width, int height, int boundarySize)
         {
-            PlayerStats.Health = Goal.Health;
-            PlayerStats.Score = Paddle.Score;
+            PlayerStats.State.Health = Goal.Health;
+            PlayerStats.State.Score = Paddle.Score;
             if (Goal.Died)
                 return;
 
@@ -180,15 +209,15 @@ namespace MyGame
             var height4 = height / 4f;
 
 
-            if (this.Position == Paddles.Left)
+            if (this.State.Position == Paddles.Left)
             {
                 Paddle.Update(gameTime, new Vector2(0, boundarySize), viewPort - new Vector2(width4 * 3, boundarySize), ball, width, height);
             }
-            else if (Position == Paddles.Right)
+            else if (State.Position == Paddles.Right)
             {
                 Paddle.Update(gameTime, new Vector2(width4 * 3, boundarySize), viewPort - new Vector2(0, boundarySize), ball, width, height);
             }
-            else if (Position == Paddles.Top)
+            else if (State.Position == Paddles.Top)
             {
                 Paddle.Update(gameTime, new Vector2(boundarySize, 0), viewPort - new Vector2(boundarySize, height4 * 3), ball, width, height);
             }
