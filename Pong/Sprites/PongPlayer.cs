@@ -15,19 +15,19 @@ namespace MyGame
         private Paddles? _statsPosition;
         private float _positionOffset = 0;
         private SoundEffect? death;
-        private PongPlayerState _state = new PongPlayerState();
-
-        public PongPlayerState State
-        {
-            get => _state;
-            set
-            {
-                _state = value;
-                this.Paddle.State = value.PaddleState;
-                this.Goal.State = value.GoalState;
-                this.PlayerStats.State = value.StatsState;
-            }
-        }
+        //private PongPlayerState _state = new PongPlayerState();
+        public PongPlayerState State { get; }
+        //public PongPlayerState State
+        //{
+        //    get => _state;
+        //    set
+        //    {
+        //        _state = value;
+        //        this.Paddle.State = value.PaddleState;
+        //        this.Goal.State = value.GoalState;
+        //        this.PlayerStats.State = value.StatsState;
+        //    }
+        //}
         public PlayerStats PlayerStats { get; set; }
 
         public Paddle Paddle { get; set; }
@@ -39,15 +39,15 @@ namespace MyGame
             IParticleEngine particleEngine,
             PlayerName playerName,
             Goal? goal = null,
-            Paddles? statsPosition = null)
+            Paddles? statsPosition = null,
+            PongPlayerState? state = null)
         {
+            State = state ?? new PongPlayerState();
             _statsPosition = statsPosition;
             State.Position = position;
-            Paddle = new Paddle(player, particleEngine) {PlayerName = playerName, Speed = 300};
-            Paddle.State = _state.PaddleState;
-            Goal ??= new Goal();
-            Goal.State = _state.GoalState;
-            PlayerStats = new PlayerStats {State = _state.StatsState};
+            Paddle = new Paddle(player, particleEngine, State.PaddleState) {PlayerName = playerName, Speed = 300};
+            Goal = goal ?? new Goal(State.GoalState);
+            PlayerStats = new PlayerStats(State.StatsState);
             PlayerStats.State.PlayerName = playerName;
         }
 

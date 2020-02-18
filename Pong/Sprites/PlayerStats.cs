@@ -5,8 +5,12 @@ namespace MyGame
 {
     public class PlayerStats
     {
+        public PlayerStats(PlayerStatsState state)
+        {
+            State = state;
+        }
         public SpriteFont? SpriteFont { get; set; }
-        public PlayerStatsState State { get; set; } = new PlayerStatsState();
+        public PlayerStatsState State { get;}
         public void Draw(SpriteBatch spriteBatch)
         {
             var one = new Vector2(0,1);

@@ -8,29 +8,21 @@ using MonoGame.Extended;
 
 namespace MyGame
 {
-    public class GoalState
-    {
-        public const int DefaultHealth = 10;
-
-        public RectangleF Rectangle { get; set; }
-        public Paddles Paddles { get; set; }
-        public int Health { get; set; } = DefaultHealth;
-        public int Offset { get; set; }
-        public bool Died { get; set; }
-        public bool SoundOn { get; set; } = true;
-
-    }
     public class Goal : Collider, IDisposable
     {
-        public GoalState State { get; set; } = new GoalState();
+        public Goal(GoalState state)
+        {
+            State = state;
+        }
+        public GoalState State { get; }
         public SpriteFont? SpriteFont { get; set; }
-        public RectangleF Rectangle { get => State.Rectangle; set=>State.Rectangle = value; }
-        public Paddles Paddles { get=>State.Paddles; set=>State.Paddles =value; }
+        public RectangleF Rectangle { get => State.Rectangle; set => State.Rectangle = value; }
+        public Paddles Paddles { get => State.Paddles; set => State.Paddles = value; }
         public Song? Song { get; set; }
-        public int Health { get=>State.Health; set=>State.Health=value; }
-        public int Offset { get=>State.Offset; set=>State.Offset=value; }
-        public bool Died { get=>State.Died; set=>State.Died=value; }
-        public bool SoundOn { get=>State.SoundOn; set=>State.SoundOn=value; }
+        public int Health { get => State.Health; set => State.Health = value; }
+        public int Offset { get => State.Offset; set => State.Offset = value; }
+        public bool Died { get => State.Died; set => State.Died = value; }
+        public bool SoundOn { get => State.SoundOn; set => State.SoundOn = value; }
 
         public override RectangleF Bounds()
         {
@@ -58,7 +50,7 @@ namespace MyGame
                     ball.Speed += 5;
                 }
             }
-          
+
         }
 
         public void Draw(SpriteBatch spriteBatch, int width)

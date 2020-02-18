@@ -103,40 +103,62 @@ namespace MyGame.Levels
             var font = Content.Load<SpriteFont>("arial");
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, _randomizer);
 
-            //var state = LoadSave();
-            //if(state != null)
-            //{
-            //    Balls.Clear();
-            //    foreach (var spriteState in state.Balls)
-            //    {
-            //        Balls.Add(new Ball(_randomizer, new GameTimer()){SpriteState = spriteState});
-            //    }
-            //    Players.Clear();
-            //    foreach (var pongPlayer in state.PongPlayerStates)
-            //    {
-            //        var goal2 = new Goal();
-            //        Players.Add(new PongPlayer(
-            //            new AiPlayer(true),
-            //            pongPlayer.Position,
-            //            engine,
-            //            pongPlayer.PaddleState.PlayerName,
-            //            goal2
-            //            ){State = pongPlayer});
-            //    }
+            var state = LoadSave();
+            if (state != null)
+            {
+                Balls.Clear();
+                foreach (var spriteState in state.Balls)
+                {
+                    Balls.Add(new Ball(_randomizer, new GameTimer())
+                    {
+                        SpriteState = spriteState
+                    });
+                }
+                Players.Clear();
+                foreach (var pongPlayer in state.PongPlayerStates)
+                {
+                    Players.Add(new PongPlayer(
+                        new AiPlayer(true),
+                        pongPlayer.Position,
+                        engine,
+                        pongPlayer.PaddleState.PlayerName,
+                        state:pongPlayer));
+                }
 
-            //    LoadPlayers(font, paddle, goal, paddleRot, deathSound);
-            //    LoadBalls(pew, blip, ballTexture, font);
-            //    return;
-            //}
+                LoadPlayers(font, paddle, goal, paddleRot, deathSound);
+                LoadBalls(pew, blip, ballTexture, font);
+                return;
+            }
 
             if (HasTeams)
             {
-                var goalLeft = new Goal();
-                var goalRight = new Goal();
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, PlayerName.PlayerOne, goalRight));
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, PlayerName.PlayerTwo, goalLeft));
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Three)), Paddles.Right, engine, PlayerName.PlayerThree, goalRight));
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)), Paddles.Left, engine, PlayerName.PlayerFour, goalLeft));
+                var goalLeft = new Goal(new GoalState());
+                var goalRight = new Goal(new GoalState());
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), 
+                    Paddles.Right, 
+                    engine, 
+                    PlayerName.PlayerOne, 
+                    goalRight, state:new PongPlayerState(){GoalState = goalRight.State}));
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)),
+                    Paddles.Left, 
+                    engine, 
+                    PlayerName.PlayerTwo, 
+                    goalLeft,state:new PongPlayerState(){GoalState = goalLeft.State}));
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true, 
+                        new ControllerPlayer(PlayerIndex.Three)), 
+                    Paddles.Right, 
+                    engine, 
+                    PlayerName.PlayerThree, 
+                    goalRight,state:new PongPlayerState(){GoalState = goalRight.State}));
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)),
+                    Paddles.Left,
+                    engine,
+                    PlayerName.PlayerFour,
+                    goalLeft,state:new PongPlayerState(){GoalState = goalLeft.State}));
 
             }
             else

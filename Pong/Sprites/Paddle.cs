@@ -12,20 +12,24 @@ namespace MyGame
         private readonly IPlayerController _player;
         private readonly IParticleEngine _particleEngine;
         private bool ballReady;
-        private PaddleState _state = new PaddleState();
 
         public PaddleState State
         {
-            get => _state;
-            set
-            {
-                _state = value;
-                SpriteState = _state.SpriteState;
-            }
+            get;
+            //set
+            //{
+            //    _state = value;
+            //    SpriteState = _state.SpriteState;
+            //}
         }
 
-        public Paddle(IPlayerController player, IParticleEngine particleEngine)
+        public Paddle(
+            IPlayerController player, 
+            IParticleEngine particleEngine,
+            PaddleState state)
         {
+            State = state;
+            SpriteState = state.SpriteState;
             _player = player;
             _particleEngine = particleEngine;
         }
