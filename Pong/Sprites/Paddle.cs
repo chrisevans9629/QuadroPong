@@ -24,7 +24,7 @@ namespace MyGame
         private readonly IPlayerController _player;
         private readonly IParticleEngine _particleEngine;
         private bool ballReady;
-        private PaddleState _state;
+        private PaddleState _state = new PaddleState();
 
         public PaddleState State
         {
@@ -53,7 +53,7 @@ namespace MyGame
         public Vector2 BallLaunchOffset { get => State.BallLaunchOffset; set => State.BallLaunchOffset = value; }
         public override RectangleF Bounds() => new RectangleF(Position, new Size2(Texture2D.Width * Size.X, Texture2D.Height * Size.Y));
 
-       
+
 
         public void Update(GameTime time, Vector2 min, Vector2 maxPort, Ball ball, float width, float height)
         {

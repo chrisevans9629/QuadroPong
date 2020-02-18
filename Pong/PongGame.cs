@@ -71,6 +71,7 @@ namespace MyGame
 
         protected override void OnExiting(object sender, EventArgs args)
         {
+            level?.SaveGame();
             BlobCache.Shutdown().Wait();
             base.OnExiting(sender, args);
         }

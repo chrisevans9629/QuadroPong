@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
@@ -13,24 +12,6 @@ using PongGame;
 
 namespace MyGame.Levels
 {
-    public class ContentManagerWrapper : IContentManager
-    {
-        private readonly ContentManager _contentManager;
-
-        public ContentManagerWrapper(ContentManager contentManager)
-        {
-            _contentManager = contentManager;
-        }
-        public T Load<T>(string assetName)
-        {
-            return _contentManager.Load<T>(assetName);
-        }
-    }
-    public interface IContentManager
-    {
-        T Load<T>(string assetName);
-    }
-
     public class LevelState
     {
         public List<SpriteState> Balls { get; set; } = new List<SpriteState>();
@@ -39,13 +20,22 @@ namespace MyGame.Levels
     public class RegularPongLevel : Level
     {
         private ParticleEngine? engine;
-        public LevelState LevelState { get; set; } = new LevelState();
+
+        LevelState GetState()
+        {
+            return new LevelState()
+            {
+                Balls = Balls.Select(p => p.SpriteState).ToList(),
+                PongPlayerStates = Players.Select(p => p.State).ToList()
+            };
+        }
+
         public List<Ball> Balls { get; } = new List<Ball>();
         public List<PongPlayer> Players { get; } = new List<PongPlayer>();
         private readonly GameResult _gameResult = new GameResult();
         private IRandomizer? _randomizer;
-        public bool HasTeams { get; set; }
 
+        public bool HasTeams { get; set; }
 
 
         public override void Dispose()
@@ -64,7 +54,7 @@ namespace MyGame.Levels
 
         public override void WindowResized()
         {
-            SetPositions(PongGame.Width,PongGame.Height);
+            SetPositions(PongGame.Width, PongGame.Height);
             base.WindowResized();
         }
 
@@ -74,33 +64,34 @@ namespace MyGame.Levels
             PongGame.Height = 700;
 
             _randomizer = new Randomizer();
+
+
             for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer();
                 gameTimer.EveryNumOfSeconds = 3f;
                 var ball = new Ball(_randomizer, gameTimer);
-                
                 Balls.Add(ball);
             }
             base.Initialize();
         }
 
-      
+
         public override void SaveGame()
         {
-            var json = JsonConvert.SerializeObject(LevelState);
-            File.WriteAllText("game.json",json);
+            var json = JsonConvert.SerializeObject(GetState());
+            File.WriteAllText("game.json", json);
         }
 
-        public override void LoadGame()
+        public LevelState? LoadSave()
         {
             if (File.Exists("game.json"))
             {
                 var str = File.ReadAllText("game.json");
                 var state = JsonConvert.DeserializeObject<LevelState>(str);
-                LevelState = state;
+                return state;
             }
-            base.LoadGame();
+            return null;
         }
 
         public override void LoadContent(IContentManager Content, Point windowSize)
@@ -110,8 +101,36 @@ namespace MyGame.Levels
             var goal = Content.Load<Song>("goal");
             var paddleRot = Content.Load<Texture2D>("paddleRot");
             var deathSound = Content.Load<SoundEffect>("death");
-
+            var pew = Content.Load<SoundEffect>("pew");
+            var blip = Content.Load<SoundEffect>("blip");
+            var font = Content.Load<SpriteFont>("arial");
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, _randomizer);
+
+            var state = LoadSave();
+            if(state != null)
+            {
+                Balls.Clear();
+                foreach (var spriteState in state.Balls)
+                {
+                    Balls.Add(new Ball(_randomizer, new GameTimer()){SpriteState = spriteState});
+                }
+                Players.Clear();
+                foreach (var pongPlayer in state.PongPlayerStates)
+                {
+                    var goal2 = new Goal();
+                    Players.Add(new PongPlayer(
+                        new PlayerOrAi(true),
+                        pongPlayer.Position,
+                        engine,
+                        pongPlayer.PaddleState.PlayerName,
+                        goal2
+                        ){State = pongPlayer});
+                }
+
+                LoadPlayers(font, paddle, goal, paddleRot, deathSound);
+                LoadBalls(pew, blip, ballTexture, font);
+                return;
+            }
 
             if (HasTeams)
             {
@@ -128,23 +147,21 @@ namespace MyGame.Levels
                 Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, PlayerName.PlayerOne));
                 Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, PlayerName.PlayerTwo));
             }
-
-
-            var pew = Content.Load<SoundEffect>("pew");
-            var blip = Content.Load<SoundEffect>("blip");
-            var font = Content.Load<SpriteFont>("arial");
             LoadPlayers(font, paddle, goal, paddleRot, deathSound);
 
             LoadBalls(pew, blip, ballTexture, font);
+
+
+
             ResetGame(windowSize.X, windowSize.Y);
             SetPositions(windowSize.X, windowSize.Y);
 
         }
         private void LoadPlayers(
-            SpriteFont font, 
-            Texture2D paddle, 
-            Song goal, 
-            Texture2D paddleRot, 
+            SpriteFont font,
+            Texture2D paddle,
+            Song goal,
+            Texture2D paddleRot,
             SoundEffect death)
         {
             var offset = -60;
@@ -261,7 +278,7 @@ namespace MyGame.Levels
             engine.Draw(_spriteBatch);
         }
 
-        
+
         public RegularPongLevel(IPongGame pongGame) : base(pongGame)
         {
         }
