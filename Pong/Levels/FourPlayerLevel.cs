@@ -106,6 +106,8 @@ namespace MyGame.Levels
 
         public override void LoadContent(IContentManager Content, Point windowSize)
         {
+            base.LoadContent(Content, windowSize);
+
             var font = Content.Load<SpriteFont>("arial");
             var ballTexture = Content.Load<Texture2D>("ball2");
             //var paddle = Content.Load<Texture2D>("paddle");
@@ -136,7 +138,6 @@ namespace MyGame.Levels
 
             //SetPositions(windowSize.X, windowSize.Y);
             //ResetGame(windowSize.X, windowSize.Y);
-            base.LoadContent(Content, windowSize);
         }
 
         protected override void UpdateBalls(GameTime gameTime, GameState gameState, Vector2 viewPort, IEnumerable<Ball> balls)

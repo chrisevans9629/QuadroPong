@@ -21,8 +21,8 @@ namespace MyGame
         private List<Ball> shipBullets = new List<Ball>();
         public Ship(IParticleEngine particleEngine, IRandomizer randomizer)
         {
-            _particleEngine = particleEngine;
-            _randomizer = randomizer;
+            _particleEngine = particleEngine ?? throw new ArgumentNullException(nameof(particleEngine));
+            _randomizer = randomizer ?? throw new ArgumentNullException(nameof(randomizer));
             Size = Vector2.Zero;
             AngularVelocity = 1f;
 

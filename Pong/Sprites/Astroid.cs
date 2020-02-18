@@ -24,7 +24,7 @@ namespace PongGame.Sprites
             Speed = 100;
             Speed = (_randomizer.NextFloat() + 1) * 50;
             Size = new Vector2(_randomizer.NextFloat() + 0.3f);
-            AngularVelocity = _randomizer.NextFloat() / 8f;
+            AngularVelocity = (_randomizer.NextFloat() / 4f) -.125f;
         }
 
 
