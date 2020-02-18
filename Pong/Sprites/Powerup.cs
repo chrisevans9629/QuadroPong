@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Xna.Framework;
@@ -68,30 +69,33 @@ namespace MyGame
         public PowerUpType PowerUpType { get; set; }
         public float Power { get; set; } = 200f;
         public SoundEffect SoundEffect { get; set; }
-        public void Update(Ball ball, Rectangle area, bool isSoundOn)
+        public void Update(IEnumerable<Ball> balls, Rectangle area, bool isSoundOn)
         {
-            if (Collision(ball))
+            foreach (var ball in balls)
             {
-                if (PowerUpType == PowerUpType.BiggerBall)
+                if (Collision(ball))
                 {
-                    ball.Size = new Vector2(2);
-                    _powerupManager.AddTimedPowerup(ball, PowerUpType, 10, () => ball.Size = new Vector2(1));
-                    Reset(area);
+                    if (PowerUpType == PowerUpType.BiggerBall)
+                    {
+                        ball.Size = new Vector2(2);
+                        _powerupManager.AddTimedPowerup(ball, PowerUpType, 10, () => ball.Size = new Vector2(1));
+                        Reset(area);
+                    }
+                    else if (PowerUpType == PowerUpType.SmallerBall)
+                    {
+                        ball.Size = new Vector2(0.5f);
+                        _powerupManager.AddTimedPowerup(ball, PowerUpType, 10, () => ball.Size = new Vector2(1));
+                        Reset(area);
+                    }
+                    else
+                    {
+                        if (!UpdatePaddlePowerups(ball, area))
+                            return;
+                    }
+
+                    if (isSoundOn)
+                        SoundEffect.Play(0.3f, 0, 0);
                 }
-                else if (PowerUpType == PowerUpType.SmallerBall)
-                {
-                    ball.Size = new Vector2(0.5f);
-                    _powerupManager.AddTimedPowerup(ball, PowerUpType, 10, () => ball.Size = new Vector2(1));
-                    Reset(area);
-                }
-                else
-                {
-                    if (!UpdatePaddlePowerups(ball, area)) 
-                        return;
-                }
-              
-                if (isSoundOn)
-                    SoundEffect.Play(0.3f, 0, 0);
             }
         }
 

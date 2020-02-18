@@ -9,7 +9,7 @@ namespace MyGame.Levels
     public class Level : IDisposable
     {
         protected readonly IPongGame PongGame;
-
+        public GameMode GameMode { get; set; }
         public Level()
         {
             

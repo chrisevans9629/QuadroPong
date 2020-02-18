@@ -152,7 +152,7 @@ namespace MyGame
             _guiSystem.ActiveScreen = _gui.Screen;
             IsInGame = true;
             var lvl = container.Resolve<RegularPongLevel>();
-            lvl.HasTeams = true;
+            lvl.GameMode = GameMode.Teams;
             this.level = lvl;//new RegularPongLevel(true);
             
             level.Initialize();
@@ -165,6 +165,7 @@ namespace MyGame
             _guiSystem.ActiveScreen = _gui.Screen;
             IsInGame = true;
             this.level = container.Resolve<RegularPongLevel>();
+            level.GameMode = GameMode.Classic;
             level.Initialize();
             level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }
@@ -195,6 +196,7 @@ namespace MyGame
             _guiSystem.ActiveScreen = _gui.Screen;
             IsInGame = true;
             this.level = container.Resolve<FourPlayerLevel>();
+            level.GameMode = GameMode.PlayerVs;
             level.Initialize();
             level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }

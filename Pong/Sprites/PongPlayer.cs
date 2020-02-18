@@ -133,10 +133,11 @@ namespace MyGame
             PlayerStats.State.Position = pos;
         }
 
-      
+        public int BoundarySize { get; set; }
 
-        public void Update(GameTime gameTime, Vector2 viewPort, List<Ball> balls, int width, int height, int boundarySize)
+        public void Update(GameTime gameTime, Vector2 viewPort, List<Ball> balls, int width, int height)
         {
+            var boundarySize = BoundarySize;
             PlayerStats.State.Health = Goal.Health;
             PlayerStats.State.Score = Paddle.Score;
             if (Goal.Died)

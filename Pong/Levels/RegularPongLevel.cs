@@ -13,10 +13,15 @@ using PongGame.States;
 
 namespace MyGame.Levels
 {
+    public enum GameMode
+    {
+        Classic,
+        Teams,
+        PlayerVs
+    }
     public class RegularPongLevel : Level
     {
         private readonly IGameStateManager _gameStateManager;
-        private ParticleEngine? engine;
 
         LevelState GetState()
         {
@@ -26,14 +31,16 @@ namespace MyGame.Levels
                 PongPlayerStates = Players.Select(p => p.State).ToList()
             };
         }
-
+        public ParticleEngine Engine { get; private set; }
         public List<Ball> Balls { get; } = new List<Ball>();
         public List<PongPlayer> Players { get; } = new List<PongPlayer>();
-        private readonly GameResult _gameResult = new GameResult();
-        private IRandomizer? _randomizer;
+        public GameResult Result { get; } = new GameResult();
+        public IRandomizer Randomizer1 { get; private set; }
 
-        public bool HasTeams { get; set; }
-        public RegularPongLevel(IPongGame pongGame, IGameStateManager gameStateManager) : base(pongGame)
+        //public bool HasTeams { get; set; }
+        public RegularPongLevel(
+            IPongGame pongGame,
+            IGameStateManager gameStateManager) : base(pongGame)
         {
             _gameStateManager = gameStateManager;
         }
@@ -58,23 +65,15 @@ namespace MyGame.Levels
             base.WindowResized();
         }
 
-        public override void Initialize()
+        public virtual void InitializeWindowSize()
         {
             PongGame.Width = 1000;
             PongGame.Height = 700;
-
-            _randomizer = new Randomizer();
-
-
-            for (int i = 0; i < 1; i++)
-            {
-                var gameTimer = new GameTimer
-                {
-                    EveryNumOfSeconds = 3f
-                };
-                var ball = new Ball(_randomizer, gameTimer);
-                Balls.Add(ball);
-            }
+        }
+        public override void Initialize()
+        {
+            InitializeWindowSize();
+            Randomizer1 = new Randomizer();
             base.Initialize();
         }
 
@@ -94,12 +93,12 @@ namespace MyGame.Levels
             var pew = Content.Load<SoundEffect>("pew");
             var blip = Content.Load<SoundEffect>("blip");
             var font = Content.Load<SpriteFont>("arial");
-            engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, _randomizer);
+            Engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, Randomizer1);
 
             Balls.Clear();
             foreach (var spriteState in state.Balls)
             {
-                Balls.Add(new Ball(_randomizer, new GameTimer())
+                Balls.Add(new Ball(Randomizer1, new GameTimer())
                 {
                     SpriteState = spriteState
                 });
@@ -110,7 +109,7 @@ namespace MyGame.Levels
                 Players.Add(new PongPlayer(
                     new AiPlayer(true),
                     pongPlayer.Position,
-                    engine,
+                    Engine,
                     pongPlayer.PaddleState.PlayerName,
                     state: pongPlayer));
             }
@@ -129,44 +128,17 @@ namespace MyGame.Levels
             var pew = Content.Load<SoundEffect>("pew");
             var blip = Content.Load<SoundEffect>("blip");
             var font = Content.Load<SpriteFont>("arial");
-            engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, _randomizer);
-
-            if (HasTeams)
+            Engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, Randomizer1);
+            for (int i = 0; i < 1; i++)
             {
-                var goalLeft = new Goal(new GoalState());
-                var goalRight = new Goal(new GoalState());
-                Players.Add(new PongPlayer(
-                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), 
-                    Paddles.Right, 
-                    engine, 
-                    PlayerName.PlayerOne, 
-                    goalRight, state:new PongPlayerState(){GoalState = goalRight.State}));
-                Players.Add(new PongPlayer(
-                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)),
-                    Paddles.Left, 
-                    engine, 
-                    PlayerName.PlayerTwo, 
-                    goalLeft,state:new PongPlayerState(){GoalState = goalLeft.State}));
-                Players.Add(new PongPlayer(
-                    new PlayerOrAi(true, 
-                        new ControllerPlayer(PlayerIndex.Three)), 
-                    Paddles.Right, 
-                    engine, 
-                    PlayerName.PlayerThree, 
-                    goalRight,state:new PongPlayerState(){GoalState = goalRight.State}));
-                Players.Add(new PongPlayer(
-                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)),
-                    Paddles.Left,
-                    engine,
-                    PlayerName.PlayerFour,
-                    goalLeft,state:new PongPlayerState(){GoalState = goalLeft.State}));
-
+                var gameTimer = new GameTimer
+                {
+                    EveryNumOfSeconds = 3f
+                };
+                var ball = new Ball(Randomizer1, gameTimer);
+                Balls.Add(ball);
             }
-            else
-            {
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, engine, PlayerName.PlayerOne));
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, engine, PlayerName.PlayerTwo));
-            }
+            LoadGameMode();
             LoadPlayers(font, paddle, goal, paddleRot, deathSound);
 
             LoadBalls(pew, blip, ballTexture, font);
@@ -177,6 +149,52 @@ namespace MyGame.Levels
             SetPositions(windowSize.X, windowSize.Y);
 
         }
+
+        protected virtual void LoadGameMode()
+        {
+            if (GameMode == GameMode.Teams)
+            {
+                var goalLeft = new Goal(new GoalState());
+                var goalRight = new Goal(new GoalState());
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()),
+                    Paddles.Right,
+                    Engine,
+                    PlayerName.PlayerOne,
+                    goalRight, state: new PongPlayerState() {GoalState = goalRight.State}));
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)),
+                    Paddles.Left,
+                    Engine,
+                    PlayerName.PlayerTwo,
+                    goalLeft, state: new PongPlayerState() {GoalState = goalLeft.State}));
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true,
+                        new ControllerPlayer(PlayerIndex.Three)),
+                    Paddles.Right,
+                    Engine,
+                    PlayerName.PlayerThree,
+                    goalRight, state: new PongPlayerState() {GoalState = goalRight.State}));
+                Players.Add(new PongPlayer(
+                    new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)),
+                    Paddles.Left,
+                    Engine,
+                    PlayerName.PlayerFour,
+                    goalLeft, state: new PongPlayerState() {GoalState = goalLeft.State}));
+            }
+            else if(GameMode == GameMode.Classic)
+            {
+                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()),
+                    Paddles.Right, Engine, PlayerName.PlayerOne));
+                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, Engine,
+                    PlayerName.PlayerTwo));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private void LoadPlayers(
             SpriteFont font,
             Texture2D paddle,
@@ -195,7 +213,7 @@ namespace MyGame.Levels
                 offset += 120;
             }
         }
-        private void ResetGame(int Width, int Height)
+        protected virtual void ResetGame(int Width, int Height)
         {
             foreach (var ball in Balls)
             {
@@ -206,9 +224,9 @@ namespace MyGame.Levels
             {
                 pongPlayer.Reset(Width, Height);
             }
-            _gameResult.Reset();
+            Result.Reset();
         }
-        public void SetPositions(int Width, int Height)
+        public virtual void SetPositions(int Width, int Height)
         {
             var offset = 40;
             var lefts = Players.Where(p => p.State.Position == Paddles.Left);
@@ -227,7 +245,7 @@ namespace MyGame.Levels
                 i += offset;
             }
         }
-        private void LoadBalls(SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
+        protected virtual void LoadBalls(SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
         {
             foreach (var ball in Balls)
             {
@@ -244,28 +262,16 @@ namespace MyGame.Levels
 
             var Width = gameState.Width;
             var Height = gameState.Height;
-            _gameResult.Update(Players);
+            Result.Update(Players);
 
             var viewPort = gameState.ViewPort.Size.ToVector2();
-            foreach (var pongPlayer in Players)
-            {
-                pongPlayer.Goal.SoundOn = gameState.IsSoundOn;
-                pongPlayer.Update(gameTime, viewPort, Balls, Width, Height, 0);
-            }
+            UpdatePlayers(gameTime, gameState, viewPort, Players, Balls);
 
-            foreach (var ball in Balls)
-            {
-                if (ball.IsBallColliding)
-                    engine.AddParticles(ball.Position);
-                ball.Debug = gameState.IsDebug;
-                ball.HasSound = gameState.IsSoundOn;
-                ball.Update(gameTime, viewPort);
-                ball.Timer.Update(gameTime);
-            }
-            engine.Update();
+            UpdateBalls(gameTime, gameState, viewPort, Balls);
+            Engine.Update();
 
 
-            if (_gameResult.Winner != null)
+            if (Result.Winner != null)
             {
                 //mainMenu.Winner = $"{gameResult.Winner.Position} won!";
                 ResetGame(Width, Height);
@@ -276,6 +282,36 @@ namespace MyGame.Levels
                 //BackToMainMenu();
             }
             base.Update(gameTime, gameState);
+        }
+
+        protected virtual void UpdateBalls(
+            GameTime gameTime, 
+            GameState gameState, 
+            Vector2 viewPort, IEnumerable<Ball> balls)
+        {
+            foreach (var ball in balls)
+            {
+                if (ball.IsBallColliding)
+                    Engine.AddParticles(ball.Position);
+                ball.Debug = gameState.IsDebug;
+                ball.HasSound = gameState.IsSoundOn;
+                ball.Update(gameTime, viewPort);
+                ball.Timer.Update(gameTime);
+            }
+        }
+
+        protected virtual void UpdatePlayers(
+            GameTime gameTime,
+            GameState gameState, 
+            Vector2 viewPort,
+            IEnumerable<PongPlayer> players,
+            List<Ball> balls)
+        {
+            foreach (var pongPlayer in players)
+            {
+                pongPlayer.Goal.SoundOn = gameState.IsSoundOn;
+                pongPlayer.Update(gameTime, viewPort, balls, gameState.Width, gameState.Height);
+            }
         }
 
         public override void Draw(SpriteBatch _spriteBatch, GameTime gameTime, Point window)
@@ -295,7 +331,7 @@ namespace MyGame.Levels
             }
 
 
-            engine.Draw(_spriteBatch);
+            Engine.Draw(_spriteBatch);
         }
 
 
