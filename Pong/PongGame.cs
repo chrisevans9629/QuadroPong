@@ -19,6 +19,7 @@ using MonoGame.Extended.ViewportAdapters;
 using MyGame.Levels;
 using PongGame;
 using PongGame.Sprites;
+using PongGame.States;
 
 namespace MyGame
 {
@@ -39,7 +40,7 @@ namespace MyGame
             Akavache.Registrations.Start("PongGame");
             container = new Container();
 
-
+            container.Register<IGameStateManager, GameStateManager>(Reuse.Singleton);
             container.Register<ISettings, Settings>(Reuse.Singleton);
             container.Register<FrameCounter>();
             container.RegisterInstance<IPongGame>(this);
@@ -71,6 +72,7 @@ namespace MyGame
 
         protected override void OnExiting(object sender, EventArgs args)
         {
+
             level?.SaveGame();
             BlobCache.Shutdown().Wait();
             base.OnExiting(sender, args);
@@ -212,6 +214,15 @@ namespace MyGame
         public bool IsInGame { get; set; }
         public void ResumeGame()
         {
+            if (!IsInGame)
+            {
+                var gameState = container.Resolve<IGameStateManager>();
+                IsInGame = true;
+                level = container.Resolve<RegularPongLevel>();
+                level.Initialize();
+                //level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height) );
+                level.LoadSavedGame(new ContentManagerWrapper(Content), gameState.LoadGame() );
+            }
             _settings.IsPaused = false;
             _gui = container.Resolve<PongGui>();
             _guiSystem.ActiveScreen = _gui.Screen;

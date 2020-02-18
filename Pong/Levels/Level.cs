@@ -41,7 +41,7 @@ namespace MyGame.Levels
         {
 
         }
-        public virtual void LoadGame()
+        public virtual void LoadSavedGame(IContentManager content, LevelState levelState)
         {
 
         }

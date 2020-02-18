@@ -9,11 +9,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
 using PongGame;
+using PongGame.States;
 
 namespace MyGame.Levels
 {
     public class RegularPongLevel : Level
     {
+        private readonly IGameStateManager _gameStateManager;
         private ParticleEngine? engine;
 
         LevelState GetState()
@@ -31,7 +33,10 @@ namespace MyGame.Levels
         private IRandomizer? _randomizer;
 
         public bool HasTeams { get; set; }
-
+        public RegularPongLevel(IPongGame pongGame, IGameStateManager gameStateManager) : base(pongGame)
+        {
+            _gameStateManager = gameStateManager;
+        }
 
         public override void Dispose()
         {
@@ -76,19 +81,42 @@ namespace MyGame.Levels
 
         public override void SaveGame()
         {
-            var json = JsonConvert.SerializeObject(GetState());
-            File.WriteAllText("game.json", json);
+            _gameStateManager.SaveGame(GetState());
         }
 
-        public LevelState? LoadSave()
+        public override void LoadSavedGame(IContentManager Content, LevelState state)
         {
-            if (File.Exists("game.json"))
+            var ballTexture = Content.Load<Texture2D>("ball2");
+            var paddle = Content.Load<Texture2D>("paddle");
+            var goal = Content.Load<Song>("goal");
+            var paddleRot = Content.Load<Texture2D>("paddleRot");
+            var deathSound = Content.Load<SoundEffect>("death");
+            var pew = Content.Load<SoundEffect>("pew");
+            var blip = Content.Load<SoundEffect>("blip");
+            var font = Content.Load<SpriteFont>("arial");
+            engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, _randomizer);
+
+            Balls.Clear();
+            foreach (var spriteState in state.Balls)
             {
-                var str = File.ReadAllText("game.json");
-                var state = JsonConvert.DeserializeObject<LevelState>(str);
-                return state;
+                Balls.Add(new Ball(_randomizer, new GameTimer())
+                {
+                    SpriteState = spriteState
+                });
             }
-            return null;
+            Players.Clear();
+            foreach (var pongPlayer in state.PongPlayerStates)
+            {
+                Players.Add(new PongPlayer(
+                    new AiPlayer(true),
+                    pongPlayer.Position,
+                    engine,
+                    pongPlayer.PaddleState.PlayerName,
+                    state: pongPlayer));
+            }
+
+            LoadPlayers(font, paddle, goal, paddleRot, deathSound);
+            LoadBalls(pew, blip, ballTexture, font);
         }
 
         public override void LoadContent(IContentManager Content, Point windowSize)
@@ -102,33 +130,6 @@ namespace MyGame.Levels
             var blip = Content.Load<SoundEffect>("blip");
             var font = Content.Load<SpriteFont>("arial");
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, _randomizer);
-
-            var state = LoadSave();
-            if (state != null)
-            {
-                Balls.Clear();
-                foreach (var spriteState in state.Balls)
-                {
-                    Balls.Add(new Ball(_randomizer, new GameTimer())
-                    {
-                        SpriteState = spriteState
-                    });
-                }
-                Players.Clear();
-                foreach (var pongPlayer in state.PongPlayerStates)
-                {
-                    Players.Add(new PongPlayer(
-                        new AiPlayer(true),
-                        pongPlayer.Position,
-                        engine,
-                        pongPlayer.PaddleState.PlayerName,
-                        state:pongPlayer));
-                }
-
-                LoadPlayers(font, paddle, goal, paddleRot, deathSound);
-                LoadBalls(pew, blip, ballTexture, font);
-                return;
-            }
 
             if (HasTeams)
             {
@@ -298,8 +299,6 @@ namespace MyGame.Levels
         }
 
 
-        public RegularPongLevel(IPongGame pongGame) : base(pongGame)
-        {
-        }
+        
     }
 }

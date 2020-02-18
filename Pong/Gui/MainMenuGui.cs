@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Gui;
 using MonoGame.Extended.Gui.Controls;
+using PongGame.States;
 
 namespace MyGame
 {
@@ -24,10 +25,11 @@ namespace MyGame
         readonly Thickness _padding = new Thickness(50, 20);
         readonly Thickness _margin = new Thickness(10);
         public MainMenuGui(
-            IPongGame pongGame)
+            IPongGame pongGame,
+            IGameStateManager gameStateManager)
         {
             _pongGame = pongGame;
-            var resume = Button("Resume", pongGame.ResumeGame, pongGame.IsInGame);
+            var resume = Button("Resume", pongGame.ResumeGame, pongGame.IsInGame || gameStateManager.HasSavedGame());
             var start = Button("Start 4 Player", pongGame.StartGame4Player);
             var start2 = Button("Start 2 Player", pongGame.StartGameClassic);
             var startTeams = Button("Start 4 Player Teams", pongGame.StartGameTeams);
