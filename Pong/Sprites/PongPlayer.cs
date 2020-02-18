@@ -10,60 +10,6 @@ using Microsoft.Xna.Framework.Media;
 
 namespace MyGame
 {
-    public enum PlayerName
-    {
-        PlayerOne = 1,
-        PlayerTwo,
-        PlayerThree,
-        PlayerFour
-    }
-
-    public static class PlayerNameExt
-    {
-        public static Color ToColor(this PlayerName playerName)
-        {
-            return playerName switch 
-                {
-                    PlayerName.PlayerOne => Color.Red,
-                    PlayerName.PlayerTwo => Color.Blue,
-                    PlayerName.PlayerThree => Color.Green,
-                    PlayerName.PlayerFour => Color.Purple,
-                    _ => throw new NotImplementedException()
-                };
-        }
-    }
-
-    public class PlayerStatsState
-    {
-        public Vector2 Position { get; set; }
-        public int Score { get; set; }
-        public int Health { get; set; }
-        public PlayerName PlayerName { get; set; }
-    }
-    public class PlayerStats
-    {
-        public SpriteFont? SpriteFont { get; set; }
-        public PlayerStatsState State { get; set; } = new PlayerStatsState();
-
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            var one = new Vector2(0,1);
-            spriteBatch.DrawString(SpriteFont, State.PlayerName.ToString(), State.Position, State.PlayerName.ToColor());
-            spriteBatch.DrawString(SpriteFont,$"Score: {State.Score}", State.Position + one * 30f,Color.White);
-            spriteBatch.DrawString(SpriteFont,$"Health: {State.Health}", State.Position + one * 60f,Color.White);
-        }
-    }
-
-    public class PongPlayerState
-    {
-        public PlayerStatsState StatsState { get; set; } = new PlayerStatsState();
-        public Paddles Position { get; set; }
-        public PaddleState PaddleState { get; set; } = new PaddleState();
-        public GoalState GoalState { get; set; } = new GoalState();
-    }
-
-
     public class PongPlayer : IDisposable
     {
         private Paddles? _statsPosition;
@@ -98,8 +44,11 @@ namespace MyGame
             _statsPosition = statsPosition;
             State.Position = position;
             Paddle = new Paddle(player, particleEngine) {PlayerName = playerName, Speed = 300};
-            this.Goal ??= new Goal();
-            PlayerStats = new PlayerStats {State = {PlayerName = playerName}};
+            Paddle.State = _state.PaddleState;
+            Goal ??= new Goal();
+            Goal.State = _state.GoalState;
+            PlayerStats = new PlayerStats {State = _state.StatsState};
+            PlayerStats.State.PlayerName = playerName;
         }
 
 

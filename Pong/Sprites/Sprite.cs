@@ -5,22 +5,20 @@ using MonoGame.Extended;
 
 namespace MyGame
 {
-
-    public class SpriteState
-    {
-        public Vector2 Position { get; set; }
-        public Vector2 Size { get; set; } = Vector2.One;
-        public float Speed { get; set; }
-        public Vector2 Acceleration { get; set; }
-
-    }
     public class Sprite : Collider, IDisposable
     {
+        private SpriteState _spriteState = new SpriteState();
+
         public Sprite()
         {
             SpriteState.Size = Vector2.One;
         }
-        public SpriteState SpriteState { get; set; } = new SpriteState();
+
+        public SpriteState SpriteState
+        {
+            get => _spriteState;
+            set => _spriteState = value ?? throw new InvalidOperationException();
+        }
 
         public Vector2 AngleToVector(float angle)
         {

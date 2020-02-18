@@ -12,11 +12,6 @@ using PongGame;
 
 namespace MyGame.Levels
 {
-    public class LevelState
-    {
-        public List<SpriteState> Balls { get; set; } = new List<SpriteState>();
-        public List<PongPlayerState> PongPlayerStates { get; set; } = new List<PongPlayerState>();
-    }
     public class RegularPongLevel : Level
     {
         private ParticleEngine? engine;
@@ -68,8 +63,10 @@ namespace MyGame.Levels
 
             for (int i = 0; i < 1; i++)
             {
-                var gameTimer = new GameTimer();
-                gameTimer.EveryNumOfSeconds = 3f;
+                var gameTimer = new GameTimer
+                {
+                    EveryNumOfSeconds = 3f
+                };
                 var ball = new Ball(_randomizer, gameTimer);
                 Balls.Add(ball);
             }
@@ -106,31 +103,31 @@ namespace MyGame.Levels
             var font = Content.Load<SpriteFont>("arial");
             engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, _randomizer);
 
-            var state = LoadSave();
-            if(state != null)
-            {
-                Balls.Clear();
-                foreach (var spriteState in state.Balls)
-                {
-                    Balls.Add(new Ball(_randomizer, new GameTimer()){SpriteState = spriteState});
-                }
-                Players.Clear();
-                foreach (var pongPlayer in state.PongPlayerStates)
-                {
-                    var goal2 = new Goal();
-                    Players.Add(new PongPlayer(
-                        new PlayerOrAi(true),
-                        pongPlayer.Position,
-                        engine,
-                        pongPlayer.PaddleState.PlayerName,
-                        goal2
-                        ){State = pongPlayer});
-                }
+            //var state = LoadSave();
+            //if(state != null)
+            //{
+            //    Balls.Clear();
+            //    foreach (var spriteState in state.Balls)
+            //    {
+            //        Balls.Add(new Ball(_randomizer, new GameTimer()){SpriteState = spriteState});
+            //    }
+            //    Players.Clear();
+            //    foreach (var pongPlayer in state.PongPlayerStates)
+            //    {
+            //        var goal2 = new Goal();
+            //        Players.Add(new PongPlayer(
+            //            new AiPlayer(true),
+            //            pongPlayer.Position,
+            //            engine,
+            //            pongPlayer.PaddleState.PlayerName,
+            //            goal2
+            //            ){State = pongPlayer});
+            //    }
 
-                LoadPlayers(font, paddle, goal, paddleRot, deathSound);
-                LoadBalls(pew, blip, ballTexture, font);
-                return;
-            }
+            //    LoadPlayers(font, paddle, goal, paddleRot, deathSound);
+            //    LoadBalls(pew, blip, ballTexture, font);
+            //    return;
+            //}
 
             if (HasTeams)
             {
