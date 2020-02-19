@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using MyGame.Levels;
 
 namespace MyGame
 {
     public class ServerClient
     {
+        public const string SendState = nameof(SendState);
+        public const string ReceiveState = nameof(ReceiveState);
         private HubConnection connection;
 
         public ServerClient()
@@ -20,15 +24,18 @@ namespace MyGame
                 await connection.StartAsync();
             };
         }
-        public async Task SendMove(string player, float x, float y)
+        public async Task SendMove(LevelState state)
         {
-            await connection.InvokeAsync("Moved", player, x, y);
+            await connection.InvokeAsync(SendState, state);
         }
 
-        public string Output { get; set; } = "";
+        public List<LevelState> LevelStates { get; set; } = new List<LevelState>();
+
         public async Task Start()
         {
-            connection.On<string, float, float>("Receive", (s, f, arg3) => { Output += $"{s} {f},{arg3}"; });
+            connection.On<LevelState>(
+                ReceiveState, 
+                s => LevelStates.Add(s));
             await connection.StartAsync();
 
         }
