@@ -15,7 +15,7 @@ namespace MyGame
 
         public Button Button(string text, Action action, bool visible = true)
         {
-            var t = new Button(){Content = text, Name = text, Padding = _padding, Margin = _margin, IsVisible = visible};
+            var t = new Button() { Content = text, Name = text, Padding = _padding, Margin = _margin, IsVisible = visible };
             t.Style();
             Buttons.Add(t);
             t.Clicked += (sender, args) => action();
@@ -24,19 +24,30 @@ namespace MyGame
 
         readonly Thickness _padding = new Thickness(50, 20);
         readonly Thickness _margin = new Thickness(10);
+        private ServerClient client;
+        private TextBox player;
+        private TextBox x;
+        private TextBox y;
+        private Label output;
         public MainMenuGui(
             IPongGame pongGame,
             IGameStateManager gameStateManager)
         {
             _pongGame = pongGame;
+            player = new TextBox("player1");
+            x = new TextBox("0");
+            y = new TextBox("0");
+            output=new Label();
+            output.TextColor = Color.White;
+            client = new ServerClient();
+            client.Start();
             var resume = Button("Resume", pongGame.ResumeGame, pongGame.IsInGame || gameStateManager.HasSavedGame());
             var start = Button("Start 4 Player", pongGame.StartGame4Player);
             var start2 = Button("Start 2 Player", pongGame.StartGameClassic);
             var startTeams = Button("Start 4 Player Teams", pongGame.StartGameTeams);
             var settings = Button("Settings", pongGame.ShowSettings);
-            var quit = Button("Quit",pongGame.Exit);
-
-
+            var quit = Button("Quit", pongGame.Exit);
+            var send = Button("Send", async () => await client.SendMove(player.Text, float.Parse(x.Text), float.Parse(y.Text)));
             var src = new Screen()
             {
                 Content = new StackPanel()
@@ -54,6 +65,11 @@ namespace MyGame
                         startTeams,
                         settings,
                         quit,
+                        player,
+                        x,
+                        y,
+                        send,
+                        output,
                     },
                     HorizontalAlignment = HorizontalAlignment.Centre,
                     VerticalAlignment = VerticalAlignment.Centre
@@ -71,6 +87,7 @@ namespace MyGame
         {
             if (!Screen.IsVisible)
                 return;
+            output.Content = client.Output;
             var capabilities = GamePad.GetCapabilities(PlayerIndex.One);
             if (capabilities.IsConnected && capabilities.HasLeftYThumbStick && capabilities.HasAButton)
             {
@@ -85,9 +102,9 @@ namespace MyGame
                     return;
                 if (left.Y > 0.5f)
                 {
-                    if(wasUp)
+                    if (wasUp)
                         return;
-                    if (selectedButton > 0 && Buttons[selectedButton-1].IsVisible)
+                    if (selectedButton > 0 && Buttons[selectedButton - 1].IsVisible)
                     {
                         selectedButton--;
                     }
@@ -110,9 +127,9 @@ namespace MyGame
                 }
                 else if (left.Y < -0.5f)
                 {
-                    if(wasDown)
+                    if (wasDown)
                         return;
-                    if (selectedButton < Buttons.Count-1 && Buttons[selectedButton+1].IsVisible)
+                    if (selectedButton < Buttons.Count - 1 && Buttons[selectedButton + 1].IsVisible)
                     {
                         selectedButton++;
                     }
