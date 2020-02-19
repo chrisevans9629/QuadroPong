@@ -91,6 +91,7 @@ namespace MyGame.Levels
         protected override LevelState GetState()
         {
             var result = base.GetState();
+            result.ShipState = _ship.State;
             result.PowerUps = powerups.Select(p => p.State).ToList();
             result.Astroids = _astroidManager.Sprites.Select(p => p.SpriteState).ToList();
             result.Boundaries = boundaries.Select(p => p.SpriteState).ToList();
@@ -99,6 +100,15 @@ namespace MyGame.Levels
 
         public override void LoadSavedGame(IContentManager Content, LevelState state)
         {
+            var font = Content.Load<SpriteFont>("arial");
+            var ballTexture = Content.Load<Texture2D>("ball2");
+            var blip = Content.Load<SoundEffect>("blip");
+            var explosions = Content.Load<SoundEffect>("explosion");
+            var MEAT = Content.Load<Texture2D>("meatball");
+            var engineSound = Content.Load<SoundEffect>("shipengines");
+            var powerUpSound = Content.Load<SoundEffect>("powerup");
+            var pew = Content.Load<SoundEffect>("pew");
+            var boundary = Content.Load<Texture2D>("Boundary");
             var astroid = Content.Load<Texture2D>("astroids");
             _astroidManager.Sprites.Clear();
 
@@ -111,15 +121,16 @@ namespace MyGame.Levels
             {
                 boundaries.Add(new Boundary(){SpriteState = stateBoundary});
             }
-            var boundary = Content.Load<Texture2D>("Boundary");
             powerups.Clear();
             foreach (var statePowerUp in state.PowerUps)
             {
                 powerups.Add(new PowerUp(randomizer, _powerupManager, statePowerUp));
             }
-            var powerUpSound = Content.Load<SoundEffect>("powerup");
-            var ballTexture = Content.Load<Texture2D>("ball2");
-
+            if (state.ShipState != null)
+            {
+                _ship = new Ship(Engine, randomizer, state.ShipState);
+                _ship?.Load(MEAT, new Point(PongGame.Width,PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
+            }
             LoadPowerUps(powerUpSound,ballTexture);
             LoadBoundaries(boundary);
             base.LoadSavedGame(Content, state);
@@ -139,8 +150,11 @@ namespace MyGame.Levels
             var astroid = Content.Load<Texture2D>("astroids");
 
             _astroidManager?.Load(astroid);
-            var bullets = LoadShip(MEAT, explosions, engineSound, windowSize);
-            LoadBalls(bullets, pew, blip, ballTexture, font);
+
+            _ship?.Load(MEAT, windowSize, explosions, engineSound, pew, blip, ballTexture, font);
+
+            //var bullets = LoadShip(MEAT, explosions, engineSound, windowSize);
+            //LoadBalls(bullets, pew, blip, ballTexture, font);
             LoadPowerUps(powerUpSound, ballTexture);
             LoadBoundaries(boundary);
             base.LoadContent(Content, windowSize);
@@ -165,7 +179,7 @@ namespace MyGame.Levels
             {
                 var score = pongPlayer.Paddle.Score;
 
-                if (score > 0 && pongPlayer.Paddle.Score % 3 == 0 && _ship.ShipState == ShipStatus.Dead && score > _ship.Score)
+                if (score > 0 && pongPlayer.Paddle.Score % 3 == 0 && _ship.ShipStatus == ShipStatus.Dead && score > _ship.Score)
                 {
                     _ship.Score = score;
                     this._ship.Start();
@@ -209,11 +223,9 @@ namespace MyGame.Levels
                 boundary1.Texture2D = boundary;
             }
         }
-        private List<Ball> LoadShip(Texture2D MEAT, SoundEffect explosions, SoundEffect engineSound, Point window)
-        {
-            
-            return bullets;
-        }
+        //private List<Ball> LoadShip(Texture2D MEAT, SoundEffect explosions, SoundEffect engineSound, Point window)
+        //{
+        //}
        
         private void LoadPowerUps(SoundEffect powerUpSound, Texture2D ballTexture)
         {

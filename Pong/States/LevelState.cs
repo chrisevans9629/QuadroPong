@@ -4,6 +4,7 @@ namespace MyGame.Levels
 {
     public class LevelState
     {
+        public ShipState? ShipState { get; set; }
         public List<PowerUpState> PowerUps { get; set; } = new List<PowerUpState>();
         public List<SpriteState> Boundaries { get; set; } = new List<SpriteState>();
         public List<SpriteState> Astroids { get; set; } = new List<SpriteState>();

@@ -18,7 +18,10 @@ namespace MyGame
     public class ShipState
     {
         public SpriteState SpriteState { get; set; } = new SpriteState();
-
+        public List<SpriteState> Balls { get; set; } = new List<SpriteState>();
+        public int Health { get; set; }
+        public ShipStatus ShipStatus { get; set; } = ShipStatus.Dead;
+        public int Score { get; set; }
     }
 
     public class Ship : Sprite
@@ -41,7 +44,26 @@ namespace MyGame
 
             ExplosionTimer.EveryNumOfSeconds = 0.3f;
             ExplosionTimer.Restart();
-            State = state ?? new ShipState();
+            if (state != null)
+            {
+                foreach (var spriteState in state.Balls)
+                {
+                    shipBullets.Add(new Ball(_randomizer, new GameTimer()){SpriteState = spriteState});
+                }
+            }
+            else
+            {
+                state = new ShipState();
+                state.SpriteState.Size = Vector2.Zero;
+                for (int i = 0; i < 4; i++)
+                {
+                    var ball = new Ball(_randomizer, new GameTimer());
+                    shipBullets.Add(ball);
+                    state.Balls.Add(ball.SpriteState);
+                }
+            }
+            State = state;
+            SpriteState = state.SpriteState;
         }
 
         public override void Dispose()
@@ -57,39 +79,38 @@ namespace MyGame
 
         public void Reset()
         {
-            ShipState = ShipStatus.Dead;
+            ShipStatus = ShipStatus.Dead;
             Score = 0;
         }
 
-        public List<Ball> Load(
+        public void Load(
             Texture2D MEAT, 
             Point window, 
             SoundEffect explosions, 
-            SoundEffect engineSound)
+            SoundEffect engineSound,
+            SoundEffect pew,
+            SoundEffect blip,
+            Texture2D ballTexture2D,
+            SpriteFont font)
         {
             Texture2D = MEAT;
             Position = new Vector2(window.X / 2f, window.Y / 2f);
             Explosions = explosions;
             Engines = engineSound;
-
-            var bullets = new List<Ball>();
-            for (int i = 0; i < 4; i++)
+            foreach (var shipBullet in shipBullets)
             {
-                bullets.Add(new Ball(_randomizer, new GameTimer()));
+                shipBullet.Load(pew,blip,ballTexture2D,font);
             }
-
-            shipBullets = bullets;
-            return bullets;
         }
-        public List<Ball>? Bullets => ShipState == ShipStatus.Ready ? shipBullets : new List<Ball>();
-
-        public ShipState State { get; }
-        public int Health { get; set; }
-        public ShipStatus ShipState { get; set; } = ShipStatus.Dead;
+        public List<Ball>? Bullets => ShipStatus == ShipStatus.Ready ? shipBullets : new List<Ball>();
         public GameTimer ExplosionTimer { get; set; } = new GameTimer();
         public Vector2 RelativeCenter => new Vector2(Texture2D.Width / 2f * Size.X, Texture2D.Height / 2f * Size.Y);
-        public int Score { get; set; }
         public GameTimer EngineTimer { get; set; } = new GameTimer();
+
+        public ShipState State { get; }
+        public int Health { get=>State.Health; set=>State.Health=value; }
+        public ShipStatus ShipStatus { get=>State.ShipStatus; set=>State.ShipStatus=value; }
+        public int Score { get=>State.Score; set=>State.Score=value; }
 
         public SoundEffect Engines { get; set; }
         public SoundEffect Explosions { get; set; }
@@ -97,7 +118,7 @@ namespace MyGame
         public void Start()
         {
             Size = Vector2.Zero;
-            ShipState = ShipStatus.Coming;
+            ShipStatus = ShipStatus.Coming;
             Health = 10;
         }
         public void Update(
@@ -109,7 +130,7 @@ namespace MyGame
         {
             EngineTimer.Update(gameTime);
             Angle += AngularVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            switch (ShipState)
+            switch (ShipStatus)
             {
                 case ShipStatus.Coming:
                     UpdateComing(gameTime, width, height, isSoundOn);
@@ -139,7 +160,7 @@ namespace MyGame
             }
             else
             {
-                ShipState = ShipStatus.Ready;
+                ShipStatus = ShipStatus.Ready;
                 var i = 0f;
                 var q = MathF.PI / 4;
                 foreach (var shipBullet in shipBullets)
@@ -163,7 +184,7 @@ namespace MyGame
             if (Health <= 0)
             {
                 _particleEngine.AddParticles(Position - RelativeCenter);
-                ShipState = ShipStatus.Dead;
+                ShipStatus = ShipStatus.Dead;
             }
 
             foreach (var ball in balls.Union(shipBullets))
@@ -225,7 +246,7 @@ namespace MyGame
             var origin = new Vector2(Texture2D.Width / 2f, Texture2D.Height / 2f);
 
             batch.Draw(Texture2D, Position, null, Color, Angle, origin, Size, SpriteEffects.None, 0);
-            if (ShipState != ShipStatus.Ready)
+            if (ShipStatus != ShipStatus.Ready)
                 return;
             foreach (var shipBullet in shipBullets)
             {

@@ -109,7 +109,7 @@ namespace MyGame.Levels
             foreach (var pongPlayer in state.PongPlayerStates)
             {
                 Players.Add(new PongPlayer(
-                    new AiPlayer(true),
+                    new AiPlayer(pongPlayer.Side),
                     pongPlayer.Position,
                     Engine,
                     pongPlayer.PaddleState.PlayerName,
@@ -208,7 +208,7 @@ namespace MyGame.Levels
 
             foreach (var pongPlayer in Players)
             {
-                if (pongPlayer.Side)
+                if (pongPlayer.State.Side)
                     pongPlayer.Load(font, paddle, offset, goal, death);
                 else
                     pongPlayer.Load(font, paddleRot, offset, goal, death);
@@ -247,15 +247,16 @@ namespace MyGame.Levels
                 i += offset;
             }
         }
-        protected virtual void LoadBalls(IEnumerable<Ball> balls, SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
+        protected virtual void LoadBalls(
+            IEnumerable<Ball> balls, 
+            SoundEffect pew, 
+            SoundEffect blip, 
+            Texture2D ballTexture, 
+            SpriteFont font)
         {
             foreach (var ball in balls)
             {
-                ball.PewSound = pew;
-                ball.BounceSong = blip;
-                ball.Texture2D = ballTexture;
-                ball.Timer.Font = font;
-                ball.SpriteFont = font;
+                ball.Load(pew, blip, ballTexture, font);
             }
         }
         public override void Update(GameTime gameTime, GameState gameState)

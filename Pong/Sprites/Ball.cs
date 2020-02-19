@@ -34,10 +34,22 @@ namespace MyGame
 
         public SoundEffect? PewSound { get; set; }
         public bool IsBallColliding { get; set; }
-        public SoundEffect? BounceSong { get; set; }
+        public SoundEffect? BounceSong { get; private set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
         private bool RandomBool() => _random.NextFloat() > 0.5f;
 
+        public void Load(
+            SoundEffect pew,
+            SoundEffect blip,
+            Texture2D ballTexture,
+            SpriteFont font)
+        {
+            PewSound = pew;
+            BounceSong = blip;
+            Texture2D = ballTexture;
+            Timer.Font = font;
+            SpriteFont = font;
+        }
         public void Reset(int width, int height, float? angle = null)
         {
             Speed = DefaultSpeed;

@@ -32,7 +32,6 @@ namespace MyGame
 
         public Paddle Paddle { get; set; }
         public Goal Goal { get; set; }
-        public bool Side => State.Position == Paddles.Left || State.Position == Paddles.Right;
         public PongPlayer(
             IPlayerController player, 
             Paddles position, 
