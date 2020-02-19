@@ -111,7 +111,7 @@ namespace MyGame.Levels
             var boundary = Content.Load<Texture2D>("Boundary");
             var astroid = Content.Load<Texture2D>("astroids");
             _astroidManager.Sprites.Clear();
-
+            GameMode = state.GameMode;
             foreach (var stateAstroid in state.Astroids)
             {
                 _astroidManager.Sprites.Add(new Astroid(randomizer){SpriteState = stateAstroid, Texture2D = astroid});
