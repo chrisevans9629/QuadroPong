@@ -38,11 +38,11 @@ Classic Pong
   - [ ] Powerups
   - [x] Healthbar
   - [x] Points
-- [ ] Save Game State
-  - [ ] Ball
-  - [ ] Paddle
-  - [ ] Score
-  - [ ] Health
+- [x] Save Game State
+  - [x] Ball
+  - [x] Paddle
+  - [x] Score
+  - [x] Health
 - [ ] Main Menu
   - [x] Start
   - [x] Reset
