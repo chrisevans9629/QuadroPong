@@ -7,25 +7,6 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace MyGame
 {
-    public enum PowerUpType
-    {
-        FastBall,
-        FastPaddle,
-        BiggerPaddle,
-        SmallerPaddle,
-        HoldPaddle,
-        StunPaddle,
-        BiggerBall,
-        SmallerBall,
-    }
-
-    public class PowerUpState
-    {
-        public SpriteState SpriteState { get; set; } = new SpriteState();
-        public PowerUpType PowerUpType { get; set; }
-        public float Power { get; set; } = 200f;
-
-    }
     public class PowerUp : Sprite
     {
         private readonly IRandomizer _randomizer;

@@ -8,22 +8,6 @@ using MonoGame.Extended;
 
 namespace MyGame
 {
-    public enum ShipStatus
-    {
-        Dead,
-        Coming,
-        Ready,
-    }
-
-    public class ShipState
-    {
-        public SpriteState SpriteState { get; set; } = new SpriteState();
-        public List<SpriteState> Balls { get; set; } = new List<SpriteState>();
-        public int Health { get; set; }
-        public ShipStatus ShipStatus { get; set; } = ShipStatus.Dead;
-        public int Score { get; set; }
-    }
-
     public class Ship : Sprite
     {
         private readonly IParticleEngine _particleEngine;

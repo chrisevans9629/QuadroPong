@@ -44,4 +44,8 @@
     <PackageReference Include="MonoGame.Content.Builder" Version="3.7.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
 </Project>

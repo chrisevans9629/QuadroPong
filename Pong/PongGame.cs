@@ -34,7 +34,7 @@ namespace MyGame
         private readonly ISettings _settings;
         private readonly FrameCounter _frameCounter;
         Level? level;
-        private Container container;
+        private readonly Container container;
         public PongGame()
         {
             Akavache.Registrations.Start("PongGame");

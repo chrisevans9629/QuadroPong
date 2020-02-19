@@ -1,11 +1,10 @@
 ﻿namespace MyGame
 {
-    public enum Direction
+    public enum Paddles
     {
-        None,
         Top,
         Bottom,
         Left,
-        Right,
+        Right
     }
 }

@@ -13,12 +13,6 @@ using PongGame.States;
 
 namespace MyGame.Levels
 {
-    public enum GameMode
-    {
-        Classic,
-        Teams,
-        PlayerVs
-    }
     public class RegularPongLevel : Level
     {
         private readonly IGameStateManager _gameStateManager;
