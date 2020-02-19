@@ -112,8 +112,8 @@ namespace MyGame
         public ShipStatus ShipStatus { get=>State.ShipStatus; set=>State.ShipStatus=value; }
         public int Score { get=>State.Score; set=>State.Score=value; }
 
-        public SoundEffect Engines { get; set; }
-        public SoundEffect Explosions { get; set; }
+        public SoundEffect? Engines { get; set; }
+        public SoundEffect? Explosions { get; set; }
 
         public void Start()
         {
@@ -150,7 +150,7 @@ namespace MyGame
             {
                 EngineTimer.Restart();
                 if (isSoundOn)
-                    Engines.Play(1f * Size.X, 0, 0);
+                    Engines?.Play(1f * Size.X, 0, 0);
             }
             var def = new Vector2(0.25f);
 
@@ -177,7 +177,7 @@ namespace MyGame
             {
                 EngineTimer.Restart();
                 if (isSoundOn)
-                    Engines.Play(1f * Size.X, 0, 0);
+                    Engines?.Play(1f * Size.X, 0, 0);
             }
 
 
@@ -215,7 +215,7 @@ namespace MyGame
                 {
                     ExplosionTimer.Restart();
                     if (isSoundOn)
-                        Explosions.Play(0.5f, 0, 0);
+                        Explosions?.Play(0.5f, 0, 0);
                     var b = Bounds();
                     var x = _randomizer.Next(b.X, b.X + b.Width);
                     var y = _randomizer.Next(b.Y, b.Y + b.Height);

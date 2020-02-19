@@ -21,7 +21,11 @@ namespace MyGame
         }
 
 
-        public void AddTimedPowerup(Sprite sprite,PowerUpType type, float seconds, Action completeAction)
+        public void AddTimedPowerup(
+            Sprite sprite,
+            PowerUpType type, 
+            float seconds, 
+            Action completeAction)
         {
             if (TimedPowerups.ContainsKey(sprite))
             {

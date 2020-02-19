@@ -100,6 +100,9 @@ namespace MyGame.Levels
             Balls.Clear();
             foreach (var spriteState in state.Balls)
             {
+                //resets powerup size
+                spriteState.Size = Vector2.One;
+                
                 Balls.Add(new Ball(Randomizer1, new GameTimer())
                 {
                     SpriteState = spriteState
@@ -108,6 +111,10 @@ namespace MyGame.Levels
             Players.Clear();
             foreach (var pongPlayer in state.PongPlayerStates)
             {
+                //this should fix powerups being stuck
+                pongPlayer.PaddleState.HasHoldPaddle = false;
+                pongPlayer.PaddleState.IsStunned = false;
+                pongPlayer.PaddleState.SpriteState.Size = Vector2.One;
                 Players.Add(new PongPlayer(
                     new AiPlayer(pongPlayer.Side),
                     pongPlayer.Position,

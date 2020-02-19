@@ -128,6 +128,9 @@ namespace MyGame.Levels
             }
             if (state.ShipState != null)
             {
+                //this should reset the size
+                state.ShipState.Balls.ForEach(p=>p.Size = Vector2.One);
+
                 _ship = new Ship(Engine, randomizer, state.ShipState);
                 _ship?.Load(MEAT, new Point(PongGame.Width,PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
             }
