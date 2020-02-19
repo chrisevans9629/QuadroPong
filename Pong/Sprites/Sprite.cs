@@ -38,11 +38,11 @@ namespace MyGame
         public Vector2 Size { get => SpriteState.Size; set => SpriteState.Size = value; } 
         public float Speed { get => SpriteState.Speed; set => SpriteState.Speed = value; }
         public Vector2 Acceleration { get => SpriteState.Acceleration; set => SpriteState.Acceleration = value; }
-        public Color Color { get; set; } = Color.White;
-        public float Angle { get; set; }
-        public float AngularVelocity { get; set; }
-        public float Layer { get; set; }
-        public Rectangle? Source { get; set; } = null;
+        public Color Color { get=>SpriteState.Color; set=>SpriteState.Color =value; } 
+        public float Angle { get=>SpriteState.Angle; set=>SpriteState.Angle=value; }
+        public float AngularVelocity { get=>SpriteState.AngularVelocity; set=>SpriteState.AngularVelocity=value; }
+        public float Layer { get=>SpriteState.Layer; set=>SpriteState.Layer=value; }
+        public Rectangle? Source { get=>SpriteState.Source; set=>SpriteState.Source=value; } 
         public override RectangleF Bounds() => new RectangleF(Position, new Size2(Source?.Width ?? Texture2D.Width,Source?.Height ?? Texture2D.Height));
         public virtual void Draw(SpriteBatch batch)
         {

@@ -18,14 +18,14 @@ namespace PongGame.Sprites
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    AstroidPictures.Add(new Rectangle(i*100,j*100,100,100));
+                    _astroidPictures.Add(new Rectangle(i*100,j*100,100,100));
                 }
             }
         }
 
         public List<Astroid> Sprites { get; set; } = new List<Astroid>();
 
-        private List<Rectangle> AstroidPictures = new List<Rectangle>();
+        private readonly List<Rectangle> _astroidPictures = new List<Rectangle>();
 
         public void Reset()
         {
@@ -49,7 +49,7 @@ namespace PongGame.Sprites
             {
                 var sprite = new Astroid(_randomizer);
                 sprite.Texture2D = texture2D;
-                sprite.Source = AstroidPictures[_randomizer.Next(AstroidPictures.Count)];
+                sprite.Source = _astroidPictures[_randomizer.Next(_astroidPictures.Count)];
                 Sprites.Add(sprite);
             }
             Reset();

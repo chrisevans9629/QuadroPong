@@ -47,7 +47,7 @@ namespace MyGame
             container.Register<MainMenuGui>();
             container.Register<PongGui>();
             container.Register<SettingsGui>();
-                
+
             container.Register<RegularPongLevel>(setup: Setup.With(allowDisposableTransient: true));
             container.Register<FourPlayerLevel>(setup: Setup.With(allowDisposableTransient: true));
 
@@ -58,12 +58,12 @@ namespace MyGame
 
             _graphics = new GraphicsDeviceManager(this)
             {
-                PreferMultiSampling = true, 
-                PreferredBackBufferHeight = 1000, 
+                PreferMultiSampling = true,
+                PreferredBackBufferHeight = 1000,
                 PreferredBackBufferWidth = 1000,
                 IsFullScreen = _settings.IsFullScreen,
             };
-            
+
             this.Window.AllowUserResizing = true;
             Window.ClientSizeChanged += WindowOnClientSizeChanged;
             Content.RootDirectory = "Content";
@@ -88,9 +88,9 @@ namespace MyGame
         private void WindowOnClientSizeChanged(object sender, EventArgs e)
         {
             _guiSystem.ClientSizeChanged();
-           // _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
-           // _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
-           // _graphics.ApplyChanges();
+            // _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+            // _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+            // _graphics.ApplyChanges();
             level?.WindowResized();
         }
 
@@ -128,8 +128,8 @@ namespace MyGame
             LoadGui(font1);
         }
 
-        
-       
+
+
 
         private void LoadGui(BitmapFont font1)
         {
@@ -137,7 +137,7 @@ namespace MyGame
             var guiRenderer = new GuiSpriteBatchRenderer(GraphicsDevice, () => Matrix.Identity);
             BitmapFont.UseKernings = false;
             Skin.CreateDefault(font1);
-            
+
             _gui = container.Resolve<MainMenuGui>();
             _guiSystem = new GuiSystem(viewportAdapter, guiRenderer)
             {
@@ -154,7 +154,7 @@ namespace MyGame
             var lvl = container.Resolve<RegularPongLevel>();
             lvl.GameMode = GameMode.Teams;
             this.level = lvl;//new RegularPongLevel(true);
-            
+
             level.Initialize();
             level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }
@@ -188,7 +188,7 @@ namespace MyGame
             _settings.IsPaused = true;
         }
 
-      
+
         public void StartGame4Player()
         {
             _settings.IsPaused = false;
@@ -219,11 +219,19 @@ namespace MyGame
             if (!IsInGame)
             {
                 var gameState = container.Resolve<IGameStateManager>();
+                var state = gameState.LoadGame();
                 IsInGame = true;
-                level = container.Resolve<RegularPongLevel>();
+                if (state.GameMode == GameMode.PlayerVs)
+                {
+                    level = container.Resolve<FourPlayerLevel>();
+                }
+                else
+                {
+                    level = container.Resolve<RegularPongLevel>();
+                }
                 level.Initialize();
                 //level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height) );
-                level.LoadSavedGame(new ContentManagerWrapper(Content), gameState.LoadGame() );
+                level.LoadSavedGame(new ContentManagerWrapper(Content), state);
             }
             _settings.IsPaused = false;
             _gui = container.Resolve<PongGui>();
@@ -236,7 +244,7 @@ namespace MyGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             _guiSystem.Update(gameTime);
-            
+
             _gui.Update();
             if (_graphics.IsFullScreen != _settings.IsFullScreen)
             {
@@ -256,9 +264,9 @@ namespace MyGame
             {
                 musicSoundEffect.Volume = defaultVolume;
             }
-            
-            level?.Update(gameTime, new GameState(){Width = Width, Height = Height, IsDebug = _settings.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = _settings.IsSoundOn});
-            
+
+            level?.Update(gameTime, new GameState() { Width = Width, Height = Height, IsDebug = _settings.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = _settings.IsSoundOn });
+
 
             base.Update(gameTime);
         }
@@ -272,7 +280,7 @@ namespace MyGame
             _spriteBatch.Begin();
 
             level?.Draw(_spriteBatch, gameTime, new Point(Width, Height));
-            
+
             _guiSystem.Draw(gameTime);
 
             //frameCounter.Draw(_spriteBatch);

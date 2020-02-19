@@ -9,26 +9,28 @@ namespace MyGame
 {
     public class ParticleEngine : IParticleEngine, IDisposable
     {
-        private readonly IRandomizer random;
+        private readonly IRandomizer _random;
         public Vector2 EmitterLocation { get; set; }
-        private readonly List<Particle> particles;
-        private readonly List<Texture2D> textures;
+        private readonly List<Particle> _particles;
+        private List<Texture2D> _textures;
 
-        public ParticleEngine(List<Texture2D> textures, IRandomizer random)
+        public ParticleEngine(IRandomizer random)
         {
             EmitterLocation = Vector2.One;
-            this.textures = textures;
-            this.particles = new List<Particle>();
-            this.random = random;
+            this._particles = new List<Particle>();
+            this._random = random;
         }
-
+        public void Load(List<Texture2D> textures)
+        {
+            this._textures = textures;
+        }
         public void AddParticles(Vector2 location)
         {
             EmitterLocation = location;
             int total = 20;
             for (int i = 0; i < total; i++)
             {
-                particles.Add(GenerateNewParticle(new List<Color>(){Color.White}));
+                _particles.Add(GenerateNewParticle(new List<Color>(){Color.White}));
             }
         }
 
@@ -38,18 +40,18 @@ namespace MyGame
             int total = 20;
             for (int i = 0; i < total; i++)
             {
-                particles.Add(GenerateNewParticle(colors));
+                _particles.Add(GenerateNewParticle(colors));
             }
         }
 
         public void Update()
         {
-            for (int particle = 0; particle < particles.Count; particle++)
+            for (int particle = 0; particle < _particles.Count; particle++)
             {
-                particles[particle].Update();
-                if (particles[particle].TTL <= 0)
+                _particles[particle].Update();
+                if (_particles[particle].TTL <= 0)
                 {
-                    particles.RemoveAt(particle);
+                    _particles.RemoveAt(particle);
                     particle--;
                 }
             }
@@ -57,43 +59,43 @@ namespace MyGame
 
         private Particle GenerateNewParticle(List<Color> colors)
         {
-            Texture2D texture = textures[random.Next(textures.Count)];
+            Texture2D texture = _textures[_random.Next(_textures.Count)];
             Vector2 position = EmitterLocation;
             Vector2 velocity = new Vector2(
-                1f * (float)(random.NextFloat() * 2 - 1),
-                1f * (float)(random.NextFloat() * 2 - 1));
+                1f * (float)(_random.NextFloat() * 2 - 1),
+                1f * (float)(_random.NextFloat() * 2 - 1));
             float angle = 0;
-            float angularVelocity = 0.1f * (float)(random.NextFloat() * 2 - 1);
+            float angularVelocity = 0.1f * (float)(_random.NextFloat() * 2 - 1);
 
-            var color = colors[random.Next(colors.Count)];
+            var color = colors[_random.Next(colors.Count)];
             //Color color = new Color(
             //    (float)random.NextFloat(),
             //    (float)random.NextFloat(),
             //    (float)random.NextFloat());
             //var color = Color.LightGray;
 
-            float size = (float)random.NextFloat();
-            int ttl = 20 + random.Next(40);
+            float size = (float)_random.NextFloat();
+            int ttl = 20 + _random.Next(40);
 
             return new Particle(texture, position, velocity, angle, angularVelocity, color, size, ttl);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int index = 0; index < particles.Count; index++)
+            for (int index = 0; index < _particles.Count; index++)
             {
-                particles[index].Draw(spriteBatch);
+                _particles[index].Draw(spriteBatch);
             }
         }
 
         public void Dispose()
         {
-            foreach (var particle in this.particles)
+            foreach (var particle in this._particles)
             {
                 particle?.Dispose();
             }
 
-            foreach (var texture2D in this.textures)
+            foreach (var texture2D in this._textures)
             {
                 texture2D?.Dispose();
             }

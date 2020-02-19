@@ -15,15 +15,11 @@ namespace MyGame.Levels
     public class FourPlayerLevel : RegularPongLevel
     {
         private readonly ISettings _settings;
-        private AstroidManager astroidManager;
-        //private ParticleEngine engine => base.Engine;
-        //private IEnumerable<Ball> balls => base.Balls;
-        //private List<PongPlayer> players = new List<PongPlayer>();
+        private AstroidManager? _astroidManager;
         private List<Boundary> boundaries = new List<Boundary>();
         private List<PowerUp> powerups = new List<PowerUp>();
-        private Ship ship;
-        //private GameResult gameResult => Result;
-        private PowerupManager manager;
+        private Ship? _ship;
+        private PowerupManager? _powerupManager;
         private IRandomizer randomizer => Randomizer1;
         public Rectangle PowerUpArea(int Width, int Height) => new Rectangle(250, 250, Width - 250, Height - 250);
         public FourPlayerLevel(
@@ -37,16 +33,8 @@ namespace MyGame.Levels
 
         public override void Dispose()
         {
-            astroidManager?.Dispose();
-            //engine?.Dispose();
-            //foreach (var ball in balls)
-            //{
-            //    ball?.Dispose();
-            //}
-            //foreach (var pongPlayer in this.players)
-            //{
-            //    pongPlayer?.Dispose();
-            //}
+            _astroidManager?.Dispose();
+            
             foreach (var boundary in boundaries)
             {
                 boundary?.Dispose();
@@ -55,9 +43,11 @@ namespace MyGame.Levels
             {
                 powerUp.Dispose();
             }
-            ship.Dispose();
+            _ship?.Dispose();
             base.Dispose();
         }
+
+      
 
         public override void InitializeWindowSize()
         {
@@ -73,20 +63,14 @@ namespace MyGame.Levels
             {
                 boundaries.Add(new Boundary());
             }
-            // TODO: Add your initialization logic here
-            manager = new PowerupManager();
-            astroidManager = new AstroidManager(randomizer);
+            _powerupManager = new PowerupManager();
+            _astroidManager = new AstroidManager(randomizer);
+            _ship = new Ship(Engine, randomizer);
 
             for (int i = 0; i < 10; i++)
             {
-                powerups.Add(new PowerUp(randomizer, manager));
+                powerups.Add(new PowerUp(randomizer, _powerupManager));
             }
-            //for (int i = 0; i < 1; i++)
-            //{
-            //    var gameTimer = new GameTimer();
-            //    gameTimer.EveryNumOfSeconds = 3f;
-            //    balls.Add(new Ball(randomizer, gameTimer));
-            //}
         }
 
         protected override void LoadGameMode()
@@ -104,15 +88,38 @@ namespace MyGame.Levels
             }
         }
 
+        protected override LevelState GetState()
+        {
+            var result = base.GetState();
+            result.Astroids = _astroidManager.Sprites.Select(p => p.SpriteState).ToList();
+            result.Boundaries = boundaries.Select(p => p.SpriteState).ToList();
+            return result;
+        }
+
+        public override void LoadSavedGame(IContentManager Content, LevelState state)
+        {
+            var astroid = Content.Load<Texture2D>("astroids");
+            _astroidManager.Sprites.Clear();
+
+            foreach (var stateAstroid in state.Astroids)
+            {
+                _astroidManager.Sprites.Add(new Astroid(randomizer){SpriteState = stateAstroid, Texture2D = astroid});
+            }
+            boundaries.Clear();
+            foreach (var stateBoundary in state.Boundaries)
+            {
+                boundaries.Add(new Boundary(){SpriteState = stateBoundary});
+            }
+            var boundary = Content.Load<Texture2D>("Boundary");
+
+            LoadBoundaries(boundary);
+            base.LoadSavedGame(Content, state);
+        }
         public override void LoadContent(IContentManager Content, Point windowSize)
         {
-            base.LoadContent(Content, windowSize);
 
             var font = Content.Load<SpriteFont>("arial");
             var ballTexture = Content.Load<Texture2D>("ball2");
-            //var paddle = Content.Load<Texture2D>("paddle");
-            //var paddleRot = Content.Load<Texture2D>("paddleRot");
-            //var goal = Content.Load<Song>("goal");
             var blip = Content.Load<SoundEffect>("blip");
             var explosions = Content.Load<SoundEffect>("explosion");
             var MEAT = Content.Load<Texture2D>("meatball");
@@ -120,29 +127,20 @@ namespace MyGame.Levels
             var powerUpSound = Content.Load<SoundEffect>("powerup");
             var pew = Content.Load<SoundEffect>("pew");
             var boundary = Content.Load<Texture2D>("Boundary");
-            //var deathSound = Content.Load<SoundEffect>("death");
-            var asstroid = Content.Load<Texture2D>("astroids");
+            var astroid = Content.Load<Texture2D>("astroids");
 
-            astroidManager.Load(asstroid);
-            //engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, randomizer);
-
+            _astroidManager?.Load(astroid);
             var bullets = LoadShip(MEAT, explosions, engineSound, windowSize);
             LoadBalls(bullets, pew, blip, ballTexture, font);
-
-            //LoadPlayers(font, paddle, goal, paddleRot, deathSound);
-
             LoadPowerUps(powerUpSound, ballTexture);
-
-
             LoadBoundaries(boundary);
+            base.LoadContent(Content, windowSize);
 
-            //SetPositions(windowSize.X, windowSize.Y);
-            //ResetGame(windowSize.X, windowSize.Y);
         }
 
         protected override void UpdateBalls(GameTime gameTime, GameState gameState, Vector2 viewPort, IEnumerable<Ball> balls)
         {
-            base.UpdateBalls(gameTime, gameState, viewPort, balls.Union(ship.Bullets));
+            base.UpdateBalls(gameTime, gameState, viewPort, balls.Union(_ship.Bullets));
         }
 
         protected override void UpdatePlayers(GameTime gameTime, GameState gameState, Vector2 viewPort, IEnumerable<PongPlayer> players, List<Ball> balls)
@@ -152,72 +150,44 @@ namespace MyGame.Levels
             {
                 pongPlayer.BoundarySize = b.Texture2D.Width;
             }
-            base.UpdatePlayers(gameTime, gameState, viewPort, players, balls.Union(ship.Bullets).ToList());
+            base.UpdatePlayers(gameTime, gameState, viewPort, players, balls.Union(_ship.Bullets).ToList());
 
             foreach (var pongPlayer in players)
             {
                 var score = pongPlayer.Paddle.Score;
 
-                if (score > 0 && pongPlayer.Paddle.Score % 3 == 0 && ship.ShipState == ShipState.Dead && score > ship.Score)
+                if (score > 0 && pongPlayer.Paddle.Score % 3 == 0 && _ship.ShipState == ShipState.Dead && score > _ship.Score)
                 {
-                    ship.Score = score;
-                    this.ship.Start();
+                    _ship.Score = score;
+                    this._ship.Start();
                 }
             }
         }
 
         public override void Update(GameTime gameTime, GameState gameState)
         {
-            var Width = gameState.Width;
-            var Height = gameState.Height;
+            var width = gameState.Width;
+            var height = gameState.Height;
             if (_settings.HasAstroids)
-                astroidManager.Update(gameTime, Balls.Union(ship.Bullets).ToList(), Width, Height);
+                _astroidManager.Update(gameTime, Balls.Union(_ship.Bullets).ToList(), width, height);
 
-            manager.UpdateTimedPowerup(gameTime);
-            //gameResult.Update(Players);
-
-            //var viewPort = gameState.ViewPort.Size.ToVector2();
-
-            ship.Update(gameTime, Balls, Width, Height, gameState.IsSoundOn);
-            //foreach (var pongPlayer in Players)
-            //{
-            //    pongPlayer.Goal.SoundOn = gameState.IsSoundOn;
-            //    pongPlayer.Update(gameTime, viewPort, Balls.Union(ship.Bullets).ToList(), Width, Height, b.Texture2D.Width);
-            //}
-
-            //foreach (var ball in Balls.Union(ship.Bullets))
-            //{
-            //    if (ball.IsBallColliding)
-            //        engine.AddParticles(ball.Position);
-            //    ball.Debug = gameState.IsDebug;
-            //    ball.HasSound = gameState.IsSoundOn;
-            //    ball.Update(gameTime, viewPort);
-            //    ball.Timer.Update(gameTime);
-                
-            //}
+            _powerupManager.UpdateTimedPowerup(gameTime);
+           
+            _ship.Update(gameTime, Balls, width, height, gameState.IsSoundOn);
+           
             foreach (var powerUp in powerups)
             {
-                powerUp.Update(Balls.Union(ship.Bullets), PowerUpArea(Width, Height), gameState.IsSoundOn);
+                powerUp.Update(Balls.Union(_ship.Bullets), PowerUpArea(width, height), gameState.IsSoundOn);
             }
-            //engine.Update();
 
             foreach (var boundary in boundaries)
             {
-                foreach (var ball in Balls.Union(ship.Bullets))
+                foreach (var ball in Balls.Union(_ship.Bullets))
                 {
                     boundary.Update(ball);
                 }
             }
 
-            //if (gameResult.Winner != null)
-            //{
-            //    //mainMenu.Winner = $"{gameResult.Winner.Position} won!";
-            //    ResetGame(Width, Height);
-            //    //todo: make gui to show winner
-            //    PongGame.ShowMainMenu();
-            //    //BackToMenu($"{gameResult.Winner.Position} won!");
-            //    //BackToMainMenu();
-            //}
             base.Update(gameTime, gameState);
         }
 
@@ -232,11 +202,10 @@ namespace MyGame.Levels
         }
         private List<Ball> LoadShip(Texture2D MEAT, SoundEffect explosions, SoundEffect engineSound, Point window)
         {
-            ship = new Ship(Engine, randomizer);
-            ship.Texture2D = MEAT;
-            ship.Position = new Vector2(window.X / 2f, window.Y / 2f);
-            ship.Explosions = explosions;
-            ship.Engines = engineSound;
+            _ship.Texture2D = MEAT;
+            _ship.Position = new Vector2(window.X / 2f, window.Y / 2f);
+            _ship.Explosions = explosions;
+            _ship.Engines = engineSound;
 
             var bullets = new List<Ball>();
             for (int i = 0; i < 4; i++)
@@ -244,22 +213,10 @@ namespace MyGame.Levels
                 bullets.Add(new Ball(randomizer, new GameTimer()));
             }
 
-            ship.Bullets = bullets;
+            _ship.Bullets = bullets;
             return bullets;
         }
-        private void LoadPlayers(SpriteFont font, Texture2D paddle, Song goal, Texture2D paddleRot, SoundEffect death)
-        {
-            var offset = -240;
-
-            foreach (var pongPlayer in Players)
-            {
-                if (pongPlayer.Side)
-                    pongPlayer.Load(font, paddle, offset, goal, death);
-                else
-                    pongPlayer.Load(font, paddleRot, offset, goal, death);
-                offset += 120;
-            }
-        }
+       
         private void LoadPowerUps(SoundEffect powerUpSound, Texture2D ballTexture)
         {
             foreach (var powerUp in powerups)
@@ -268,34 +225,10 @@ namespace MyGame.Levels
                 powerUp.Texture2D = ballTexture;
             }
         }
-        private void LoadBalls(List<Ball> bullets, SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
-        {
-            foreach (var ball in bullets)
-            {
-                ball.PewSound = pew;
-                ball.BounceSong = blip;
-                ball.Texture2D = ballTexture;
-                ball.Timer.Font = font;
-                ball.SpriteFont = font;
-            }
-
-            //foreach (var ball in balls)
-            //{
-            //    ball.PewSound = pew;
-            //    ball.BounceSong = blip;
-            //    ball.Texture2D = ballTexture;
-            //    ball.Timer.Font = font;
-            //    ball.SpriteFont = font;
-            //}
-        }
+        
         protected override void ResetGame(int Width, int Height)
         {
-            //foreach (var ball in balls)
-            //{
-            //    ball.Reset(Width, Height);
-            //}
-
-            foreach (var shipBullet in ship.Bullets ?? new List<Ball>())
+            foreach (var shipBullet in _ship.Bullets ?? new List<Ball>())
             {
                 shipBullet.Reset(Width, Height);
             }
@@ -305,14 +238,8 @@ namespace MyGame.Levels
                 powerUp.Reset(PowerUpArea(Width, Height));
             }
 
-            //foreach (var pongPlayer in Players)
-            //{
-            //    pongPlayer.Reset(Width, Height);
-            //}
-
-            ship.Reset();
+            _ship.Reset();
             base.ResetGame(Width, Height);
-            //gameResult.Reset();
         }
 
         public override void WindowResized()
@@ -336,22 +263,7 @@ namespace MyGame.Levels
 
         public override void Draw(SpriteBatch _spriteBatch, GameTime gameTime, Point window)
         {
-            //var Width = window.X;
-            //var Height = window.Y;
-            ship.Draw(_spriteBatch);
-
-
-            //foreach (var ball in balls)
-            //{
-            //    ball.Draw(_spriteBatch);
-            //    ball.Timer.Draw(_spriteBatch, Width, Height);
-
-            //}
-            //foreach (var pongPlayer in Players)
-            //{
-            //    pongPlayer.Draw(_spriteBatch, Width);
-            //}
-
+            _ship.Draw(_spriteBatch);
 
             foreach (var boundary in boundaries)
             {
@@ -363,8 +275,7 @@ namespace MyGame.Levels
                 powerUp.Draw(_spriteBatch);
             }
             if (_settings.HasAstroids)
-                astroidManager.Draw(_spriteBatch);
-            //engine.Draw(_spriteBatch);
+                _astroidManager.Draw(_spriteBatch);
             base.Draw(_spriteBatch, gameTime, window);
         }
 

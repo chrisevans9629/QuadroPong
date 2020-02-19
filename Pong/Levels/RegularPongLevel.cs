@@ -23,11 +23,12 @@ namespace MyGame.Levels
     {
         private readonly IGameStateManager _gameStateManager;
 
-        LevelState GetState()
+        protected virtual LevelState GetState()
         {
             return new LevelState()
             {
                 Balls = Balls.Select(p => p.SpriteState).ToList(),
+                GameMode = GameMode,
                 PongPlayerStates = Players.Select(p => p.State).ToList()
             };
         }
@@ -74,6 +75,7 @@ namespace MyGame.Levels
         {
             InitializeWindowSize();
             Randomizer1 = new Randomizer();
+            Engine = new ParticleEngine(Randomizer1);
             base.Initialize();
         }
 
@@ -93,7 +95,7 @@ namespace MyGame.Levels
             var pew = Content.Load<SoundEffect>("pew");
             var blip = Content.Load<SoundEffect>("blip");
             var font = Content.Load<SpriteFont>("arial");
-            Engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, Randomizer1);
+            Engine.Load(new List<Texture2D>() { ballTexture });
 
             Balls.Clear();
             foreach (var spriteState in state.Balls)
@@ -115,7 +117,7 @@ namespace MyGame.Levels
             }
 
             LoadPlayers(font, paddle, goal, paddleRot, deathSound);
-            LoadBalls(pew, blip, ballTexture, font);
+            LoadBalls(Balls, pew, blip, ballTexture, font);
         }
 
         public override void LoadContent(IContentManager Content, Point windowSize)
@@ -128,7 +130,7 @@ namespace MyGame.Levels
             var pew = Content.Load<SoundEffect>("pew");
             var blip = Content.Load<SoundEffect>("blip");
             var font = Content.Load<SpriteFont>("arial");
-            Engine = new ParticleEngine(new List<Texture2D>() { ballTexture }, Randomizer1);
+            Engine.Load(new List<Texture2D>() { ballTexture });
             for (int i = 0; i < 1; i++)
             {
                 var gameTimer = new GameTimer
@@ -141,7 +143,7 @@ namespace MyGame.Levels
             LoadGameMode();
             LoadPlayers(font, paddle, goal, paddleRot, deathSound);
 
-            LoadBalls(pew, blip, ballTexture, font);
+            LoadBalls(Balls, pew, blip, ballTexture, font);
 
 
 
@@ -161,28 +163,28 @@ namespace MyGame.Levels
                     Paddles.Right,
                     Engine,
                     PlayerName.PlayerOne,
-                    goalRight, state: new PongPlayerState() {GoalState = goalRight.State}));
+                    goalRight, state: new PongPlayerState() { GoalState = goalRight.State }));
                 Players.Add(new PongPlayer(
                     new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)),
                     Paddles.Left,
                     Engine,
                     PlayerName.PlayerTwo,
-                    goalLeft, state: new PongPlayerState() {GoalState = goalLeft.State}));
+                    goalLeft, state: new PongPlayerState() { GoalState = goalLeft.State }));
                 Players.Add(new PongPlayer(
                     new PlayerOrAi(true,
                         new ControllerPlayer(PlayerIndex.Three)),
                     Paddles.Right,
                     Engine,
                     PlayerName.PlayerThree,
-                    goalRight, state: new PongPlayerState() {GoalState = goalRight.State}));
+                    goalRight, state: new PongPlayerState() { GoalState = goalRight.State }));
                 Players.Add(new PongPlayer(
                     new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Four)),
                     Paddles.Left,
                     Engine,
                     PlayerName.PlayerFour,
-                    goalLeft, state: new PongPlayerState() {GoalState = goalLeft.State}));
+                    goalLeft, state: new PongPlayerState() { GoalState = goalLeft.State }));
             }
-            else if(GameMode == GameMode.Classic)
+            else if (GameMode == GameMode.Classic)
             {
                 Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()),
                     Paddles.Right, Engine, PlayerName.PlayerOne));
@@ -245,9 +247,9 @@ namespace MyGame.Levels
                 i += offset;
             }
         }
-        protected virtual void LoadBalls(SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
+        protected virtual void LoadBalls(IEnumerable<Ball> balls, SoundEffect pew, SoundEffect blip, Texture2D ballTexture, SpriteFont font)
         {
-            foreach (var ball in Balls)
+            foreach (var ball in balls)
             {
                 ball.PewSound = pew;
                 ball.BounceSong = blip;
@@ -258,8 +260,6 @@ namespace MyGame.Levels
         }
         public override void Update(GameTime gameTime, GameState gameState)
         {
-
-
             var Width = gameState.Width;
             var Height = gameState.Height;
             Result.Update(Players);
@@ -273,20 +273,15 @@ namespace MyGame.Levels
 
             if (Result.Winner != null)
             {
-                //mainMenu.Winner = $"{gameResult.Winner.Position} won!";
                 ResetGame(Width, Height);
-
                 PongGame.ShowMainMenu();
-
-                //BackToMenu($"{gameResult.Winner.Position} won!");
-                //BackToMainMenu();
             }
             base.Update(gameTime, gameState);
         }
 
         protected virtual void UpdateBalls(
-            GameTime gameTime, 
-            GameState gameState, 
+            GameTime gameTime,
+            GameState gameState,
             Vector2 viewPort, IEnumerable<Ball> balls)
         {
             foreach (var ball in balls)
@@ -302,7 +297,7 @@ namespace MyGame.Levels
 
         protected virtual void UpdatePlayers(
             GameTime gameTime,
-            GameState gameState, 
+            GameState gameState,
             Vector2 viewPort,
             IEnumerable<PongPlayer> players,
             List<Ball> balls)
@@ -335,6 +330,6 @@ namespace MyGame.Levels
         }
 
 
-        
+
     }
 }

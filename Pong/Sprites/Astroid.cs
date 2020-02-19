@@ -27,23 +27,8 @@ namespace PongGame.Sprites
             AngularVelocity = (_randomizer.NextFloat() / 4f) -.125f;
         }
 
-
-        class T : Collider
-        {
-            public override RectangleF Bounds()
-            {
-                var state = Mouse.GetState();
-                return new RectangleF(state.X, state.Y, 1, 1);
-            }
-        }
         public void Update(GameTime time, int width, int height, List<Ball> balls)
         {
-
-            //var t = new T();
-            //if (Collision(t))
-            //{
-            //    Console.WriteLine($"Mouse:{t.Bounds()},Astroid:{Bounds()}");
-            //}
             foreach (var ball in balls)
             {
                 if (Collision(ball))
@@ -51,7 +36,6 @@ namespace PongGame.Sprites
                     ball.Reflect((Position + new Vector2(-RelativeCenter.X, RelativeCenter.Y)) - ball.Center, 0);
                 }
             }
-
             var end = new Vector2(width + 100, height + 100);
             Acceleration = AngleToVector(this.VectorToAngle(Acceleration));
 
@@ -66,8 +50,6 @@ namespace PongGame.Sprites
             }
         }
         public Vector2 RelativeCenter => Source.Value.Width / 2f * Size;
-
-        
 
         public Circle Circle()
         {
