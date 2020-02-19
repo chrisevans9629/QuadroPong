@@ -91,6 +91,7 @@ namespace MyGame.Levels
         protected override LevelState GetState()
         {
             var result = base.GetState();
+            result.PowerUps = powerups.Select(p => p.State).ToList();
             result.Astroids = _astroidManager.Sprites.Select(p => p.SpriteState).ToList();
             result.Boundaries = boundaries.Select(p => p.SpriteState).ToList();
             return result;
@@ -111,7 +112,15 @@ namespace MyGame.Levels
                 boundaries.Add(new Boundary(){SpriteState = stateBoundary});
             }
             var boundary = Content.Load<Texture2D>("Boundary");
+            powerups.Clear();
+            foreach (var statePowerUp in state.PowerUps)
+            {
+                powerups.Add(new PowerUp(randomizer, _powerupManager, statePowerUp));
+            }
+            var powerUpSound = Content.Load<SoundEffect>("powerup");
+            var ballTexture = Content.Load<Texture2D>("ball2");
 
+            LoadPowerUps(powerUpSound,ballTexture);
             LoadBoundaries(boundary);
             base.LoadSavedGame(Content, state);
         }
@@ -156,7 +165,7 @@ namespace MyGame.Levels
             {
                 var score = pongPlayer.Paddle.Score;
 
-                if (score > 0 && pongPlayer.Paddle.Score % 3 == 0 && _ship.ShipState == ShipState.Dead && score > _ship.Score)
+                if (score > 0 && pongPlayer.Paddle.Score % 3 == 0 && _ship.ShipState == ShipStatus.Dead && score > _ship.Score)
                 {
                     _ship.Score = score;
                     this._ship.Start();
@@ -202,18 +211,7 @@ namespace MyGame.Levels
         }
         private List<Ball> LoadShip(Texture2D MEAT, SoundEffect explosions, SoundEffect engineSound, Point window)
         {
-            _ship.Texture2D = MEAT;
-            _ship.Position = new Vector2(window.X / 2f, window.Y / 2f);
-            _ship.Explosions = explosions;
-            _ship.Engines = engineSound;
-
-            var bullets = new List<Ball>();
-            for (int i = 0; i < 4; i++)
-            {
-                bullets.Add(new Ball(randomizer, new GameTimer()));
-            }
-
-            _ship.Bullets = bullets;
+            
             return bullets;
         }
        

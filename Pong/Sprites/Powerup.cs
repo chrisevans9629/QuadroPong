@@ -19,16 +19,31 @@ namespace MyGame
         SmallerBall,
     }
 
+    public class PowerUpState
+    {
+        public SpriteState SpriteState { get; set; } = new SpriteState();
+        public PowerUpType PowerUpType { get; set; }
+        public float Power { get; set; } = 200f;
+
+    }
     public class PowerUp : Sprite
     {
         private readonly IRandomizer _randomizer;
         private readonly IPowerupManager _powerupManager;
+        public PowerUpState State { get; }
+        public SoundEffect? SoundEffect { get; set; }
 
-        public PowerUp(IRandomizer randomizer, IPowerupManager powerupManager)
+        public PowerUpType PowerUpType { get=>State.PowerUpType; set=>State.PowerUpType=value; }
+        public PowerUp(
+            IRandomizer randomizer,
+            IPowerupManager powerupManager,
+            PowerUpState? state = null)
         {
             _randomizer = randomizer;
             _powerupManager = powerupManager;
             Color = Color.Blue;
+            State = state ?? new PowerUpState();
+            SpriteState = State.SpriteState;
         }
 
         public override void Dispose()
@@ -44,14 +59,14 @@ namespace MyGame
 
             var types = Enum.GetNames(typeof(PowerUpType));
 
-            PowerUpType = Enum.Parse<PowerUpType>(types[_randomizer.Next(types.Length)]);
+            State.PowerUpType = Enum.Parse<PowerUpType>(types[_randomizer.Next(types.Length)]);
             Color = Getcolor();
             Position = new Vector2(x, y);
         }
 
         Color Getcolor()
         {
-            return PowerUpType switch 
+            return State.PowerUpType switch 
                 {
                     PowerUpType.BiggerPaddle => Color.Green,
                     PowerUpType.FastBall => Color.Blue,
@@ -66,9 +81,6 @@ namespace MyGame
         }
 
 
-        public PowerUpType PowerUpType { get; set; }
-        public float Power { get; set; } = 200f;
-        public SoundEffect SoundEffect { get; set; }
         public void Update(IEnumerable<Ball> balls, Rectangle area, bool isSoundOn)
         {
             foreach (var ball in balls)
@@ -94,7 +106,7 @@ namespace MyGame
                     }
 
                     if (isSoundOn)
-                        SoundEffect.Play(0.3f, 0, 0);
+                        SoundEffect?.Play(0.3f, 0, 0);
                 }
             }
         }
@@ -107,7 +119,7 @@ namespace MyGame
 
             if (PowerUpType == PowerUpType.FastBall)
             {
-                last.Power += Power;
+                last.Power += State.Power;
             }
             else if (PowerUpType == PowerUpType.HoldPaddle)
             {
