@@ -36,8 +36,8 @@ namespace MyGame
         {
             _particleEngine = particleEngine ?? throw new ArgumentNullException(nameof(particleEngine));
             _randomizer = randomizer ?? throw new ArgumentNullException(nameof(randomizer));
-            Size = Vector2.Zero;
-            AngularVelocity = 1f;
+           // Size = Vector2.Zero;
+            //AngularVelocity = 1f;
 
             EngineTimer.EveryNumOfSeconds = 0.5f;
             EngineTimer.Restart();
@@ -55,6 +55,7 @@ namespace MyGame
             {
                 state = new ShipState();
                 state.SpriteState.Size = Vector2.Zero;
+                state.SpriteState.AngularVelocity = 1f;
                 for (int i = 0; i < 4; i++)
                 {
                     var ball = new Ball(_randomizer, new GameTimer());
