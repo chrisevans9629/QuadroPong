@@ -194,7 +194,7 @@ namespace MyGame.Levels
                 }
             }
         }
-
+        
         public override void Update(GameTime gameTime, GameState gameState)
         {
             var width = gameState.Width;
@@ -203,6 +203,11 @@ namespace MyGame.Levels
             if (GameHosting == GameHosting.Client)
             {
                 Balls[0].Position = _serverClient.BallPosition;
+
+                for (var i = 0; i < _serverClient.PlayerPositions.Count; i++)
+                {
+                    Players[i].Paddle.Position = _serverClient.PlayerPositions[i];
+                }
                 //var state = _serverClient?.LevelStates.LastOrDefault();
                 //if (state != null)
                 //{
@@ -213,12 +218,13 @@ namespace MyGame.Levels
                 //    }
                 //}
                 //_serverClient?.LevelStates?.Clear();
-                return;
+                //return;
             }
             else if (GameHosting == GameHosting.Host)
             {
                  _serverClient?.SendBall(Balls[0].Position).GetAwaiter().GetResult();
-                //_serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
+                 _serverClient?.SendPlayers(Players.Select(p => (VectorT)p.Paddle.Position).ToList()).GetAwaiter().GetResult();
+                 //_serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
             }
 
             if (_settings.HasAstroids)

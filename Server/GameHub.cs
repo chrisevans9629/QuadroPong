@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Xna.Framework;
@@ -9,6 +10,11 @@ namespace Server
 {
     public class GameHub : Hub
     {
+        public async Task SendPlayerPositions(List<VectorT> players)
+        {
+            await Clients.Others.SendAsync(ServerClient.ReceivePlayerPositions, players);
+        }
+
         public async Task SendState(LevelState state)
         {
             await Clients.Others.SendAsync(ServerClient.ReceiveState, state);
