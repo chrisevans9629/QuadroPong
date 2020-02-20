@@ -277,11 +277,7 @@ namespace MyGame
                 _graphics.IsFullScreen = _settings.IsFullScreen;
                 _graphics.ApplyChanges();
             }
-            if (!IsInGame)
-                return;
 
-            if (_settings.IsPaused)
-                return;
             if (!_settings.IsSoundOn)
             {
                 musicSoundEffect.Volume = 0;
@@ -290,6 +286,13 @@ namespace MyGame
             {
                 musicSoundEffect.Volume = defaultVolume;
             }
+
+            if (!IsInGame)
+                return;
+
+            if (_settings.IsPaused)
+                return;
+            
 
             level?.Update(gameTime, new GameState() { Width = Width, Height = Height, IsDebug = _settings.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = _settings.IsSoundOn });
 

@@ -45,7 +45,8 @@ namespace MyGame
                             Button("-", () => settings.MasterVolume--),
                             Label(settings.MasterVolume.ToString(), p => ((Label)p).Content = settings.MasterVolume),
                             Button("+", () => settings.MasterVolume++)
-                            ).Orientation(Orientation.Horizontal)
+                            ).Orientation(Orientation.Horizontal),
+                        CheckBox("Is Sound On", settings.IsSoundOn, c => settings.IsSoundOn = c.IsChecked)
                     }
                 }
             };
