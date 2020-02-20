@@ -14,11 +14,11 @@ namespace MyGame
     {
         public const string SendState = nameof(SendState);
         public const string ReceiveState = nameof(ReceiveState);
-        private HubConnection connection;
+        private readonly HubConnection _connection;
 
         public ServerClient(HttpMessageHandler? handler = null)
         {
-            connection = new HubConnectionBuilder()
+            _connection = new HubConnectionBuilder()
                 .WithUrl("https://localhost:44397/GameHub", o =>
                 {
                     if (handler != null)
@@ -31,17 +31,17 @@ namespace MyGame
         }
         public async Task SendMove(LevelState state)
         {
-            await connection.InvokeAsync(SendState, state);
+            await _connection.InvokeAsync(SendState, state);
         }
 
         public List<LevelState> LevelStates { get; set; } = new List<LevelState>();
 
         public async Task Start()
         {
-            connection.On<LevelState>(
+            _connection.On<LevelState>(
                 ReceiveState, 
                 s => LevelStates.Add(s));
-            await connection.StartAsync();
+            await _connection.StartAsync();
 
         }
     }

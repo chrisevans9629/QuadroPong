@@ -44,6 +44,24 @@ namespace Tests
             await Task.Delay(100);
             client2.LevelStates.Should().NotBeEmpty();
         }
+
+        [Test]
+        public async Task SendMove_LongFloat_Should_Be()
+        {
+            await client1.SendMove(new LevelState()
+            {
+                ShipState = new ShipState()
+                {
+                    SpriteState = new SpriteState()
+                    {
+                        Speed = 1.50003432f
+                    }
+                }
+            });
+            await Task.Delay(100);
+            client2.LevelStates.Should().NotBeEmpty();
+        }
+
         [Test]
         public async Task SendMove_Should_Be()
         {

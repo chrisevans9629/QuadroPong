@@ -216,7 +216,7 @@ namespace MyGame.Levels
             }
             else if (GameHosting == GameHosting.Host)
             {
-                _serverClient?.SendMove(GetState());
+                _serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
             }
 
             if (_settings.HasAstroids)
