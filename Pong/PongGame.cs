@@ -169,7 +169,17 @@ namespace MyGame
             level.Initialize();
             level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }
-
+        public void StartGame4Player()
+        {
+            _settings.IsPaused = false;
+            _gui = container.Resolve<PongGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
+            IsInGame = true;
+            this.level = container.Resolve<FourPlayerLevel>();
+            level.GameMode = GameMode.PlayerVs;
+            level.Initialize();
+            level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
+        }
         public void ShowMainMenu()
         {
             BackToMainMenu();
@@ -189,17 +199,7 @@ namespace MyGame
         }
 
 
-        public void StartGame4Player()
-        {
-            _settings.IsPaused = false;
-            _gui = container.Resolve<PongGui>();
-            _guiSystem.ActiveScreen = _gui.Screen;
-            IsInGame = true;
-            this.level = container.Resolve<FourPlayerLevel>();
-            level.GameMode = GameMode.PlayerVs;
-            level.Initialize();
-            level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
-        }
+       
         private void LoadMusic()
         {
             var backSong = music.CreateInstance();
@@ -236,6 +236,32 @@ namespace MyGame
             _settings.IsPaused = false;
             _gui = container.Resolve<PongGui>();
             _guiSystem.ActiveScreen = _gui.Screen;
+        }
+
+        public void HostGame()
+        {
+            _settings.IsPaused = false;
+            _gui = container.Resolve<PongGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
+            IsInGame = true;
+            this.level = container.Resolve<FourPlayerLevel>();
+            level.GameMode = GameMode.PlayerVs;
+            level.GameHosting = GameHosting.Host;
+            level.Initialize();
+            level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
+        }
+
+        public void JoinGame()
+        {
+            _settings.IsPaused = false;
+            _gui = container.Resolve<PongGui>();
+            _guiSystem.ActiveScreen = _gui.Screen;
+            IsInGame = true;
+            this.level = container.Resolve<FourPlayerLevel>();
+            level.GameMode = GameMode.PlayerVs;
+            level.GameHosting = GameHosting.Client;
+            level.Initialize();
+            level.LoadContent(new ContentManagerWrapper(Content), new Point(Width, Height));
         }
 
         protected override void Update(GameTime gameTime)

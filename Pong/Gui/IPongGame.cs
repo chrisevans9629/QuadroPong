@@ -12,5 +12,7 @@
         void Exit();
         bool IsInGame { get; }
         void ResumeGame();
+        void HostGame();
+        void JoinGame();
     }
 }

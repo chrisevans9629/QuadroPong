@@ -6,10 +6,18 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MyGame.Levels
 {
+    public enum GameHosting
+    {
+        Offline,
+        Host,
+        Client
+    }
     public class Level : IDisposable
     {
         protected readonly IPongGame PongGame;
         public GameMode GameMode { get; set; }
+        public GameHosting GameHosting { get; set; }
+
         public Level()
         {
             

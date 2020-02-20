@@ -24,30 +24,21 @@ namespace MyGame
 
         readonly Thickness _padding = new Thickness(50, 20);
         readonly Thickness _margin = new Thickness(10);
-        private ServerClient client;
-        private TextBox player;
-        private TextBox x;
-        private TextBox y;
-        private Label output;
         public MainMenuGui(
             IPongGame pongGame,
             IGameStateManager gameStateManager)
         {
             _pongGame = pongGame;
-            player = new TextBox("player1");
-            x = new TextBox("0");
-            y = new TextBox("0");
-            output=new Label();
-            output.TextColor = Color.White;
-            client = new ServerClient();
-            client.Start();
             var resume = Button("Resume", pongGame.ResumeGame, pongGame.IsInGame || gameStateManager.HasSavedGame());
             var start = Button("Start 4 Player", pongGame.StartGame4Player);
             var start2 = Button("Start 2 Player", pongGame.StartGameClassic);
             var startTeams = Button("Start 4 Player Teams", pongGame.StartGameTeams);
+
+            var host = Button("Host", pongGame.HostGame);
+            var join = Button("Join", pongGame.JoinGame);
+
             var settings = Button("Settings", pongGame.ShowSettings);
             var quit = Button("Quit", pongGame.Exit);
-            var send = Button("Send", async () => await client.SendMove(player.Text, float.Parse(x.Text), float.Parse(y.Text)));
             var src = new Screen()
             {
                 Content = new StackPanel()
@@ -64,12 +55,9 @@ namespace MyGame
                         start2,
                         startTeams,
                         settings,
+                        host,
+                        join,
                         quit,
-                        player,
-                        x,
-                        y,
-                        send,
-                        output,
                     },
                     HorizontalAlignment = HorizontalAlignment.Centre,
                     VerticalAlignment = VerticalAlignment.Centre
@@ -87,7 +75,6 @@ namespace MyGame
         {
             if (!Screen.IsVisible)
                 return;
-            output.Content = client.Output;
             var capabilities = GamePad.GetCapabilities(PlayerIndex.One);
             if (capabilities.IsConnected && capabilities.HasLeftYThumbStick && capabilities.HasAButton)
             {
