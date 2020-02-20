@@ -20,6 +20,7 @@ namespace MyGame.Levels
         private List<PowerUp> powerups = new List<PowerUp>();
         private Ship? _ship;
         private PowerupManager? _powerupManager;
+        private ServerClient? _serverClient;
         private IRandomizer randomizer => Randomizer1;
         public Rectangle PowerUpArea(int Width, int Height) => new Rectangle(250, 250, Width - 250, Height - 250);
         public FourPlayerLevel(
@@ -34,7 +35,7 @@ namespace MyGame.Levels
         public override void Dispose()
         {
             _astroidManager?.Dispose();
-            
+
             foreach (var boundary in boundaries)
             {
                 boundary?.Dispose();
@@ -47,7 +48,7 @@ namespace MyGame.Levels
             base.Dispose();
         }
 
-      
+
 
         public override void InitializeWindowSize()
         {
@@ -58,7 +59,11 @@ namespace MyGame.Levels
         public override void Initialize()
         {
             base.Initialize();
-
+            if (GameHosting != GameHosting.Offline)
+            {
+                _serverClient = new ServerClient();
+                _serverClient.Start().GetAwaiter().GetResult();
+            }
             for (int i = 0; i < 4; i++)
             {
                 boundaries.Add(new Boundary());
@@ -91,7 +96,7 @@ namespace MyGame.Levels
         protected override LevelState GetState()
         {
             var result = base.GetState();
-            result.ShipState = _ship.State;
+            result.ShipState = _ship?.State;
             result.PowerUps = powerups.Select(p => p.State).ToList();
             result.Astroids = _astroidManager.Sprites.Select(p => p.SpriteState).ToList();
             result.Boundaries = boundaries.Select(p => p.SpriteState).ToList();
@@ -114,12 +119,12 @@ namespace MyGame.Levels
             GameMode = state.GameMode;
             foreach (var stateAstroid in state.Astroids)
             {
-                _astroidManager.Sprites.Add(new Astroid(randomizer){SpriteState = stateAstroid, Texture2D = astroid});
+                _astroidManager.Sprites.Add(new Astroid(randomizer) { SpriteState = stateAstroid, Texture2D = astroid });
             }
             boundaries.Clear();
             foreach (var stateBoundary in state.Boundaries)
             {
-                boundaries.Add(new Boundary(){SpriteState = stateBoundary});
+                boundaries.Add(new Boundary() { SpriteState = stateBoundary });
             }
             powerups.Clear();
             foreach (var statePowerUp in state.PowerUps)
@@ -129,12 +134,12 @@ namespace MyGame.Levels
             if (state.ShipState != null)
             {
                 //this should reset the size
-                state.ShipState.Balls.ForEach(p=>p.Size = Vector2.One);
+                state.ShipState.Balls.ForEach(p => p.Size = Vector2.One);
 
                 _ship = new Ship(Engine, randomizer, state.ShipState);
-                _ship?.Load(MEAT, new Point(PongGame.Width,PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
+                _ship?.Load(MEAT, new Point(PongGame.Width, PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
             }
-            LoadPowerUps(powerUpSound,ballTexture);
+            LoadPowerUps(powerUpSound, ballTexture);
             LoadBoundaries(boundary);
             base.LoadSavedGame(Content, state);
         }
@@ -194,13 +199,33 @@ namespace MyGame.Levels
         {
             var width = gameState.Width;
             var height = gameState.Height;
-            if (_settings.HasAstroids)
-                _astroidManager.Update(gameTime, Balls.Union(_ship.Bullets).ToList(), width, height);
 
-            _powerupManager.UpdateTimedPowerup(gameTime);
-           
-            _ship.Update(gameTime, Balls, width, height, gameState.IsSoundOn);
-           
+            if (GameHosting == GameHosting.Client)
+            {
+                var state = _serverClient?.LevelStates.LastOrDefault();
+                if (state != null)
+                {
+                    for (var index = 0; index < Balls.Count; index++)
+                    {
+                        var ball = Balls[index];
+                        ball.SpriteState = state.Balls[index];
+                    }
+                }
+                _serverClient?.LevelStates?.Clear();
+                return;
+            }
+            else if (GameHosting == GameHosting.Host)
+            {
+                _serverClient?.SendMove(GetState());
+            }
+
+            if (_settings.HasAstroids)
+                _astroidManager?.Update(gameTime, Balls.Union(_ship.Bullets).ToList(), width, height);
+
+            _powerupManager?.UpdateTimedPowerup(gameTime);
+
+            _ship?.Update(gameTime, Balls, width, height, gameState.IsSoundOn);
+
             foreach (var powerUp in powerups)
             {
                 powerUp.Update(Balls.Union(_ship.Bullets), PowerUpArea(width, height), gameState.IsSoundOn);
@@ -229,7 +254,7 @@ namespace MyGame.Levels
         //private List<Ball> LoadShip(Texture2D MEAT, SoundEffect explosions, SoundEffect engineSound, Point window)
         //{
         //}
-       
+
         private void LoadPowerUps(SoundEffect powerUpSound, Texture2D ballTexture)
         {
             foreach (var powerUp in powerups)
@@ -238,7 +263,7 @@ namespace MyGame.Levels
                 powerUp.Texture2D = ballTexture;
             }
         }
-        
+
         protected override void ResetGame(int Width, int Height)
         {
             foreach (var shipBullet in _ship.Bullets ?? new List<Ball>())
@@ -292,6 +317,6 @@ namespace MyGame.Levels
             base.Draw(_spriteBatch, gameTime, window);
         }
 
-        
+
     }
 }
