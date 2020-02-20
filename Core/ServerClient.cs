@@ -14,6 +14,8 @@ namespace MyGame
     {
         public const string SendState = nameof(SendState);
         public const string ReceiveState = nameof(ReceiveState);
+        public const string ReceiveBallPosition = nameof(ReceiveBallPosition);
+        public const string SendBallPosition = nameof(SendBallPosition);
         private readonly HubConnection _connection;
 
         public ServerClient(HttpMessageHandler? handler = null)
@@ -34,13 +36,22 @@ namespace MyGame
             await _connection.InvokeAsync(SendState, state);
         }
 
+        public async Task SendBall(VectorT pos)
+        {
+            await _connection.InvokeAsync(SendBallPosition, pos);
+        }
         public List<LevelState> LevelStates { get; set; } = new List<LevelState>();
-
+        public VectorT BallPosition { get; set; }
         public async Task Start()
         {
             _connection.On<LevelState>(
                 ReceiveState, 
                 s => LevelStates.Add(s));
+
+            _connection.On<VectorT>(
+                ReceiveBallPosition, 
+                s => BallPosition = s);
+
             await _connection.StartAsync();
 
         }

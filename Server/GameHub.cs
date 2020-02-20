@@ -13,6 +13,11 @@ namespace Server
         {
             await Clients.Others.SendAsync(ServerClient.ReceiveState, state);
         }
+
+        public async Task SendBallPosition(VectorT pos)
+        {
+            await Clients.Others.SendAsync(ServerClient.ReceiveBallPosition, pos);
+        }
         //public async Task Moved(string player,float x, float y)
         //{
         //    await Clients.Others.SendAsync("Receive", player, x, y);

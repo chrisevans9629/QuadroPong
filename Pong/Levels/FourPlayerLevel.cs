@@ -202,21 +202,23 @@ namespace MyGame.Levels
 
             if (GameHosting == GameHosting.Client)
             {
-                var state = _serverClient?.LevelStates.LastOrDefault();
-                if (state != null)
-                {
-                    for (var index = 0; index < Balls.Count; index++)
-                    {
-                        var ball = Balls[index];
-                        ball.SpriteState = state.Balls[index];
-                    }
-                }
-                _serverClient?.LevelStates?.Clear();
+                Balls[0].Position = _serverClient.BallPosition;
+                //var state = _serverClient?.LevelStates.LastOrDefault();
+                //if (state != null)
+                //{
+                //    for (var index = 0; index < Balls.Count; index++)
+                //    {
+                //        var ball = Balls[index];
+                //        ball.SpriteState = state.Balls[index];
+                //    }
+                //}
+                //_serverClient?.LevelStates?.Clear();
                 return;
             }
             else if (GameHosting == GameHosting.Host)
             {
-                _serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
+                 _serverClient?.SendBall(Balls[0].Position).GetAwaiter().GetResult();
+                //_serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
             }
 
             if (_settings.HasAstroids)
