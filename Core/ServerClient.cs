@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 using MyGame.Levels;
@@ -14,10 +16,16 @@ namespace MyGame
         public const string ReceiveState = nameof(ReceiveState);
         private HubConnection connection;
 
-        public ServerClient()
+        public ServerClient(HttpMessageHandler? handler = null)
         {
             connection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:44397/GameHub")
+                .WithUrl("https://localhost:44397/GameHub", o =>
+                {
+                    if (handler != null)
+                        o.HttpMessageHandlerFactory = _ => handler;
+                })
+                //.AddMessagePackProtocol()
+                .AddNewtonsoftJsonProtocol()
                 .WithAutomaticReconnect()
                 .Build();
         }
