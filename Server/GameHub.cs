@@ -14,7 +14,10 @@ namespace Server
         {
             await Clients.Others.SendAsync(ServerClient.ReceivePlayerPositions, players);
         }
-
+        public async Task PlayerJoinedGame()
+        {
+            await Clients.Others.SendAsync(ServerClient.ReceivePlayerJoined);
+        }
         public async Task SendState(LevelState state)
         {
             await Clients.Others.SendAsync(ServerClient.ReceiveState, state);

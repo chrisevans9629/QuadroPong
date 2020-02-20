@@ -194,7 +194,7 @@ namespace MyGame.Levels
                 }
             }
         }
-        
+
         public override void Update(GameTime gameTime, GameState gameState)
         {
             var width = gameState.Width;
@@ -202,11 +202,26 @@ namespace MyGame.Levels
 
             if (GameHosting == GameHosting.Client)
             {
-                Balls[0].Position = _serverClient.BallPosition;
-
-                for (var i = 0; i < _serverClient.PlayerPositions.Count; i++)
+                if (_serverClient.BallPosition is VectorT t)
                 {
-                    Players[i].Paddle.Position = _serverClient.PlayerPositions[i];
+                    Balls[0].Position = t;
+                    _serverClient.BallPosition = null;
+                }
+
+                if (_serverClient.PlayerPositions != null)
+                {
+                    for (var i = 0; i < _serverClient.PlayerPositions.Count; i++)
+                    {
+                        Players[i].Paddle.Position = _serverClient.PlayerPositions[i];
+                    }
+
+                    _serverClient.PlayerPositions = null;
+                }
+
+                if (_serverClient.LevelStates != null)
+                {
+                    LoadSavedGame(PongGame.ContentManager, _serverClient.LevelStates);
+                    _serverClient.LevelStates = null;
                 }
                 //var state = _serverClient?.LevelStates.LastOrDefault();
                 //if (state != null)
@@ -222,9 +237,14 @@ namespace MyGame.Levels
             }
             else if (GameHosting == GameHosting.Host)
             {
-                 _serverClient?.SendBall(Balls[0].Position).GetAwaiter().GetResult();
-                 _serverClient?.SendPlayers(Players.Select(p => (VectorT)p.Paddle.Position).ToList()).GetAwaiter().GetResult();
-                 //_serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
+                if (_serverClient.PlayerJoined)
+                {
+                    _serverClient.PlayerJoined = false;
+                    _serverClient.SendMove(GetState()).GetAwaiter().GetResult();
+                }
+                _serverClient?.SendBall(Balls[0].Position).GetAwaiter().GetResult();
+                _serverClient?.SendPlayers(Players.Select(p => (VectorT)p.Paddle.Position).ToList()).GetAwaiter().GetResult();
+                //_serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
             }
 
             if (_settings.HasAstroids)

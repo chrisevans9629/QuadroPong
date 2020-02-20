@@ -18,6 +18,9 @@ namespace MyGame
         public const string SendBallPosition = nameof(SendBallPosition);
         public const string ReceivePlayerPositions = nameof(ReceivePlayerPositions);
         public const string SendPlayerPositions = nameof(SendPlayerPositions);
+
+        public const string ReceivePlayerJoined = nameof(ReceivePlayerJoined);
+        public const string PlayerJoinedGame = nameof(PlayerJoinedGame);
         private readonly HubConnection _connection;
 
         public ServerClient(HttpMessageHandler? handler = null)
@@ -46,14 +49,15 @@ namespace MyGame
         {
             await _connection.InvokeAsync(SendBallPosition, pos);
         }
-        public List<LevelState> LevelStates { get; set; } = new List<LevelState>();
-        public VectorT BallPosition { get; set; }
-        public List<VectorT> PlayerPositions { get; set; } = new List<VectorT>();
+        public LevelState? LevelStates { get; set; }
+        public VectorT? BallPosition { get; set; }
+        public List<VectorT>? PlayerPositions { get; set; }
+        public bool PlayerJoined { get; set; }
         public async Task Start()
         {
             _connection.On<LevelState>(
                 ReceiveState,
-                s => LevelStates.Add(s));
+                s => LevelStates = s);
 
             _connection.On<VectorT>(
                 ReceiveBallPosition,
@@ -63,8 +67,10 @@ namespace MyGame
                 ReceivePlayerPositions,
                 s => PlayerPositions = s);
 
-            await _connection.StartAsync();
+            _connection.On(ReceivePlayerJoined, () => PlayerJoined = true);
 
+            await _connection.StartAsync();
+            await _connection.SendAsync(PlayerJoinedGame);
         }
     }
 }

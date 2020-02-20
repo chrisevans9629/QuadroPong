@@ -1,7 +1,10 @@
-﻿namespace MyGame
+﻿using MyGame.Levels;
+
+namespace MyGame
 {
     public interface IPongGame
     {
+        IContentManager ContentManager { get; }
         int Width { get; set; }
         int Height { get; set; }
         void StartGameTeams();
