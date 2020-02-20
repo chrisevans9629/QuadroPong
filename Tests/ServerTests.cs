@@ -37,7 +37,20 @@ namespace Tests
             client2 = new ServerClient(server.CreateHandler());
             await client2.Start();
         }
-
+        [Test]
+        public async Task SendMove_Null_Should_Be()
+        {
+            await client1.SendMove(new LevelState(){ShipState = null});
+            await Task.Delay(100);
+            client2.LevelStates.Should().NotBeEmpty();
+        }
+        [Test]
+        public async Task SendMove_Should_Be()
+        {
+            await client1.SendMove(new LevelState());
+            await Task.Delay(100);
+            client2.LevelStates.Should().NotBeEmpty();
+        }
         [Test]
         public async Task LevelStates_Should_BeEmpty()
         {
