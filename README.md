@@ -27,9 +27,9 @@ Classic Pong
   - [ ] Flying Saucer stun & fire ball
   - [x] Astroids
   - [ ] French Fries & Drink that rotates the map
-- [ ] Multiplayer
+- [x] Multiplayer
   - [x] Offline
-  - [ ] Online
+  - [x] Online
 - [x] Gamemodes
   - [x] 4 Player
   - [x] 2 Player
