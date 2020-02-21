@@ -110,7 +110,7 @@ namespace MyGame.Levels
             {
                 var spriteState = state.Balls[index];
                 //resets powerup size
-                spriteState.Size = Vector2.One;
+                //spriteState.Size = Vector2.One;
 
                 Balls[index].SpriteState = spriteState;
             }
@@ -118,11 +118,11 @@ namespace MyGame.Levels
             for (var index = 0; index < state.PongPlayerStates.Count; index++)
             {
                 var pongPlayer = state.PongPlayerStates[index];
-//this should fix powerups being stuck
-                pongPlayer.PaddleState.HasHoldPaddle = false;
-                pongPlayer.PaddleState.IsStunned = false;
-                pongPlayer.PaddleState.SpriteState.Size = Vector2.One;
-                
+                //this should fix powerups being stuck
+                //pongPlayer.PaddleState.HasHoldPaddle = false;
+                //pongPlayer.PaddleState.IsStunned = false;
+                //pongPlayer.PaddleState.SpriteState.Size = Vector2.One;
+
                 Players[index].State = pongPlayer;
                 Players[index].PlayerStats.State = pongPlayer.StatsState;
                 Players[index].Goal.State = pongPlayer.GoalState;
@@ -152,13 +152,13 @@ namespace MyGame.Levels
             if (state.ShipState != null)
             {
                 //this should reset the size
-                state.ShipState.Balls.ForEach(p => p.Size = Vector2.One);
+                //state.ShipState.Balls.ForEach(p => p.Size = Vector2.One);
 
                 _ship.State = state.ShipState;
                 _ship.SpriteState = state.ShipState.SpriteState;
                 //_ship?.Load(MEAT, new Point(PongGame.Width, PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
             }
-            SetPositions(PongGame.Width,PongGame.Height);
+            //            SetPositions(PongGame.Width,PongGame.Height);
         }
 
         public override void LoadSavedGame(IContentManager Content, LevelState state)
@@ -260,39 +260,16 @@ namespace MyGame.Levels
 
             if (GameHosting == GameHosting.Client)
             {
-                if (_serverClient.BallPosition is VectorT t)
-                {
-                    Balls[0].Position = t;
-                    _serverClient.BallPosition = null;
-                }
-
-                if (_serverClient.PlayerPositions != null)
-                {
-                    for (var i = 0; i < _serverClient.PlayerPositions.Count; i++)
-                    {
-                        Players[i].Paddle.Position = _serverClient.PlayerPositions[i];
-                    }
-
-                    _serverClient.PlayerPositions = null;
-                }
-
                 if (_serverClient.LevelStates != null)
                 {
-                    //UpdateLevelState(_serverClient.LevelStates);
+                    UpdateLevelState(_serverClient.LevelStates);
                     _serverClient.LevelStates = null;
                 }
                 return;
             }
             else if (GameHosting == GameHosting.Host)
             {
-                if (_serverClient.PlayerJoined)
-                {
-                    _serverClient.PlayerJoined = false;
-                    _serverClient.SendMove(GetState()).GetAwaiter().GetResult();
-                }
-                _serverClient?.SendBall(Balls[0].Position).GetAwaiter().GetResult();
-                _serverClient?.SendPlayers(Players.Select(p => (VectorT)p.Paddle.Position).ToList()).GetAwaiter().GetResult();
-                //_serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
+                _serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
             }
 
             if (_settings.HasAstroids)

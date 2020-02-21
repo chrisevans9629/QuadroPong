@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using Moq;
+using MyGame;
 using MyGame.Levels;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -31,6 +32,16 @@ namespace Tests
 
             level.LoadContent(content.Object, fixture.Create<Point>());
             level.SaveGame();
+        }
+
+
+        [Test]
+        public void ColorToVectorT()
+        {
+            var color = Color.White;
+
+            var vector = (VectorT) color;
+            vector.X.Should().Be(color.ToVector3().X);
         }
 
         [Test]

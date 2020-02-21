@@ -12,6 +12,6 @@ namespace MyGame
         public int Score { get; set; }
         public bool IsStunned { get; set; }
         public bool HasHoldPaddle { get; set; }
-        public VectorT BallLaunchOffset { get; set; }
+        public VectorT BallLaunchOffset { get; set; } = new VectorT();
     }
 }
