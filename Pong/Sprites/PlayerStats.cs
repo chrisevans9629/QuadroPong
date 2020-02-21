@@ -10,7 +10,7 @@ namespace MyGame
             State = state;
         }
         public SpriteFont? SpriteFont { get; set; }
-        public PlayerStatsState State { get;}
+        public PlayerStatsState State { get; set; }
         public void Draw(SpriteBatch spriteBatch)
         {
             var one = new Vector2(0,1);

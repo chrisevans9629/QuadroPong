@@ -6,5 +6,7 @@
         int Next(int max);
         int Next(int min,int max);
         float Next(float min,float max);
+
+        void Reset(int seed);
     }
 }

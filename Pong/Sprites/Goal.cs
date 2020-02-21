@@ -14,7 +14,7 @@ namespace MyGame
         {
             State = state;
         }
-        public GoalState State { get; }
+        public GoalState State { get; set; }
         public SpriteFont? SpriteFont { get; set; }
         public RectangleF Rectangle { get => State.Rectangle; set => State.Rectangle = value; }
         public Paddles Paddles { get => State.Paddles; set => State.Paddles = value; }

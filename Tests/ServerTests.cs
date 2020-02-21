@@ -42,7 +42,7 @@ namespace Tests
         {
             await client1.SendMove(new LevelState(){ShipState = null});
             await Task.Delay(100);
-            client2.LevelStates.Should().NotBeEmpty();
+            client2.LevelStates.Should().NotBeNull();
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace Tests
                 }
             });
             await Task.Delay(100);
-            client2.LevelStates.Should().NotBeEmpty();
+            client2.LevelStates.Should().NotBeNull();
         }
 
         [Test]
@@ -67,20 +67,20 @@ namespace Tests
         {
             await client1.SendMove(new LevelState());
             await Task.Delay(100);
-            client2.LevelStates.Should().NotBeEmpty();
+            client2.LevelStates.Should().NotBeNull();
         }
         [Test]
-        public async Task LevelStates_Should_BeEmpty()
+        public async Task LevelStates_Should_BeNull()
         {
             await client1.SendMove(fixture.Create<LevelState>());
             await Task.Delay(100);
-            client1.LevelStates.Should().BeEmpty();
+            client1.LevelStates.Should().BeNull();
         }
 
         [Test]
-        public void LevelStates_Default_Should_BeEmpty()
+        public void LevelStates_Default_Should_BeNull()
         {
-            client1.LevelStates.Should().BeEmpty();
+            client1.LevelStates.Should().BeNull();
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace Tests
         {
             await client1.SendMove(fixture.Create<LevelState>());
             await Task.Delay(100);
-            client2.LevelStates.Should().HaveCount(1);
+            client2.LevelStates.Should().NotBeNull();
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace Tests
             var state = fixture.Create<LevelState>();
             await client1.SendMove(state);
             await Task.Delay(100);
-            var stateResult = client2.LevelStates.First();
+            var stateResult = client2.LevelStates;
             stateResult.ShipState.SpriteState.Speed.Should().Be(state.ShipState.SpriteState.Speed);
         }
 
@@ -107,7 +107,7 @@ namespace Tests
             var state = fixture.Create<LevelState>();
             await client1.SendMove(state);
             await Task.Delay(100);
-            var stateResult = client2.LevelStates.First();
+            var stateResult = client2.LevelStates;
             stateResult.ShipState.SpriteState.Position.Should().Be(state.ShipState.SpriteState.Position);
         }
     }

@@ -16,7 +16,7 @@ namespace MyGame
         private float _positionOffset = 0;
         private SoundEffect? death;
         //private PongPlayerState _state = new PongPlayerState();
-        public PongPlayerState State { get; }
+        public PongPlayerState State { get; set; }
         //public PongPlayerState State
         //{
         //    get => _state;

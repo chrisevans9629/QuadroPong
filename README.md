@@ -50,7 +50,7 @@ Classic Pong
   - [ ] Settings
     - [ ] Volume
     - [ ] Music
-    - [ ] Sound
+    - [x] Sound
     - [x] Fullscreen
     - [ ] Game Settings
       - [ ] Powerups

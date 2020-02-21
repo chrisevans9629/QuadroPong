@@ -91,8 +91,26 @@ namespace MyGame
         public GameTimer ExplosionTimer { get; set; } = new GameTimer();
         public Vector2 RelativeCenter => new Vector2(Texture2D.Width / 2f * Size.X, Texture2D.Height / 2f * Size.Y);
         public GameTimer EngineTimer { get; set; } = new GameTimer();
+        private ShipState _state;
+        public ShipState State
+        {
+            get=>_state;
+            set
+            {
+                _state = value;
+                if (_state != null)
+                {
+                    for (var index = 0; index < _state.Balls.Count; index++)
+                    {
+                        var spriteState = _state.Balls[index];
+                        shipBullets[index].SpriteState = spriteState;
+                    }
 
-        public ShipState State { get; }
+                    SpriteState = _state.SpriteState;
+                }
+            }
+        }
+
         public int Health { get=>State.Health; set=>State.Health=value; }
         public ShipStatus ShipStatus { get=>State.ShipStatus; set=>State.ShipStatus=value; }
         public int Score { get=>State.Score; set=>State.Score=value; }

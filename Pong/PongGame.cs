@@ -200,12 +200,17 @@ namespace MyGame
         }
 
 
-       
+
         private void LoadMusic()
         {
             var backSong = music.CreateInstance();
             backSong.IsLooped = true;
-            backSong.Volume = defaultVolume;
+            if (_settings.IsSoundOn)
+                backSong.Volume = 0;
+            else
+            {
+                backSong.Volume = defaultVolume;
+            }
             backSong.Play();
             musicSoundEffect = backSong;
 
@@ -293,7 +298,7 @@ namespace MyGame
 
             if (_settings.IsPaused)
                 return;
-            
+
 
             level?.Update(gameTime, new GameState() { Width = Width, Height = Height, IsDebug = _settings.IsDebugging, ViewPort = GraphicsDevice.Viewport.Bounds, IsSoundOn = _settings.IsSoundOn });
 

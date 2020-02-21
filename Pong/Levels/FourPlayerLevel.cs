@@ -103,6 +103,64 @@ namespace MyGame.Levels
             return result;
         }
 
+        public void UpdateLevelState(LevelState state)
+        {
+            GameMode = state.GameMode;
+            for (var index = 0; index < state.Balls.Count; index++)
+            {
+                var spriteState = state.Balls[index];
+                //resets powerup size
+                spriteState.Size = Vector2.One;
+
+                Balls[index].SpriteState = spriteState;
+            }
+
+            for (var index = 0; index < state.PongPlayerStates.Count; index++)
+            {
+                var pongPlayer = state.PongPlayerStates[index];
+//this should fix powerups being stuck
+                pongPlayer.PaddleState.HasHoldPaddle = false;
+                pongPlayer.PaddleState.IsStunned = false;
+                pongPlayer.PaddleState.SpriteState.Size = Vector2.One;
+                
+                Players[index].State = pongPlayer;
+                Players[index].PlayerStats.State = pongPlayer.StatsState;
+                Players[index].Goal.State = pongPlayer.GoalState;
+                Players[index].Paddle.State = pongPlayer.PaddleState;
+                Players[index].Paddle.SpriteState = pongPlayer.PaddleState.SpriteState;
+            }
+
+            for (var index = 0; index < state.Astroids.Count; index++)
+            {
+                var stateAstroid = state.Astroids[index];
+                _astroidManager.Sprites[index].SpriteState = stateAstroid;
+            }
+
+            for (var index = 0; index < state.Boundaries.Count; index++)
+            {
+                var stateBoundary = state.Boundaries[index];
+                boundaries[index].SpriteState = stateBoundary;
+            }
+
+            for (var index = 0; index < state.PowerUps.Count; index++)
+            {
+                var statePowerUp = state.PowerUps[index];
+                powerups[index].State = statePowerUp;
+                powerups[index].SpriteState = statePowerUp.SpriteState;
+            }
+
+            if (state.ShipState != null)
+            {
+                //this should reset the size
+                state.ShipState.Balls.ForEach(p => p.Size = Vector2.One);
+
+                _ship.State = state.ShipState;
+                _ship.SpriteState = state.ShipState.SpriteState;
+                //_ship?.Load(MEAT, new Point(PongGame.Width, PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
+            }
+            SetPositions(PongGame.Width,PongGame.Height);
+        }
+
         public override void LoadSavedGame(IContentManager Content, LevelState state)
         {
             var font = Content.Load<SpriteFont>("arial");
@@ -115,8 +173,9 @@ namespace MyGame.Levels
             var pew = Content.Load<SoundEffect>("pew");
             var boundary = Content.Load<Texture2D>("Boundary");
             var astroid = Content.Load<Texture2D>("astroids");
-            _astroidManager.Sprites.Clear();
             GameMode = state.GameMode;
+
+            _astroidManager.Sprites.Clear();
             foreach (var stateAstroid in state.Astroids)
             {
                 _astroidManager.Sprites.Add(new Astroid(randomizer) { SpriteState = stateAstroid, Texture2D = astroid });
@@ -135,7 +194,6 @@ namespace MyGame.Levels
             {
                 //this should reset the size
                 state.ShipState.Balls.ForEach(p => p.Size = Vector2.One);
-
                 _ship = new Ship(Engine, randomizer, state.ShipState);
                 _ship?.Load(MEAT, new Point(PongGame.Width, PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
             }
@@ -220,20 +278,10 @@ namespace MyGame.Levels
 
                 if (_serverClient.LevelStates != null)
                 {
-                    LoadSavedGame(PongGame.ContentManager, _serverClient.LevelStates);
+                    //UpdateLevelState(_serverClient.LevelStates);
                     _serverClient.LevelStates = null;
                 }
-                //var state = _serverClient?.LevelStates.LastOrDefault();
-                //if (state != null)
-                //{
-                //    for (var index = 0; index < Balls.Count; index++)
-                //    {
-                //        var ball = Balls[index];
-                //        ball.SpriteState = state.Balls[index];
-                //    }
-                //}
-                //_serverClient?.LevelStates?.Clear();
-                //return;
+                return;
             }
             else if (GameHosting == GameHosting.Host)
             {
@@ -331,7 +379,7 @@ namespace MyGame.Levels
         {
             _ship.Draw(_spriteBatch);
 
-            foreach (var boundary in boundaries)
+             foreach (var boundary in boundaries)
             {
                 boundary.Draw(_spriteBatch);
             }

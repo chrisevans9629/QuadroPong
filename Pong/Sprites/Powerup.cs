@@ -11,7 +11,7 @@ namespace MyGame
     {
         private readonly IRandomizer _randomizer;
         private readonly IPowerupManager _powerupManager;
-        public PowerUpState State { get; }
+        public PowerUpState State { get; set; }
         public SoundEffect? SoundEffect { get; set; }
 
         public PowerUpType PowerUpType { get=>State.PowerUpType; set=>State.PowerUpType=value; }

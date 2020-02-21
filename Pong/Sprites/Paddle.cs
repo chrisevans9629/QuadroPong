@@ -16,11 +16,7 @@ namespace MyGame
         public PaddleState State
         {
             get;
-            //set
-            //{
-            //    _state = value;
-            //    SpriteState = _state.SpriteState;
-            //}
+            set;
         }
 
         public Paddle(
