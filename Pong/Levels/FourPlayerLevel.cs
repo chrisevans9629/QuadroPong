@@ -109,20 +109,11 @@ namespace MyGame.Levels
             for (var index = 0; index < state.Balls.Count; index++)
             {
                 var spriteState = state.Balls[index];
-                //resets powerup size
-                //spriteState.Size = Vector2.One;
-
                 Balls[index].SpriteState = spriteState;
             }
-
             for (var index = 0; index < state.PongPlayerStates.Count; index++)
             {
                 var pongPlayer = state.PongPlayerStates[index];
-                //this should fix powerups being stuck
-                //pongPlayer.PaddleState.HasHoldPaddle = false;
-                //pongPlayer.PaddleState.IsStunned = false;
-                //pongPlayer.PaddleState.SpriteState.Size = Vector2.One;
-
                 Players[index].State = pongPlayer;
                 Players[index].PlayerStats.State = pongPlayer.StatsState;
                 Players[index].Goal.State = pongPlayer.GoalState;
@@ -151,14 +142,9 @@ namespace MyGame.Levels
 
             if (state.ShipState != null)
             {
-                //this should reset the size
-                //state.ShipState.Balls.ForEach(p => p.Size = Vector2.One);
-
                 _ship.State = state.ShipState;
                 _ship.SpriteState = state.ShipState.SpriteState;
-                //_ship?.Load(MEAT, new Point(PongGame.Width, PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
             }
-            //            SetPositions(PongGame.Width,PongGame.Height);
         }
 
         public override void LoadSavedGame(IContentManager Content, LevelState state)
@@ -265,7 +251,7 @@ namespace MyGame.Levels
                     UpdateLevelState(_serverClient.LevelStates);
                     _serverClient.LevelStates = null;
                 }
-                return;
+                //return;
             }
             else if (GameHosting == GameHosting.Host)
             {

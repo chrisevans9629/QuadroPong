@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
 using MyGame.Levels;
+using Newtonsoft.Json;
 
 namespace MyGame
 {
@@ -22,11 +23,12 @@ namespace MyGame
         public const string ReceivePlayerJoined = nameof(ReceivePlayerJoined);
         public const string PlayerJoinedGame = nameof(PlayerJoinedGame);
         private readonly HubConnection _connection;
-
+        private readonly HttpClient _httpClient;
+        const string Url = "https://localhost:44397/GameHub";
         public ServerClient(HttpMessageHandler? handler = null)
         {
             _connection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:44397/GameHub", o =>
+                .WithUrl(Url, o =>
                 {
                     if (handler != null)
                         o.HttpMessageHandlerFactory = _ => handler;
@@ -35,6 +37,8 @@ namespace MyGame
                 .AddNewtonsoftJsonProtocol()
                 .WithAutomaticReconnect()
                 .Build();
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri(Url, UriKind.RelativeOrAbsolute);
         }
         public async Task SendMove(LevelState state)
         {
@@ -49,12 +53,21 @@ namespace MyGame
         {
             await _connection.InvokeAsync(SendBallPosition, pos);
         }
+
+        public async Task<PlayerName> GetPlayerName()
+        {
+            var str =await _httpClient.GetStringAsync($"api/Game/PlayerName?connection={_connection.ConnectionId}");
+            return JsonConvert.DeserializeObject<PlayerName>(str);
+        }
+
         public LevelState? LevelStates { get; set; }
         public VectorT? BallPosition { get; set; }
         public List<VectorT>? PlayerPositions { get; set; }
         public bool PlayerJoined { get; set; }
+        public PlayerName PlayerName { get; set; }
         public async Task Start()
         {
+            
             _connection.On<LevelState>(
                 ReceiveState,
                 s => LevelStates = s);
@@ -71,6 +84,7 @@ namespace MyGame
 
             await _connection.StartAsync();
             await _connection.SendAsync(PlayerJoinedGame);
+            PlayerName = await GetPlayerName();
         }
     }
 }

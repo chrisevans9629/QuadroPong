@@ -20,6 +20,7 @@ namespace Server
                     o.EnableDetailedErrors = true;
                 })
                 .AddNewtonsoftJsonProtocol();
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,11 +36,11 @@ namespace Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<GameHub>("/GameHub");
-
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
+                endpoints.MapDefaultControllerRoute();
+                //endpoints.MapGet("/", async context =>
+                //{
+                //    await context.Response.WriteAsync("Hello World!");
+                //});
             });
         }
     }
