@@ -7,18 +7,8 @@ namespace MyGame
 {
     public class Sprite : Collider, IDisposable
     {
-        private SpriteState _spriteState = new SpriteState();
 
-        public Sprite()
-        {
-            SpriteState.Size = Vector2.One;
-        }
-
-        public SpriteState SpriteState
-        {
-            get => _spriteState;
-            set => _spriteState = value ?? throw new InvalidOperationException();
-        }
+        public virtual SpriteState SpriteState {get; set; } = new SpriteState();
 
         public Vector2 AngleToVector(float angle)
         {

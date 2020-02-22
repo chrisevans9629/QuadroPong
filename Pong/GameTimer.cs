@@ -5,40 +5,43 @@ namespace MyGame
 {
     public class GameTimer
     {
-        public float EveryNumOfSeconds { get; set; } = 4f;
+        public GameTimerState State { get; set; } = new GameTimerState();
 
-        public float CurrentTime { get; set; }
+        public float EveryNumOfSeconds { get => State.EveryNumOfSeconds; set => State.EveryNumOfSeconds = value; }
 
-        public bool IsRunning { get; set; }
-        public bool IsCompleted { get; set; }
+        public float CurrentTime { get => State.CurrentTime; set => State.CurrentTime = value; }
+
+        public bool IsRunning { get => State.IsRunning; set => State.IsRunning = value; }
+        public bool IsCompleted { get => State.IsCompleted; set => State.IsCompleted = value; }
+
         public void Update(GameTime gameTime)
         {
-            if (IsRunning)
+            if (State.IsRunning)
             {
-                CurrentTime += (float)gameTime.ElapsedGameTime.TotalSeconds; //Time passed since last Update() 
+                State.CurrentTime += (float)gameTime.ElapsedGameTime.TotalSeconds; //Time passed since last Update() 
 
-                if (CurrentTime >= EveryNumOfSeconds)
+                if (State.CurrentTime >= State.EveryNumOfSeconds)
                 {
-                    IsRunning = false;
-                    CurrentTime = 0;
-                    IsCompleted = true;
+                    State.IsRunning = false;
+                    State.CurrentTime = 0;
+                    State.IsCompleted = true;
                 }
             }
         }
 
-        public SpriteFont Font { get; set; }
+        public SpriteFont? Font { get; set; }
         public void Restart()
         {
-            IsCompleted = false;
-            IsRunning = true;
-            CurrentTime = 0f;
+            State.IsCompleted = false;
+            State.IsRunning = true;
+            State.CurrentTime = 0f;
         }
 
         public void Draw(SpriteBatch spriteBatch, int width, int height)
         {
-            if (IsRunning)
+            if (State.IsRunning)
             {
-                spriteBatch.DrawString(Font, CurrentTime.ToString("0"), new Vector2(width/2f,height/4f ), Color.White);
+                spriteBatch.DrawString(Font, State.CurrentTime.ToString("0"), new Vector2(width / 2f, height / 4f), Color.White);
             }
         }
     }

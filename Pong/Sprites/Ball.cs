@@ -9,7 +9,20 @@ namespace MyGame
 {
     public class Ball : Sprite
     {
+        public BallState State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                Timer.State = value.GameTimerState;
+            }
+        }
+
+        public override SpriteState SpriteState { get=>State.SpriteState; set=>State.SpriteState=value; }
+
         private readonly IRandomizer _random;
+        private BallState _state = new BallState();
         public GameTimer Timer { get; }
         public SpriteFont? SpriteFont { get; set; }
         public Ball(IRandomizer random, GameTimer gameTimer)
@@ -17,6 +30,7 @@ namespace MyGame
             _random = random;
             Timer = gameTimer;
             Speed = DefaultSpeed;
+            Timer.State = State.GameTimerState;
         }
 
         public override void Dispose()
@@ -33,11 +47,13 @@ namespace MyGame
         public const float DefaultSpeed = 500;
 
         public SoundEffect? PewSound { get; set; }
-        public bool IsBallColliding { get; set; }
+        public bool IsBallColliding { get=>State.IsBallColliding; set=>State.IsBallColliding = value; }
         public SoundEffect? BounceSong { get; private set; }
         private float RandomFloat() => (float)(_random.NextFloat() + 0.5f);
         private bool RandomBool() => _random.NextFloat() > 0.5f;
-
+        public bool HasSound { get; set; } = true;
+        public bool Debug { get; set; }
+        public List<Paddle> LastPosessor { get; set; } = new List<Paddle>(100);
         public void Load(
             SoundEffect pew,
             SoundEffect blip,
@@ -132,9 +148,7 @@ namespace MyGame
             IsBallColliding = false;
         }
 
-        public bool HasSound { get; set; } = true;
-        public bool Debug { get; set; }
-        public List<Paddle> LastPosessor { get; set; } = new List<Paddle>(100);
+       
 
         public void Reflect(Direction position)
         {

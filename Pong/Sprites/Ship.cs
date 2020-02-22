@@ -32,7 +32,7 @@ namespace MyGame
             {
                 foreach (var spriteState in state.Balls)
                 {
-                    shipBullets.Add(new Ball(_randomizer, new GameTimer()){SpriteState = spriteState});
+                    shipBullets.Add(new Ball(_randomizer, new GameTimer()){State = spriteState});
                 }
             }
             else
@@ -44,7 +44,7 @@ namespace MyGame
                 {
                     var ball = new Ball(_randomizer, new GameTimer());
                     shipBullets.Add(ball);
-                    state.Balls.Add(ball.SpriteState);
+                    state.Balls.Add(ball.State);
                 }
             }
             State = state;
@@ -103,7 +103,7 @@ namespace MyGame
                     for (var index = 0; index < _state.Balls.Count; index++)
                     {
                         var spriteState = _state.Balls[index];
-                        shipBullets[index].SpriteState = spriteState;
+                        shipBullets[index].State = spriteState;
                     }
 
                     SpriteState = _state.SpriteState;

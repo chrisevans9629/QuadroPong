@@ -61,6 +61,8 @@ namespace MyGame.Levels
             base.Initialize();
             if (GameHosting != GameHosting.Offline)
             {
+                //timer.EveryNumOfSeconds = 0.1f;
+               // timer.Restart();
                 _serverClient = new ServerClient();
                 _serverClient.Start().GetAwaiter().GetResult();
             }
@@ -120,7 +122,7 @@ namespace MyGame.Levels
             for (var index = 0; index < state.Balls.Count; index++)
             {
                 var spriteState = state.Balls[index];
-                Balls[index].SpriteState = spriteState;
+                Balls[index].State = spriteState;
             }
             for (var index = 0; index < state.PongPlayerStates.Count; index++)
             {
@@ -203,7 +205,7 @@ namespace MyGame.Levels
             if (state.ShipState != null)
             {
                 //this should reset the size
-                state.ShipState.Balls.ForEach(p => p.Size = Vector2.One);
+                state.ShipState.Balls.ForEach(p => p.SpriteState.Size = Vector2.One);
                 _ship = new Ship(Engine, randomizer, state.ShipState);
                 _ship?.Load(MEAT, new Point(PongGame.Width, PongGame.Height), explosions, engineSound, pew, blip, ballTexture, font);
             }
@@ -280,11 +282,12 @@ namespace MyGame.Levels
         }
 
         private PongPlayerState? _currentPlayerState;
+        //private GameTimer timer = new GameTimer();
         public override void Update(GameTime gameTime, GameState gameState)
         {
             var width = gameState.Width;
             var height = gameState.Height;
-
+            //timer.Update(gameTime);
             if (GameHosting == GameHosting.Client)
             {
                 if (_serverClient.LevelStates != null)
@@ -301,7 +304,11 @@ namespace MyGame.Levels
             }
             else if (GameHosting == GameHosting.Host)
             {
-                _serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
+                //if (timer.IsCompleted)
+                //{
+                    _serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
+                 //   timer.Restart();
+                //}
 
                 var playerMoves = _serverClient.PongPlayerStates.ToList().GroupBy(p => p.StatsState.PlayerName);
 

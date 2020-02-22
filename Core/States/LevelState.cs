@@ -9,7 +9,7 @@ namespace MyGame.Levels
         public List<SpriteState> Boundaries { get; set; } = new List<SpriteState>();
         public List<SpriteState> Astroids { get; set; } = new List<SpriteState>();
         public GameMode GameMode { get; set; }
-        public List<SpriteState> Balls { get; set; } = new List<SpriteState>();
+        public List<BallState> Balls { get; set; } = new List<BallState>();
         public List<PongPlayerState> PongPlayerStates { get; set; } = new List<PongPlayerState>();
     }
 }

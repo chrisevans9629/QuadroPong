@@ -21,7 +21,7 @@ namespace MyGame.Levels
         {
             return new LevelState()
             {
-                Balls = Balls.Select(p => p.SpriteState).ToList(),
+                Balls = Balls.Select(p => p.State).ToList(),
                 GameMode = GameMode,
                 PongPlayerStates = Players.Select(p => p.State).ToList()
             };
@@ -95,11 +95,11 @@ namespace MyGame.Levels
             foreach (var spriteState in state.Balls)
             {
                 //resets powerup size
-                spriteState.Size = Vector2.One;
+                spriteState.SpriteState.Size = Vector2.One;
                 
                 Balls.Add(new Ball(Randomizer1, new GameTimer())
                 {
-                    SpriteState = spriteState
+                    State = spriteState
                 });
             }
             Players.Clear();

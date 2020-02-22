@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -72,7 +73,7 @@ namespace MyGame
         public PlayerName PlayerName { get; set; }
         public List<PlayerName> Players { get; set; } = new List<PlayerName>();
         public const string ReceivePlayerState = nameof(ReceivePlayerState);
-        public List<PongPlayerState> PongPlayerStates { get; set; } = new List<PongPlayerState>();
+        public ConcurrentBag<PongPlayerState> PongPlayerStates { get; set; } = new ConcurrentBag<PongPlayerState>();
         public async Task Start()
         {
             
