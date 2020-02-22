@@ -126,6 +126,13 @@ namespace MyGame.Levels
             {
                 var pongPlayer = state.PongPlayerStates[index];
                 var player = Players[index];
+                if (GameHosting == GameHosting.Client)
+                {
+                    if (_serverClient.PlayerName == pongPlayer.StatsState.PlayerName)
+                    {
+                        continue;
+                    }
+                }
                 UpdatePlayerState(player, pongPlayer);
             }
 
@@ -296,7 +303,7 @@ namespace MyGame.Levels
             {
                 _serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
 
-                var playerMoves = _serverClient.PongPlayerStates.GroupBy(p => p.StatsState.PlayerName);
+                var playerMoves = _serverClient.PongPlayerStates.ToList().GroupBy(p => p.StatsState.PlayerName);
 
                 foreach (var states in playerMoves)
                 {
@@ -305,8 +312,8 @@ namespace MyGame.Levels
                     var player =
                         Players.FirstOrDefault(p => p.State.StatsState.PlayerName == state.StatsState.PlayerName);
 
-                    
-                    UpdatePlayerState(player,state);
+
+                    UpdatePlayerState(player, state);
                 }
                 _serverClient.PongPlayerStates.Clear();
             }
