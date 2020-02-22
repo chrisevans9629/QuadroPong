@@ -21,6 +21,7 @@ namespace MyGame
         public const string SendPlayerPositions = nameof(SendPlayerPositions);
 
         public const string ReceivePlayerJoined = nameof(ReceivePlayerJoined);
+        public const string ReceivePlayerDisconnected = nameof(ReceivePlayerDisconnected);
         public const string PlayerJoinedGame = nameof(PlayerJoinedGame);
         private readonly HubConnection _connection;
         private readonly HttpClient _httpClient;
@@ -65,6 +66,7 @@ namespace MyGame
         public List<VectorT>? PlayerPositions { get; set; }
         public bool PlayerJoined { get; set; }
         public PlayerName PlayerName { get; set; }
+        public List<PlayerName> Players { get; set; } = new List<PlayerName>();
         public async Task Start()
         {
             
@@ -80,10 +82,11 @@ namespace MyGame
                 ReceivePlayerPositions,
                 s => PlayerPositions = s);
 
-            _connection.On(ReceivePlayerJoined, () => PlayerJoined = true);
+            _connection.On<PlayerName>(ReceivePlayerJoined, p => Players.Add(p));
+            _connection.On<PlayerName>(ReceivePlayerDisconnected, p => Players.Remove(p));
 
             await _connection.StartAsync();
-            await _connection.SendAsync(PlayerJoinedGame);
+            //await _connection.SendAsync(PlayerJoinedGame);
             PlayerName = await GetPlayerName();
         }
     }

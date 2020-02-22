@@ -82,10 +82,21 @@ namespace MyGame.Levels
         {
             if (GameMode == GameMode.PlayerVs)
             {
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, Engine, PlayerName.PlayerOne));
-                Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, Engine, PlayerName.PlayerTwo));
-                Players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top, Engine, PlayerName.PlayerThree));
-                Players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom, Engine, PlayerName.PlayerFour));
+                if (GameHosting != GameHosting.Offline)
+                {
+                    Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, Engine, PlayerName.PlayerOne));
+                    Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, Engine, PlayerName.PlayerTwo));
+                    Players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top, Engine, PlayerName.PlayerThree));
+                    Players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom, Engine, PlayerName.PlayerFour));
+                }
+                else
+                {
+                    Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.One), new KeyBoardPlayer()), Paddles.Right, Engine, PlayerName.PlayerOne));
+                    Players.Add(new PongPlayer(new PlayerOrAi(true, new ControllerPlayer(PlayerIndex.Two)), Paddles.Left, Engine, PlayerName.PlayerTwo));
+                    Players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Three)), Paddles.Top, Engine, PlayerName.PlayerThree));
+                    Players.Add(new PongPlayer(new PlayerOrAi(false, new ControllerPlayer(PlayerIndex.Four)), Paddles.Bottom, Engine, PlayerName.PlayerFour));
+
+                }
             }
             else
             {
@@ -225,7 +236,23 @@ namespace MyGame.Levels
             {
                 pongPlayer.BoundarySize = b.Texture2D.Width;
             }
-            base.UpdatePlayers(gameTime, gameState, viewPort, players, balls.Union(_ship.Bullets).ToList());
+
+            if (GameHosting != GameHosting.Offline)
+            {
+                if (GameHosting == GameHosting.Client)
+                {
+                    base.UpdatePlayers(gameTime, gameState, viewPort, players.Where(p=> _serverClient.PlayerName == p.State.StatsState.PlayerName), balls.Union(_ship.Bullets).ToList());
+                }
+
+                if (GameHosting == GameHosting.Host)
+                {
+                    base.UpdatePlayers(gameTime, gameState, viewPort, players.Where(p => _serverClient.Players.Contains(p.State.StatsState.PlayerName) != true), balls.Union(_ship.Bullets).ToList());
+                }
+            }
+            else
+            {
+                base.UpdatePlayers(gameTime, gameState, viewPort, players, balls.Union(_ship.Bullets).ToList());
+            }
 
             foreach (var pongPlayer in players)
             {

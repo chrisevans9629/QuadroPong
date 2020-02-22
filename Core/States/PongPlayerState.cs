@@ -7,6 +7,5 @@
         public PaddleState PaddleState { get; set; } = new PaddleState();
         public GoalState GoalState { get; set; } = new GoalState();
         public bool Side => Position == Paddles.Left || Position == Paddles.Right;
-
     }
 }

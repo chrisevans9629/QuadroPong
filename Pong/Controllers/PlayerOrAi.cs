@@ -4,6 +4,26 @@ using Microsoft.Xna.Framework;
 
 namespace MyGame
 {
+
+    public class OnlinePlayer : IPlayerController
+    {
+        public InputResult UpdateAcceleration(Sprite sprite, Ball ball)
+        {
+            throw new NotImplementedException();
+        }
+
+        public InputResult<bool> TriggerPressed()
+        {
+            throw new NotImplementedException();
+        }
+
+        public InputResult<Vector2> GetDirectional(Vector2 defaultVector2)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
     public class PlayerOrAi : IPlayerController
     {
         public PlayerOrAi(bool isSide, params IPlayerController[] userPlayer)

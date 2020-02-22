@@ -22,10 +22,10 @@ namespace Server
         {
             await Clients.Others.SendAsync(ServerClient.ReceivePlayerPositions, players);
         }
-        public async Task PlayerJoinedGame()
-        {
-            await Clients.Others.SendAsync(ServerClient.ReceivePlayerJoined);
-        }
+        //public async Task PlayerJoinedGame()
+        //{
+        //    await Clients.Others.SendAsync(ServerClient.ReceivePlayerJoined);
+        //}
         public async Task SendState(LevelState state)
         {
             await Clients.Others.SendAsync(ServerClient.ReceiveState, state);
@@ -36,17 +36,21 @@ namespace Server
             await Clients.Others.SendAsync(ServerClient.ReceiveBallPosition, pos);
         }
 
-        public override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
-            Games.Players.Add(new HubPlayer(){PlayerName = (PlayerName)Games.Players.Count+1, Connection = this.Context.ConnectionId});
-            return base.OnConnectedAsync();
+            var player = new HubPlayer()
+                {PlayerName = (PlayerName) Games.Players.Count + 1, Connection = this.Context.ConnectionId};
+            Games.Players.Add(player);
+            await Clients.Others.SendAsync(ServerClient.ReceivePlayerJoined, player.PlayerName);
+            await base.OnConnectedAsync();
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var t = Games.Players.FirstOrDefault(p => p.Connection == Context.ConnectionId);
+            var t = Games.Players.First(p => p.Connection == Context.ConnectionId);
             Games.Players.Remove(t);
-            return base.OnDisconnectedAsync(exception);
+            await Clients.Others.SendAsync(ServerClient.ReceivePlayerDisconnected, t.PlayerName);
+            await base.OnDisconnectedAsync(exception);
         }
 
         //public async Task Moved(string player,float x, float y)
