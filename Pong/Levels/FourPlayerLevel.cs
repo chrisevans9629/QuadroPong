@@ -125,11 +125,8 @@ namespace MyGame.Levels
             for (var index = 0; index < state.PongPlayerStates.Count; index++)
             {
                 var pongPlayer = state.PongPlayerStates[index];
-                Players[index].State = pongPlayer;
-                Players[index].PlayerStats.State = pongPlayer.StatsState;
-                Players[index].Goal.State = pongPlayer.GoalState;
-                Players[index].Paddle.State = pongPlayer.PaddleState;
-                Players[index].Paddle.SpriteState = pongPlayer.PaddleState.SpriteState;
+                var player = Players[index];
+                UpdatePlayerState(player, pongPlayer);
             }
 
             for (var index = 0; index < state.Astroids.Count; index++)
@@ -156,6 +153,15 @@ namespace MyGame.Levels
                 _ship.State = state.ShipState;
                 _ship.SpriteState = state.ShipState.SpriteState;
             }
+        }
+
+        private static void UpdatePlayerState(PongPlayer player, PongPlayerState pongPlayer)
+        {
+            player.State = pongPlayer;
+            player.PlayerStats.State = pongPlayer.StatsState;
+            player.Goal.State = pongPlayer.GoalState;
+            player.Paddle.State = pongPlayer.PaddleState;
+            player.Paddle.SpriteState = pongPlayer.PaddleState.SpriteState;
         }
 
         public override void LoadSavedGame(IContentManager Content, LevelState state)
@@ -241,7 +247,7 @@ namespace MyGame.Levels
             {
                 if (GameHosting == GameHosting.Client)
                 {
-                    base.UpdatePlayers(gameTime, gameState, viewPort, players.Where(p=> _serverClient.PlayerName == p.State.StatsState.PlayerName), balls.Union(_ship.Bullets).ToList());
+                    base.UpdatePlayers(gameTime, gameState, viewPort, players.Where(p => _serverClient.PlayerName == p.State.StatsState.PlayerName), balls.Union(_ship.Bullets).ToList());
                 }
 
                 if (GameHosting == GameHosting.Host)
@@ -266,6 +272,7 @@ namespace MyGame.Levels
             }
         }
 
+        private PongPlayerState? _currentPlayerState;
         public override void Update(GameTime gameTime, GameState gameState)
         {
             var width = gameState.Width;
@@ -278,11 +285,30 @@ namespace MyGame.Levels
                     UpdateLevelState(_serverClient.LevelStates);
                     _serverClient.LevelStates = null;
                 }
+
+                _currentPlayerState ??= Players.FirstOrDefault(p =>
+                    p.State.StatsState.PlayerName == _serverClient.PlayerName)?.State;
+                if (_currentPlayerState != null)
+                    _serverClient.SendPlayerState(_currentPlayerState).GetAwaiter().GetResult();
                 //return;
             }
             else if (GameHosting == GameHosting.Host)
             {
                 _serverClient?.SendMove(GetState()).GetAwaiter().GetResult();
+
+                var playerMoves = _serverClient.PongPlayerStates.GroupBy(p => p.StatsState.PlayerName);
+
+                foreach (var states in playerMoves)
+                {
+                    var state = states.LastOrDefault();
+
+                    var player =
+                        Players.FirstOrDefault(p => p.State.StatsState.PlayerName == state.StatsState.PlayerName);
+
+                    
+                    UpdatePlayerState(player,state);
+                }
+                _serverClient.PongPlayerStates.Clear();
             }
 
             if (_settings.HasAstroids)
@@ -369,7 +395,7 @@ namespace MyGame.Levels
         {
             _ship.Draw(_spriteBatch);
 
-             foreach (var boundary in boundaries)
+            foreach (var boundary in boundaries)
             {
                 boundary.Draw(_spriteBatch);
             }

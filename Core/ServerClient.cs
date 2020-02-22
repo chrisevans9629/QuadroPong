@@ -55,6 +55,10 @@ namespace MyGame
             await _connection.InvokeAsync(SendBallPosition, pos);
         }
 
+        public async Task SendPlayerState(PongPlayerState state)
+        {
+            await _connection.InvokeAsync("SendPlayerState", state);
+        }
         public async Task<PlayerName> GetPlayerName()
         {
             var str =await _httpClient.GetStringAsync($"api/Game/PlayerName?connection={_connection.ConnectionId}");
@@ -67,6 +71,8 @@ namespace MyGame
         public bool PlayerJoined { get; set; }
         public PlayerName PlayerName { get; set; }
         public List<PlayerName> Players { get; set; } = new List<PlayerName>();
+        public const string ReceivePlayerState = nameof(ReceivePlayerState);
+        public List<PongPlayerState> PongPlayerStates { get; set; } = new List<PongPlayerState>();
         public async Task Start()
         {
             
@@ -81,6 +87,8 @@ namespace MyGame
             _connection.On<List<VectorT>>(
                 ReceivePlayerPositions,
                 s => PlayerPositions = s);
+
+            _connection.On<PongPlayerState>(ReceivePlayerState, p => PongPlayerStates.Add(p));
 
             _connection.On<PlayerName>(ReceivePlayerJoined, p => Players.Add(p));
             _connection.On<PlayerName>(ReceivePlayerDisconnected, p => Players.Remove(p));

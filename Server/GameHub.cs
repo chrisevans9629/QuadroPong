@@ -26,6 +26,12 @@ namespace Server
         //{
         //    await Clients.Others.SendAsync(ServerClient.ReceivePlayerJoined);
         //}
+
+        public async Task SendPlayerState(PongPlayerState pongPlayerState)
+        {
+            await Clients.Others.SendAsync(ServerClient.ReceivePlayerState, pongPlayerState);
+        }
+
         public async Task SendState(LevelState state)
         {
             await Clients.Others.SendAsync(ServerClient.ReceiveState, state);
