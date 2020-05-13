@@ -11,7 +11,6 @@ namespace MyGame
 {
     public class MainMenuGui : IGui
     {
-        private readonly IPongGame _pongGame;
 
         public Button Button(string text, Action action, bool visible = true)
         {
@@ -28,14 +27,13 @@ namespace MyGame
             IPongGame pongGame,
             IGameStateManager gameStateManager)
         {
-            _pongGame = pongGame;
             var resume = Button("Resume", pongGame.ResumeGame, pongGame.IsInGame || gameStateManager.HasSavedGame());
             var start = Button("Start 4 Player", pongGame.StartGame4Player);
             var start2 = Button("Start 2 Player", pongGame.StartGameClassic);
             var startTeams = Button("Start 4 Player Teams", pongGame.StartGameTeams);
 
-            var host = Button("Host", pongGame.HostGame);
-            var join = Button("Join", pongGame.JoinGame);
+            //var host = Button("Host", pongGame.HostGame);
+            //var join = Button("Join", pongGame.JoinGame);
 
             var settings = Button("Settings", pongGame.ShowSettings);
             var quit = Button("Quit", pongGame.Exit);
@@ -55,8 +53,8 @@ namespace MyGame
                         start2,
                         startTeams,
                         settings,
-                        host,
-                        join,
+                        //host,
+                        //join,
                         quit,
                     },
                     HorizontalAlignment = HorizontalAlignment.Centre,

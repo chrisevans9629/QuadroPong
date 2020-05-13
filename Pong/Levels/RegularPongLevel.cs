@@ -103,14 +103,24 @@ namespace MyGame.Levels
                 });
             }
             Players.Clear();
-            foreach (var pongPlayer in state.PongPlayerStates)
+            for (var index = 0; index < state.PongPlayerStates.Count; index++)
             {
-                //this should fix powerups being stuck
+                var pongPlayer = state.PongPlayerStates[index];
+//this should fix powerups being stuck
                 pongPlayer.PaddleState.HasHoldPaddle = false;
                 pongPlayer.PaddleState.IsStunned = false;
                 pongPlayer.PaddleState.SpriteState.Size = Vector2.One;
+
+                var controllers = new List<IPlayerController>();
+
+                controllers.Add(new ControllerPlayer((PlayerIndex)index));
+                if (index == 0)
+                {
+                    controllers.Add(new KeyBoardPlayer());
+                }
+
                 Players.Add(new PongPlayer(
-                    new AiPlayer(pongPlayer.Side),
+                    new PlayerOrAi(pongPlayer.Side, controllers.ToArray()),
                     pongPlayer.Position,
                     Engine,
                     pongPlayer.PaddleState.PlayerName,
